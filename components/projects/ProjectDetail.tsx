@@ -11,7 +11,8 @@ import ProjectGitHub from '@/components/projects/ProjectGitHub'
 import ProjectTeam from '@/components/projects/ProjectTeam'
 import ProjectRisks from '@/components/projects/ProjectRisks'
 import FlowchartPreview from '@/components/projects/FlowchartPreview'
-import { ChevronLeft, Settings, MoreVertical, Users, GitBranch, AlertTriangle, Workflow, MessageSquare } from 'lucide-react'
+import WebhookConfig from '@/components/projects/WebhookConfig'
+import { ChevronLeft, Settings, MoreVertical, Users, GitBranch, AlertTriangle, Workflow, MessageSquare, Webhook } from 'lucide-react'
 import { Project } from '@/types'
 
 interface ProjectDetailProps {
@@ -21,7 +22,7 @@ interface ProjectDetailProps {
 
 export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
   const [showAI, setShowAI] = useState(false)
-  const [activeTab, setActiveTab] = useState<'tasks' | 'github' | 'team' | 'risks' | 'flowchart'>('tasks')
+  const [activeTab, setActiveTab] = useState<'tasks' | 'github' | 'team' | 'risks' | 'flowchart' | 'webhook'>('tasks')
 
   return (
     <div className="space-y-6">
@@ -149,6 +150,17 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
           <Workflow className="w-4 h-4" />
           Flowchart
         </button>
+        <button
+          onClick={() => setActiveTab('webhook')}
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+            activeTab === 'webhook'
+              ? 'text-primary-600 border-b-2 border-primary-600'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Webhook className="w-4 h-4" />
+          Webhook Setup
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -158,6 +170,12 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
           {activeTab === 'team' && <ProjectTeam />}
           {activeTab === 'risks' && <ProjectRisks />}
           {activeTab === 'flowchart' && <FlowchartPreview />}
+          {activeTab === 'webhook' && (
+            <WebhookConfig 
+              githubOwner={project.githubOwner || ''} 
+              githubRepo={project.githubRepo || ''} 
+            />
+          )}
         </div>
 
         {showAI && (

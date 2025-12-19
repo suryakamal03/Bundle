@@ -33,6 +33,9 @@ export interface Project {
   status: 'Active' | 'On Hold' | 'Archived'
   progress?: number
   health?: 'Warning' | 'Healthy' | 'Critical'
+  githubOwner?: string
+  githubRepo?: string
+  githubRepoUrl?: string
 }
 
 export interface RiskAlert {

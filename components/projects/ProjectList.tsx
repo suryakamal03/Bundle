@@ -1,67 +1,146 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import Avatar from '@/components/ui/Avatar'
 import { Plus, Search, Grid, List, MoreVertical } from 'lucide-react'
-import { mockProjects } from '@/lib/mockData'
 import { Project } from '@/types'
+import { projectService, ProjectData } from '@/backend/projects/projectService'
+import { useAuth } from '@/backend/auth/authContext'
+import CreateProjectModal from './CreateProjectModal'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
 
 interface ProjectListProps {
   onSelectProject: (project: Project) => void
 }
 
 export default function ProjectList({ onSelectProject }: ProjectListProps) {
+  const { user } = useAuth()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [searchQuery, setSearchQuery] = useState('')
+  const [projects, setProjects] = useState<Array<Project>>([])
+  const [loading, setLoading] = useState(true)
+  const [showCreateModal, setShowCreateModal] = useState(false)
 
-  const filteredProjects = mockProjects.filter(project =>
+  const loadProjects = async () => {
+    if (!user) return
+
+    setLoading(true)
+    try {
+      const userProjects = await projectService.getUserProjects(user.uid)
+      
+      const projectsWithLeads = await Promise.all(
+        userProjects.map(async (proj) => {
+          let leadUser = null
+          if (proj.createdBy) {
+            const userDoc = await getDoc(doc(db, 'users', proj.createdBy))
+            if (userDoc.exists()) {
+              const userData = userDoc.data()
+              leadUser = {
+                id: userDoc.id,
+                name: userData.name,
+                email: userData.email,
+                role: 'Project Lead'
+              }
+            }
+          }
+
+          return {
+            id: proj.id,
+            name: proj.name,
+            description: proj.description,
+            lead: leadUser,
+            status: proj.status,
+            progress: proj.progress,
+            githubOwner: proj.githubOwner,
+            githubRepo: proj.githubRepo,
+            githubRepoUrl: proj.githubRepoUrl
+          }
+        })
+      )
+
+      setProjects(projectsWithLeads)
+    } catch (error) {
+      console.error('Failed to load projects:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadProjects()
+  }, [user])
+
+  const filteredProjects = projects.filter(project =>
     project.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  const handleProjectCreated = () => {
+    loadProjects()
+  }
+
   return (
-    <div className="space-y-4">
-      <Card>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">All Projects</h2>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-1.5 rounded ${viewMode === 'grid' ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700'}`}
-              >
-                <Grid className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700'}`}
-              >
-                <List className="w-4 h-4" />
-              </button>
+    <>
+      {showCreateModal && (
+        <CreateProjectModal
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={handleProjectCreated}
+        />
+      )}
+      
+      <div className="space-y-4">
+        <Card>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-gray-900">All Projects</h2>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-1.5 rounded ${viewMode === 'grid' ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  <Grid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+              <Button className="gap-2" onClick={() => setShowCreateModal(true)}>
+                <Plus className="w-4 h-4" />
+                New Project
+              </Button>
             </div>
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" />
-              New Project
-            </Button>
           </div>
-        </div>
 
-        <div className="mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
+          <div className="mb-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search projects..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+            </div>
           </div>
-        </div>
 
-        {viewMode === 'grid' ? (
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+            </div>
+          ) : filteredProjects.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">
+                {searchQuery ? 'No projects found matching your search' : 'No projects yet. Create your first project!'}
+              </p>
+            </div>
+          ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredProjects.map((project) => (
               <div
@@ -154,5 +233,6 @@ export default function ProjectList({ onSelectProject }: ProjectListProps) {
         )}
       </Card>
     </div>
+    </>
   )
 }

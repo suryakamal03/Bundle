@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update, delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    match /projects/{projectId} {
+      allow read: if request.auth != null && request.auth.uid in resource.data.members;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && request.auth.uid in resource.data.members;
+      allow delete: if request.auth != null && request.auth.uid == resource.data.createdBy;
+    }
+    
+    match /github_events/{eventId} {
+      allow read: if request.auth != null;
+      allow create: if true;
+    }
+    
+    match /tasks/{taskId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

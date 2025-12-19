@@ -8,7 +8,8 @@ import {
   User,
   UserCredential
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
 
 export interface AuthError {
   code: string;
@@ -39,6 +40,13 @@ export const authService = {
         await updateProfile(userCredential.user, {
           displayName: data.fullName
         });
+
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          uid: userCredential.user.uid,
+          email: userCredential.user.email,
+          name: data.fullName,
+          createdAt: serverTimestamp()
+        });
       }
       
       return userCredential;
@@ -64,6 +72,16 @@ export const authService = {
     try {
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
+
+      if (userCredential.user) {
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          uid: userCredential.user.uid,
+          email: userCredential.user.email,
+          name: userCredential.user.displayName || userCredential.user.email,
+          createdAt: serverTimestamp()
+        }, { merge: true });
+      }
+
       return userCredential;
     } catch (error: any) {
       throw this.handleAuthError(error);
