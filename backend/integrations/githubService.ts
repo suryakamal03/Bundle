@@ -1,5 +1,6 @@
-import { collection, addDoc, doc, getDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { adminDb } from '@/lib/firebase-admin';
+import { taskServiceAdmin } from '@/backend/tasks/taskServiceAdmin';
+import { Timestamp } from 'firebase-admin/firestore';
 
 export interface GitHubEvent {
   id: string;
@@ -23,19 +24,26 @@ export interface WebhookPayload {
     avatar_url?: string;
   };
   action?: string;
+  ref?: string;
   commits?: Array<{
     id: string;
     message: string;
     author: {
       name: string;
       email: string;
+      username?: string;
     };
     timestamp: string;
   }>;
   pull_request?: {
     id: number;
     title: string;
+    body?: string;
     state: string;
+    merged?: boolean;
+    base?: {
+      ref: string;
+    };
     user: {
       login: string;
     };
@@ -74,19 +82,49 @@ export const githubService = {
         login: payload.sender.login,
         avatarUrl: payload.sender.avatar_url
       },
-      createdAt: serverTimestamp()
+      createdAt: Timestamp.now()
     };
 
-    const docRef = await addDoc(collection(db, 'github_events'), eventData);
+    const docRef = await adminDb.collection('github_events').add(eventData);
     return docRef.id;
   },
 
   async processPushEvent(payload: WebhookPayload, projectId: string): Promise<void> {
     await this.storeWebhookEvent(projectId, 'push', payload);
+    
+    if (payload.commits && payload.commits.length > 0) {
+      for (const commit of payload.commits) {
+        const githubUsername = commit.author.username || payload.sender.login;
+        const commitMessage = commit.message;
+        
+        try {
+          await taskServiceAdmin.matchTaskForCommit(projectId, commitMessage, githubUsername);
+        } catch (error) {
+          console.error('Error matching task for commit:', error);
+        }
+      }
+    }
   },
 
   async processPullRequestEvent(payload: WebhookPayload, projectId: string): Promise<void> {
     await this.storeWebhookEvent(projectId, 'pull_request', payload);
+    
+    if (payload.pull_request && payload.action === 'closed' && payload.pull_request.merged) {
+      const isMainBranch = payload.pull_request.base?.ref === 'main' || 
+                          payload.pull_request.base?.ref === 'master';
+      
+      if (isMainBranch) {
+        const githubUsername = payload.pull_request.user.login;
+        const prTitle = payload.pull_request.title;
+        const prBody = payload.pull_request.body || '';
+        
+        try {
+          await taskServiceAdmin.matchTaskForMerge(projectId, prTitle, prBody, githubUsername);
+        } catch (error) {
+          console.error('Error matching task for merge:', error);
+        }
+      }
+    }
   },
 
   async processIssueEvent(payload: WebhookPayload, projectId: string): Promise<void> {

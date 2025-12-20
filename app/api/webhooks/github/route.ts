@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { githubService } from '@/backend/integrations/githubService';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { adminDb } from '@/lib/firebase-admin';
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,13 +20,19 @@ export async function POST(req: NextRequest) {
     const { owner, name: repo } = payload.repository;
     const fullRepoName = `${owner.login}/${repo}`;
 
-    const projectsRef = collection(db, 'projects');
-    const q = query(
-      projectsRef,
-      where('githubOwner', '==', owner.login),
-      where('githubRepo', '==', repo)
-    );
-    const querySnapshot = await getDocs(q);
+    if (event === 'ping') {
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Webhook received successfully',
+        repository: fullRepoName
+      });
+    }
+
+    const projectsRef = adminDb.collection('projects');
+    const querySnapshot = await projectsRef
+      .where('githubOwner', '==', owner.login)
+      .where('githubRepo', '==', repo)
+      .get();
 
     if (querySnapshot.empty) {
       return NextResponse.json({ 

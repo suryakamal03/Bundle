@@ -165,7 +165,7 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className={showAI ? 'lg:col-span-2' : 'lg:col-span-3'}>
-          {activeTab === 'tasks' && <ProjectTasks />}
+          {activeTab === 'tasks' && <ProjectTasks projectId={project.id} />}
           {activeTab === 'github' && <ProjectGitHub />}
           {activeTab === 'team' && <ProjectTeam projectId={project.id} />}
           {activeTab === 'risks' && <ProjectRisks />}
