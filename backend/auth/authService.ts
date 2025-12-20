@@ -20,6 +20,8 @@ export interface SignUpData {
   email: string;
   password: string;
   fullName: string;
+  displayName?: string;
+  githubUsername?: string;
 }
 
 export interface SignInData {
@@ -45,6 +47,8 @@ export const authService = {
           uid: userCredential.user.uid,
           email: userCredential.user.email,
           name: data.fullName,
+          displayName: data.displayName || '',
+          githubUsername: data.githubUsername || '',
           createdAt: serverTimestamp()
         });
       }
@@ -78,6 +82,8 @@ export const authService = {
           uid: userCredential.user.uid,
           email: userCredential.user.email,
           name: userCredential.user.displayName || userCredential.user.email,
+          displayName: '',
+          githubUsername: '',
           createdAt: serverTimestamp()
         }, { merge: true });
       }

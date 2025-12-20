@@ -5,6 +5,8 @@ export interface User {
   role: string
   avatar?: string
   status?: 'Active' | 'Inactive'
+  githubUsername?: string
+  displayName?: string
 }
 
 export interface Developer extends User {
@@ -17,12 +19,13 @@ export interface Task {
   id: string
   title: string
   description?: string
-  status: 'To Do' | 'In Progress' | 'In Review' | 'Done' | 'Completed' | 'Pending'
-  priority: 'Low' | 'Medium' | 'High'
-  assignee?: User
-  deadline?: string
-  dueDate?: string
-  createdAt?: string
+  status: 'To Do' | 'In Review' | 'Done'
+  assignedTo: string
+  assignedToName?: string
+  projectId: string
+  keywords: string[]
+  createdAt: any
+  updatedAt: any
 }
 
 export interface Project {
