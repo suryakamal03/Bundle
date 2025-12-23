@@ -23,7 +23,7 @@ interface ProjectMember {
 export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddTaskModalProps) {
   const [title, setTitle] = useState('')
   const [assignedTo, setAssignedTo] = useState('')
-  const [deadlineInDays, setDeadlineInDays] = useState('')
+  const [deadline, setDeadline] = useState('')
   const [members, setMembers] = useState<ProjectMember[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingMembers, setLoadingMembers] = useState(true)
@@ -64,12 +64,23 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
     try {
       const selectedMember = members.find(m => m.id === assignedTo)
       
+      // Calculate days from now if deadline is set
+      let deadlineInDays: number | undefined
+      if (deadline) {
+        const selectedDate = new Date(deadline)
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        selectedDate.setHours(0, 0, 0, 0)
+        const diffTime = selectedDate.getTime() - today.getTime()
+        deadlineInDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      }
+      
       await taskService.createTask({
         title: title.trim(),
         projectId,
         assignedTo,
         assignedToName: selectedMember?.name || '',
-        deadlineInDays: deadlineInDays ? parseInt(deadlineInDays, 10) : undefined
+        deadlineInDays
       })
 
       onTaskCreated()
@@ -140,15 +151,19 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
             )}
           </div>
 
-          <Input
-            label="Task Deadline (days)"
-            type="number"
-            placeholder="7"
-            value={deadlineInDays}
-            onChange={(e) => setDeadlineInDays(e.target.value)}
-            disabled={loading}
-            min="1"
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Task Deadline
+            </label>
+            <input
+              type="date"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              disabled={loading}
+              min={new Date().toISOString().split('T')[0]}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+            />
+          </div>
 
           <div className="flex gap-3 pt-2">
             <Button

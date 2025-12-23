@@ -1,4 +1,4 @@
-import { collection, query, where, getDocs, doc, getDoc, onSnapshot } from 'firebase/firestore'
+  import { collection, query, where, getDocs, doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { Task } from '@/types'
 

@@ -14,6 +14,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, needsProfileSetup } = useAuth()
   const [showProfileModal, setShowProfileModal] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
 
   useEffect(() => {
     if (needsProfileSetup) {
@@ -21,16 +22,22 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   }, [needsProfileSetup])
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen)
+  }
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
-        <Sidebar />
-        <Header />
-        <main className="ml-64 pt-16">
-          <div className="p-6">
-            {children}
-          </div>
-        </main>
+        <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+        <div className={`transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-0'}`}>
+          <Header />
+          <main className="pt-16">
+            <div className="p-6">
+              {children}
+            </div>
+          </main>
+        </div>
         
         {showProfileModal && user && (
           <UserProfileModal

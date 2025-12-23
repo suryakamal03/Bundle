@@ -6,16 +6,20 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Avatar from '@/components/ui/Avatar'
-import Button from '@/components/ui/Button'
-import { SlidersHorizontal, ExternalLink, Loader2, MoreVertical } from 'lucide-react'
+import { Calendar, Loader2 } from 'lucide-react'
 import { useAuth } from '@/backend/auth/authContext'
 import { taskManagementService, TaskManagementItem } from '@/backend/tasks/taskManagementService'
+import { cn } from '@/lib/utils'
+
+type FilterStatus = 'All' | 'To Do' | 'In Review'
 
 export default function TaskManagementPage() {
   const { user } = useAuth()
   const router = useRouter()
   const [tasks, setTasks] = useState<TaskManagementItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [activeFilter, setActiveFilter] = useState<FilterStatus>('All')
+  const [reminders, setReminders] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     if (!user) {
@@ -36,31 +40,49 @@ export default function TaskManagementPage() {
     router.push(`/projects?project=${projectId}`)
   }
 
-  const handleProjectClick = (projectId: string) => {
-    router.push(`/projects?project=${projectId}`)
-  }
-
   const formatDeadline = (deadline: any) => {
-    if (!deadline) return 'No deadline'
+    if (!deadline) return null
     try {
       const date = deadline.toDate ? deadline.toDate() : new Date(deadline)
-      return date.toISOString().split('T')[0]
+      const now = new Date()
+      const diffTime = date.getTime() - now.getTime()
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      
+      if (diffDays < 0) return { text: 'Overdue', isOverdue: true }
+      if (diffDays === 0) return { text: 'Today', isOverdue: false }
+      if (diffDays === 1) return { text: 'Tomorrow', isOverdue: false }
+      if (diffDays < 7) return { text: `${diffDays}d`, isOverdue: false }
+      
+      return { 
+        text: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), 
+        isOverdue: false 
+      }
     } catch (error) {
-      return 'Invalid date'
+      return null
     }
   }
 
-  const getStatusVariant = (status: string): 'success' | 'warning' | 'info' | 'danger' => {
-    switch (status) {
-      case 'Done':
-        return 'success'
-      case 'In Review':
-        return 'warning'
-      case 'To Do':
-        return 'info'
-      default:
-        return 'info'
-    }
+  const toggleReminder = (taskId: string) => {
+    setReminders(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId)
+      } else {
+        newSet.add(taskId)
+      }
+      return newSet
+    })
+  }
+
+  const filteredTasks = tasks.filter(task => {
+    if (activeFilter === 'All') return true
+    return task.status === activeFilter
+  })
+
+  const statusCounts = {
+    'All': tasks.length,
+    'To Do': tasks.filter(t => t.status === 'To Do').length,
+    'In Review': tasks.filter(t => t.status === 'In Review').length
   }
 
   return (
@@ -73,106 +95,152 @@ export default function TaskManagementPage() {
               {tasks.length > 0 ? `Managing ${tasks.length} tasks across your projects` : 'No tasks to display'}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="secondary" className="gap-2">
-              <SlidersHorizontal className="w-4 h-4" />
-              Filter
-            </Button>
-          </div>
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="flex items-center gap-2 border-b border-gray-200">
+          {(['All', 'To Do', 'In Review'] as FilterStatus[]).map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={cn(
+                'px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px',
+                activeFilter === filter
+                  ? 'text-primary-600 border-primary-600'
+                  : 'text-gray-600 border-transparent hover:text-gray-900 hover:border-gray-300'
+              )}
+            >
+              {filter}
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-gray-100 text-xs">
+                {statusCounts[filter]}
+              </span>
+            </button>
+          ))}
         </div>
         
-        <Card padding={false}>
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
+          </div>
+        ) : filteredTasks.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No tasks found</p>
+            <p className="text-sm text-gray-400 mt-1">
+              {user 
+                ? activeFilter === 'All' 
+                  ? 'Task Management is available for project leads only' 
+                  : `No tasks in "${activeFilter}" status`
+                : 'Please log in to view tasks'}
+            </p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg border border-gray-200">
+            {/* Table Header */}
+            <div className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 border-b border-gray-200 bg-gray-50">
+              <div className="text-xs font-semibold text-gray-600 uppercase">Name</div>
+              <div className="text-xs font-semibold text-gray-600 uppercase">Status</div>
+              <div className="text-xs font-semibold text-gray-600 uppercase">Assignee</div>
+              <div className="text-xs font-semibold text-gray-600 uppercase">Due date</div>
+              <div className="text-xs font-semibold text-gray-600 uppercase">Remind Me</div>
             </div>
-          ) : tasks.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No tasks found</p>
-              <p className="text-sm text-gray-400 mt-1">
-                {user ? 'Task Management is available for project leads only' : 'Please log in to view tasks'}
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Project Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Task Title
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Assigned To
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Deadline
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {tasks.map((task) => (
-                    <tr key={task.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button
-                          onClick={() => handleProjectClick(task.projectId)}
-                          className="text-sm font-medium text-primary-600 hover:text-primary-700 hover:underline"
-                        >
-                          {task.projectName}
-                        </button>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={() => handleTaskClick(task.projectId)}
-                          className="text-sm font-medium text-gray-900 hover:text-primary-600 text-left"
-                        >
-                          {task.title}
-                        </button>
-                        {task.description && (
-                          <p className="text-xs text-gray-500 mt-1 line-clamp-1">{task.description}</p>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {task.assignedToName ? (
-                          <div className="flex items-center gap-2">
-                            <Avatar name={task.assignedToName} size="sm" />
-                            <span className="text-sm text-gray-900">{task.assignedToName}</span>
+            
+            {/* Task Rows */}
+            <div className="divide-y divide-gray-100">
+              {filteredTasks.map((task) => {
+                const deadlineInfo = formatDeadline(task.deadlineAt)
+                const hasReminder = !reminders.has(task.id)
+                
+                return (
+                  <div
+                    key={task.id}
+                    className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 hover:bg-gray-50 transition-colors group relative"
+                  >
+                    {/* Task Title */}
+                    <div 
+                      className="flex-1 min-w-0 cursor-pointer flex items-center"
+                      onClick={() => handleTaskClick(task.projectId)}
+                    >
+                      <p className="text-sm font-medium text-gray-900 group-hover:text-primary-600 truncate">
+                        {task.title}
+                      </p>
+                    </div>
+
+                    {/* Status */}
+                    <div className="flex items-center">
+                      <Badge 
+                        variant={
+                          task.status === 'Done' ? 'success' : 
+                          task.status === 'In Review' ? 'warning' : 
+                          'info'
+                        }
+                        className="text-xs"
+                      >
+                        {task.status}
+                      </Badge>
+                    </div>
+
+                    {/* Assigned User - Show Name */}
+                    <div className="flex items-center gap-2">
+                      {task.assignedToName ? (
+                        <>
+                          <Avatar name={task.assignedToName} size="sm" />
+                          <span className="text-sm text-gray-700 truncate">
+                            {task.assignedToName}
+                          </span>
+                        </>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                            <span className="text-xs text-gray-400">?</span>
                           </div>
-                        ) : (
-                          <span className="text-sm text-gray-500">Unassigned</span>
+                          <span className="text-sm text-gray-400">Unassigned</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Deadline */}
+                    <div className="flex items-center gap-1.5">
+                      {deadlineInfo ? (
+                        <>
+                          <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                          <span className={cn(
+                            "text-xs font-medium",
+                            deadlineInfo.isOverdue 
+                              ? "text-red-600" 
+                              : "text-gray-600"
+                          )}>
+                            {deadlineInfo.text}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-xs text-gray-400">-</span>
+                      )}
+                    </div>
+
+                    {/* Toggle Button */}
+                    <div className="flex items-center justify-center">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleReminder(task.id)
+                        }}
+                        className={cn(
+                          "w-11 h-6 rounded-full transition-colors relative",
+                          hasReminder ? "bg-primary-500" : "bg-gray-300"
                         )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge variant={getStatusVariant(task.status)}>
-                          {task.status}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-900">{formatDeadline(task.deadlineAt)}</span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button
-                          onClick={() => handleTaskClick(task.projectId)}
-                          className="text-gray-400 hover:text-gray-600"
-                        >
-                          <ExternalLink className="w-5 h-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      >
+                        <div className={cn(
+                          "w-5 h-5 bg-white rounded-full shadow-sm transition-transform absolute top-0.5",
+                          hasReminder ? "translate-x-5" : "translate-x-0.5"
+                        )} />
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
-          )}
-        </Card>
+          </div>
+        )}
         
         <div className="flex items-center justify-center text-sm text-gray-600">
           © 2025 Ontrackr. All rights reserved.
