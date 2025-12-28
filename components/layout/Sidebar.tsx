@@ -35,20 +35,20 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   return (
     <div 
       className={cn(
-        'flex flex-col w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 transition-transform duration-300 z-20',
+        'flex flex-col w-64 bg-white dark:bg-[#212121] border-r border-gray-200 dark:border-gray-700 h-screen fixed left-0 top-0 transition-all duration-300 z-20',
         !isOpen && '-translate-x-full'
       )}
     >
       <button
         onClick={onToggle}
-        className="flex items-center gap-2 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition-colors"
+        className="flex items-center gap-2 px-6 py-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
       >
         <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
           <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
           </svg>
         </div>
-        <span className="text-xl font-bold text-gray-900">Ontrackr</span>
+        <span className="text-xl font-bold text-gray-900 dark:text-white">Ontrackr</span>
       </button>
       
       <nav className="flex-1 px-3 py-4 overflow-y-auto">
@@ -64,8 +64,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     isActive
-                      ? 'bg-gray-100 text-gray-900'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
                   )}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />

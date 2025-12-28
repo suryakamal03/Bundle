@@ -19,6 +19,7 @@ export interface CreateTaskData {
   assignedTo: string;
   assignedToName: string;
   deadlineInDays?: number;
+  reminderEnabled?: boolean;
 }
 
 export const taskService = {
@@ -41,7 +42,7 @@ export const taskService = {
       keywords,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
-      reminderEnabled: true,
+      reminderEnabled: data.reminderEnabled !== undefined ? data.reminderEnabled : true,
       reminderSent: false
     };
 

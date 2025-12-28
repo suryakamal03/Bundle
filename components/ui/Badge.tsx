@@ -8,12 +8,12 @@ interface BadgeProps {
 
 export default function Badge({ children, variant = 'primary', className }: BadgeProps) {
   const variants = {
-    primary: 'bg-primary-100 text-primary-700',
-    success: 'bg-green-100 text-green-700',
-    warning: 'bg-yellow-100 text-yellow-700',
-    danger: 'bg-red-100 text-red-700',
-    info: 'bg-blue-100 text-blue-700',
-    purple: 'bg-purple-100 text-purple-700',
+    primary: 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400',
+    success: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400',
+    warning: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400',
+    danger: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400',
+    info: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400',
+    purple: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400',
   }
   
   return (

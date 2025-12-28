@@ -1,110 +1,76 @@
-import { type ClassValue, clsx } from 'clsx'
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
-  return clsx(inputs)
+  return twMerge(clsx(inputs))
 }
 
 export function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map(n => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
+  if (!name) return ''
+  
+  const parts = name.trim().split(' ')
+  if (parts.length === 1) {
+    return parts[0].charAt(0).toUpperCase()
+  }
+  
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase()
 }
 
-export function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
-
-export function getRelativeTime(date: Date | any): string {
+export function getRelativeTime(date: Date | string | { toDate: () => Date }): string {
+  if (!date) return ''
+  
   let dateObj: Date
   
-  if (date?.toDate) {
-    dateObj = date.toDate()
+  if (typeof date === 'string') {
+    dateObj = new Date(date)
   } else if (date instanceof Date) {
     dateObj = date
+  } else if (date && typeof date === 'object' && 'toDate' in date) {
+    dateObj = date.toDate()
   } else {
-    dateObj = new Date(date)
+    return ''
   }
   
-  if (isNaN(dateObj.getTime())) {
-    return 'just now'
-  }
+  const now = new Date()
+  const diffInMs = now.getTime() - dateObj.getTime()
+  const diffInSeconds = Math.floor(diffInMs / 1000)
+  const diffInMinutes = Math.floor(diffInSeconds / 60)
+  const diffInHours = Math.floor(diffInMinutes / 60)
+  const diffInDays = Math.floor(diffInHours / 24)
   
-  const nowUtc = new Date()
-  const dateUtc = new Date(dateObj.toISOString())
-  const diffMs = nowUtc.getTime() - dateUtc.getTime()
-  
-  if (diffMs < 0) {
-    return 'just now'
-  }
-  
-  const diffSec = Math.floor(diffMs / 1000)
-  const diffMin = Math.floor(diffSec / 60)
-  const diffHour = Math.floor(diffMin / 60)
-  const diffDay = Math.floor(diffHour / 24)
-  
-  if (diffSec < 10) {
-    return 'just now'
-  } else if (diffSec < 60) {
-    return 'just now'
-  } else if (diffMin === 1) {
-    return '1 minute ago'
-  } else if (diffMin < 60) {
-    return `${diffMin} minutes ago`
-  } else if (diffHour === 1) {
-    return '1 hour ago'
-  } else if (diffHour < 24) {
-    return `${diffHour} hours ago`
-  } else if (diffDay === 1) {
-    return 'yesterday'
-  } else if (diffDay < 7) {
-    return `${diffDay} days ago`
-  } else if (diffDay < 14) {
-    return '1 week ago'
-  } else if (diffDay < 30) {
-    const weeks = Math.floor(diffDay / 7)
-    return `${weeks} weeks ago`
-  } else if (diffDay < 60) {
-    return '1 month ago'
-  } else if (diffDay < 365) {
-    const months = Math.floor(diffDay / 30)
-    return `${months} months ago`
-  } else if (diffDay < 730) {
-    return '1 year ago'
+  if (diffInSeconds < 60) {
+    return 'Just now'
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} ${diffInMinutes === 1 ? 'minute' : 'minutes'} ago`
+  } else if (diffInHours < 24) {
+    return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`
+  } else if (diffInDays < 7) {
+    return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`
   } else {
-    const years = Math.floor(diffDay / 365)
-    return `${years} years ago`
+    return dateObj.toLocaleDateString()
   }
 }
 
-export function getExactTimestamp(date: Date | any): string {
+export function getExactTimestamp(date: Date | string | { toDate: () => Date }): string {
+  if (!date) return ''
+  
   let dateObj: Date
   
-  if (date?.toDate) {
-    dateObj = date.toDate()
+  if (typeof date === 'string') {
+    dateObj = new Date(date)
   } else if (date instanceof Date) {
     dateObj = date
+  } else if (date && typeof date === 'object' && 'toDate' in date) {
+    dateObj = date.toDate()
   } else {
-    dateObj = new Date(date)
-  }
-  
-  if (isNaN(dateObj.getTime())) {
-    return 'Invalid date'
+    return ''
   }
   
   return dateObj.toLocaleString('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
-    hour12: true
   })
 }

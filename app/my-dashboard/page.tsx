@@ -159,8 +159,8 @@ export default function MyDashboardPage() {
     if (tasks.length === 0) {
       return (
         <div className="text-center py-12">
-          <CheckSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-sm text-gray-500">No tasks found</p>
+          <CheckSquare className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+          <p className="text-sm text-gray-500 dark:text-gray-400">No tasks found</p>
         </div>
       )
     }
@@ -171,21 +171,21 @@ export default function MyDashboardPage() {
           <div
             key={task.id}
             onClick={() => handleViewProject(task.projectId)}
-            className="p-4 border border-gray-200 rounded-lg hover:border-primary-500 hover:bg-gray-50 transition-colors cursor-pointer"
+            className="p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#2a2a2a] rounded-lg hover:border-primary-500 dark:hover:border-primary-400 hover:bg-[#f5f5f5] dark:hover:bg-[#353535] transition-colors cursor-pointer"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 mb-1">{task.title}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{task.title}</p>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Badge variant="info" className="text-xs">
                     {task.projectName || 'Unknown Project'}
                   </Badge>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
                     {task.status}
                   </span>
                 </div>
               </div>
-              <ExternalLink className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <ExternalLink className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
             </div>
           </div>
         ))}
@@ -227,11 +227,11 @@ export default function MyDashboardPage() {
           <div
             key={issue.id}
             onClick={() => handleOpenGitHub(issue.githubUrl)}
-            className="p-4 border border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors cursor-pointer"
+            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-red-500 dark:hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors cursor-pointer"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 mb-1">{issue.title}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{issue.title}</p>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Badge variant="info" className="text-xs">
                     {issue.projectName || 'Unknown Project'}
@@ -239,12 +239,12 @@ export default function MyDashboardPage() {
                   <Badge variant={issue.state === 'open' ? 'danger' : 'success'} className="text-xs">
                     {issue.state}
                   </Badge>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
                     #{issue.number} · {getRelativeTime(issue.createdAt)}
                   </span>
                 </div>
               </div>
-              <ExternalLink className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <ExternalLink className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
             </div>
           </div>
         ))}
@@ -256,8 +256,8 @@ export default function MyDashboardPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Dashboard</h1>
-          <p className="text-sm text-gray-600 mt-1">Your personal command center</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Dashboard</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Your personal command center</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

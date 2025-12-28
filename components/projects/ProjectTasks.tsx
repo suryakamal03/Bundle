@@ -135,12 +135,12 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Project Tasks</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Project Tasks</h2>
         <div className="flex items-center gap-3">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
             <option value="All">All Status</option>
             <option value="To Do">To Do</option>
@@ -157,9 +157,9 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
       {/* Member Filter */}
       {loadingMembers ? (
         <div className="flex gap-2 flex-wrap animate-pulse">
-          <div className="h-8 w-28 bg-gray-200 rounded-lg"></div>
-          <div className="h-8 w-32 bg-gray-200 rounded-lg"></div>
-          <div className="h-8 w-24 bg-gray-200 rounded-lg"></div>
+          <div className="h-8 w-28 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+          <div className="h-8 w-32 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+          <div className="h-8 w-24 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
         </div>
       ) : members.length > 0 && (
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
@@ -190,22 +190,22 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
 
       {/* Tasks Table */}
       {loading ? (
-        <div className="text-center py-8 text-gray-500">Loading tasks...</div>
+        <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading tasks...</div>
       ) : (
-        <div className="bg-white rounded-lg border border-gray-200">
+        <div className="bg-white dark:bg-[#2a2a2a] rounded-lg border border-gray-200 dark:border-gray-700">
           {/* Table Header */}
-          <div className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 border-b border-gray-200 bg-gray-50">
-            <div className="text-xs font-semibold text-gray-600 uppercase">Name</div>
-            <div className="text-xs font-semibold text-gray-600 uppercase">Status</div>
-            <div className="text-xs font-semibold text-gray-600 uppercase">Assignee</div>
-            <div className="text-xs font-semibold text-gray-600 uppercase">Due date</div>
-            <div className="text-xs font-semibold text-gray-600 uppercase">Remind Me</div>
+          <div className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1f1f1f]">
+            <div className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Name</div>
+            <div className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Status</div>
+            <div className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Assignee</div>
+            <div className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Due date</div>
+            <div className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Remind Me</div>
           </div>
           
           {/* Task Rows */}
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {statusFilteredTasks.length === 0 ? (
-              <p className="text-sm text-gray-500 text-center py-8">No tasks</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-8">No tasks</p>
             ) : (
               statusFilteredTasks.map((task) => {
                 const deadlineInfo = formatDeadline(task.deadlineAt)
@@ -215,14 +215,14 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                 return (
                   <div
                     key={task.id}
-                    className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 hover:bg-gray-50 transition-colors group relative"
+                    className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 hover:bg-gray-50 dark:hover:bg-[#353535] transition-colors group relative"
                   >
                     {/* Task Name */}
                     <div 
                       className="flex-1 min-w-0 cursor-pointer flex items-center"
                       onClick={() => setSelectedTask(task)}
                     >
-                      <h4 className="font-medium text-sm text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                      <h4 className="font-medium text-sm text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {task.title}
                       </h4>
                     </div>
@@ -247,7 +247,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                         name={task.assignedToName || getMemberName(task.assignedTo)} 
                         size="sm" 
                       />
-                      <span className="text-sm text-gray-700 truncate">
+                      <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
                         {task.assignedToName || getMemberName(task.assignedTo)}
                       </span>
                     </div>
@@ -256,18 +256,18 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                     <div className="flex items-center gap-1.5">
                       {deadlineInfo ? (
                         <>
-                          <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                          <Calendar className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
                           <span className={cn(
                             "text-xs font-medium",
                             deadlineInfo.isOverdue 
-                              ? "text-red-600" 
-                              : "text-gray-600"
+                              ? "text-red-600 dark:text-red-400" 
+                              : "text-gray-600 dark:text-gray-300"
                           )}>
                             {deadlineInfo.text}
                           </span>
                         </>
                       ) : (
-                        <span className="text-xs text-gray-400">-</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">-</span>
                       )}
                     </div>
 
@@ -280,7 +280,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                         }}
                         className={cn(
                           "w-11 h-6 rounded-full transition-colors relative",
-                          hasReminder ? "bg-primary-500" : "bg-gray-300"
+                          hasReminder ? "bg-primary-500" : "bg-gray-300 dark:bg-gray-600"
                         )}
                       >
                         <div className={cn(

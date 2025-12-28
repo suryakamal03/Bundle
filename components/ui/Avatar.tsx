@@ -31,7 +31,7 @@ export default function Avatar({ name, src, size = 'md', className, status }: Av
         </div>
       )}
       {status && (
-        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></span>
+        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></span>
       )}
     </div>
   )

@@ -11,7 +11,8 @@
   "dependencies": {
     "@google/genai": "^1.34.0",
     "@google/generative-ai": "^0.24.1",
-    "clsx": "^2.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "firebase": "^12.7.0",
     "firebase-admin": "^13.6.0",
     "lucide-react": "^0.294.0",
@@ -22,7 +23,9 @@
     "react-dom": "^18.2.0",
     "react-mermaid2": "^0.1.4",
     "recharts": "^2.10.3",
-    "resend": "^4.0.0"
+    "resend": "^4.0.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",

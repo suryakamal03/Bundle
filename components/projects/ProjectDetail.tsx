@@ -5,13 +5,12 @@ import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import Avatar from '@/components/ui/Avatar'
-import AIAssistant from '@/components/projects/AIAssistant'
 import ProjectTasks from '@/components/projects/ProjectTasks'
 import ProjectGitHub from '@/components/projects/ProjectGitHub'
 import ProjectTeam from '@/components/projects/ProjectTeam'
 import ProjectFlowchart from '@/components/projects/ProjectFlowchart'
 import WebhookConfig from '@/components/projects/WebhookConfig'
-import { ChevronLeft, Settings, MoreVertical, Users, GitBranch, Workflow, MessageSquare, Webhook } from 'lucide-react'
+import { ChevronLeft, MoreVertical, Users, GitBranch, Workflow, MessageSquare, Webhook } from 'lucide-react'
 import { Project } from '@/types'
 
 interface ProjectDetailProps {
@@ -20,7 +19,6 @@ interface ProjectDetailProps {
 }
 
 export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
-  const [showAI, setShowAI] = useState(false)
   const [activeTab, setActiveTab] = useState<'tasks' | 'github' | 'team' | 'flowchart' | 'webhook'>('tasks')
 
   return (
@@ -31,33 +29,22 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
           Back to Projects
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{project.name}</h1>
         </div>
-        <Button variant="secondary" className="gap-2">
-          <Settings className="w-4 h-4" />
-          Settings
-        </Button>
-        <Button
-          onClick={() => setShowAI(!showAI)}
-          className="gap-2"
-        >
-          <MessageSquare className="w-4 h-4" />
-          AI Assistant
-        </Button>
       </div>
 
       <Card>
         <div className="space-y-4">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-gray-600 mb-4">{project.description}</p>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">{project.description}</p>
               <div className="flex items-center gap-3">
                 {project.lead && (
                   <div className="flex items-center gap-2">
                     <Avatar name={project.lead.name} size="sm" />
                     <div>
-                      <p className="text-xs text-gray-500">Project Lead</p>
-                      <p className="text-sm font-medium text-gray-900">{project.lead.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Project Lead</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{project.lead.name}</p>
                     </div>
                   </div>
                 )}
@@ -73,17 +60,17 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
                 </div>
               </div>
             </div>
-            <button className="text-gray-400 hover:text-gray-600">
+            <button className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" aria-label="More options">
               <MoreVertical className="w-5 h-5" />
             </button>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Project Progress</span>
-              <span className="text-sm font-medium text-gray-900">{project.progress || 0}%</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Project Progress</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-white">{project.progress || 0}%</span>
             </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary-500 transition-all"
                 style={{ width: `${project.progress || 0}%` }}
@@ -93,13 +80,13 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
         </div>
       </Card>
 
-      <div className="flex items-center gap-2 border-b border-gray-200">
+      <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700">
         <button
           onClick={() => setActiveTab('tasks')}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
             activeTab === 'tasks'
-              ? 'text-primary-600 border-b-2 border-primary-600'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
           <Users className="w-4 h-4" />
@@ -109,8 +96,8 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
           onClick={() => setActiveTab('github')}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
             activeTab === 'github'
-              ? 'text-primary-600 border-b-2 border-primary-600'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
           <GitBranch className="w-4 h-4" />
@@ -120,8 +107,8 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
           onClick={() => setActiveTab('team')}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
             activeTab === 'team'
-              ? 'text-primary-600 border-b-2 border-primary-600'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
           <Users className="w-4 h-4" />
@@ -131,8 +118,8 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
           onClick={() => setActiveTab('flowchart')}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
             activeTab === 'flowchart'
-              ? 'text-primary-600 border-b-2 border-primary-600'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
           <Workflow className="w-4 h-4" />
@@ -142,8 +129,8 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
           onClick={() => setActiveTab('webhook')}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
             activeTab === 'webhook'
-              ? 'text-primary-600 border-b-2 border-primary-600'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           }`}
         >
           <Webhook className="w-4 h-4" />
@@ -152,7 +139,7 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className={showAI ? 'lg:col-span-2' : 'lg:col-span-3'}>
+        <div className="lg:col-span-3">
           {activeTab === 'tasks' && <ProjectTasks projectId={project.id} />}
           {activeTab === 'github' && <ProjectGitHub projectId={project.id} />}
           {activeTab === 'team' && <ProjectTeam projectId={project.id} />}
@@ -164,12 +151,6 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
             />
           )}
         </div>
-
-        {showAI && (
-          <div className="lg:col-span-1">
-            <AIAssistant onClose={() => setShowAI(false)} />
-          </div>
-        )}
       </div>
     </div>
   )

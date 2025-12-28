@@ -6,6 +6,8 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { taskService } from '@/backend/tasks/taskService'
 import { inviteService } from '@/backend/projects/inviteService'
+import { getUserSettings } from '@/backend/settings/userSettingsService'
+import { useAuth } from '@/backend/auth/authContext'
 
 interface AddTaskModalProps {
   projectId: string
@@ -21,6 +23,7 @@ interface ProjectMember {
 }
 
 export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddTaskModalProps) {
+  const { user } = useAuth()
   const [title, setTitle] = useState('')
   const [assignedTo, setAssignedTo] = useState('')
   const [deadline, setDeadline] = useState('')
@@ -28,10 +31,22 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
   const [loading, setLoading] = useState(false)
   const [loadingMembers, setLoadingMembers] = useState(true)
   const [error, setError] = useState('')
+  const [autoReminder, setAutoReminder] = useState(true)
 
   useEffect(() => {
     loadProjectMembers()
+    loadUserSettings()
   }, [projectId])
+
+  const loadUserSettings = async () => {
+    if (!user?.uid) return
+    try {
+      const settings = await getUserSettings(user.uid)
+      setAutoReminder(settings.autoReminder)
+    } catch (err) {
+      console.error('Failed to load user settings:', err)
+    }
+  }
 
   const loadProjectMembers = async () => {
     try {
@@ -80,7 +95,8 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
         projectId,
         assignedTo,
         assignedToName: selectedMember?.name || '',
-        deadlineInDays
+        deadlineInDays,
+        reminderEnabled: autoReminder
       })
 
       onTaskCreated()
@@ -162,6 +178,7 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
               disabled={loading}
               min={new Date().toISOString().split('T')[0]}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+              aria-label="Select task deadline date"
             />
           </div>
 

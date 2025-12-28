@@ -93,7 +93,7 @@ export default function ProjectList({ onSelectProject }: ProjectListProps) {
       <div className="space-y-4">
         <Card>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">All Projects</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">All Projects</h2>
             <Button className="gap-2" onClick={() => setShowCreateModal(true)}>
               <Plus className="w-4 h-4" />
               New Project
@@ -102,13 +102,13 @@ export default function ProjectList({ onSelectProject }: ProjectListProps) {
 
           <div className="mb-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
                 placeholder="Search projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function ProjectList({ onSelectProject }: ProjectListProps) {
             </div>
           ) : filteredProjects.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">
+              <p className="text-gray-500 dark:text-gray-400">
                 {searchQuery ? 'No projects found matching your search' : 'No projects yet. Create your first project!'}
               </p>
             </div>
@@ -129,26 +129,26 @@ export default function ProjectList({ onSelectProject }: ProjectListProps) {
                 <div
                   key={project.id}
                   onClick={() => onSelectProject(project)}
-                  className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-primary-500 hover:shadow-md transition-all cursor-pointer"
+                  className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#2a2a2a] rounded-lg hover:border-primary-500 dark:hover:border-primary-400 hover:bg-[#f5f5f5] dark:hover:bg-[#353535] transition-all cursor-pointer"
                 >
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-1">{project.name}</h3>
-                    <p className="text-sm text-gray-600">{project.description}</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{project.name}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{project.description}</p>
                   </div>
                   
                   {project.lead && (
                     <div className="flex items-center gap-2">
                       <Avatar name={project.lead.name} size="sm" />
-                      <span className="text-sm text-gray-600 hidden md:block">{project.lead.name}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400 hidden md:block">{project.lead.name}</span>
                     </div>
                   )}
 
                   <div className="w-32 hidden lg:block">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-600">Progress</span>
-                      <span className="text-xs font-medium text-gray-900">{project.progress || 0}%</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">Progress</span>
+                      <span className="text-xs font-medium text-gray-900 dark:text-white">{project.progress || 0}%</span>
                     </div>
-                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-primary-500 transition-all"
                         style={{ width: `${project.progress || 0}%` }}
