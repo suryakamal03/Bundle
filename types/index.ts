@@ -64,6 +64,17 @@ export interface ChatMessage {
   isBot?: boolean
 }
 
+export interface ProjectChatMessage {
+  id: string
+  projectId: string
+  senderId: string
+  senderName: string
+  text: string
+  timestamp: string
+  time24h: string
+  createdAt?: any
+}
+
 export interface Channel {
   id: string
   name: string
