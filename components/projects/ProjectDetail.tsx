@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
@@ -9,9 +9,11 @@ import ProjectTasks from '@/components/projects/ProjectTasks'
 import ProjectGitHub from '@/components/projects/ProjectGitHub'
 import ProjectTeam from '@/components/projects/ProjectTeam'
 import ProjectGroupChat from '@/components/projects/ProjectGroupChat'
+import ProjectAssignerAI from '@/components/projects/ProjectAssignerAI'
 import WebhookConfig from '@/components/projects/WebhookConfig'
-import { ChevronLeft, MoreVertical, Users, GitBranch, MessageSquare, Webhook } from 'lucide-react'
-import { Project } from '@/types'
+import { ChevronLeft, MoreVertical, Users, GitBranch, MessageSquare, Bot, Webhook } from 'lucide-react'
+import { Project, User } from '@/types'
+import { inviteService } from '@/backend/projects/inviteService'
 
 interface ProjectDetailProps {
   project: Project
@@ -19,7 +21,21 @@ interface ProjectDetailProps {
 }
 
 export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
-  const [activeTab, setActiveTab] = useState<'tasks' | 'github' | 'team' | 'chat' | 'webhook'>('tasks')
+  const [activeTab, setActiveTab] = useState<'tasks' | 'github' | 'team' | 'chat' | 'ai-assigner' | 'webhook'>('tasks')
+  const [projectMembers, setProjectMembers] = useState<User[]>([])
+
+  // Load project members for AI task assignment
+  useEffect(() => {
+    const loadMembers = async () => {
+      try {
+        const members = await inviteService.getProjectMembers(project.id)
+        setProjectMembers(members as User[])
+      } catch (error) {
+        console.error('Failed to load project members:', error)
+      }
+    }
+    loadMembers()
+  }, [project.id])
 
   return (
     <div className="space-y-6">
@@ -31,40 +47,6 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{project.name}</h1>
         </div>
       </div>
-
-      <Card>
-        <div className="space-y-4">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <p className="text-gray-600 dark:text-gray-300 mb-4">{project.description}</p>
-              <div className="flex items-center gap-3">
-                {project.lead && (
-                  <div className="flex items-center gap-2">
-                    <Avatar name={project.lead.name} size="sm" />
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Project Lead</p>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{project.lead.name}</p>
-                    </div>
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <Badge variant={project.status === 'Active' ? 'success' : project.status === 'On Hold' ? 'warning' : 'info'}>
-                    {project.status}
-                  </Badge>
-                  {project.health && (
-                    <Badge variant={project.health === 'Healthy' ? 'success' : project.health === 'Warning' ? 'warning' : 'danger'}>
-                      Health: {project.health}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            </div>
-            <button className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" aria-label="More options">
-              <MoreVertical className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </Card>
 
       <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700">
         <button
@@ -112,6 +94,17 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
           Group Chat
         </button>
         <button
+          onClick={() => setActiveTab('ai-assigner')}
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+            activeTab === 'ai-assigner'
+              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+          }`}
+        >
+          <Bot className="w-4 h-4" />
+          Project Assigner AI
+        </button>
+        <button
           onClick={() => setActiveTab('webhook')}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
             activeTab === 'webhook'
@@ -130,6 +123,12 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
           {activeTab === 'github' && <ProjectGitHub projectId={project.id} />}
           {activeTab === 'team' && <ProjectTeam projectId={project.id} />}
           {activeTab === 'chat' && <ProjectGroupChat projectId={project.id} />}
+          {activeTab === 'ai-assigner' && (
+            <ProjectAssignerAI 
+              projectId={project.id}
+              projectMembers={projectMembers}
+            />
+          )}
           {activeTab === 'webhook' && (
             <WebhookConfig 
               githubOwner={project.githubOwner || ''} 
