@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import Input from '@/components/ui/Input'
-import { X, Copy, Check, Link as LinkIcon } from 'lucide-react'
+import { X, Copy, Check } from 'lucide-react'
 import { useAuth } from '@/backend/auth/authContext'
 
 interface InviteMemberModalProps {
@@ -45,7 +45,6 @@ export default function InviteMemberModal({ projectId, projectName, onClose }: I
 
       const fullLink = `${window.location.origin}/invites/${data.inviteId}`
       setInviteLink(fullLink)
-
     } catch (err) {
       setError('An error occurred while generating the invite link')
     } finally {
@@ -59,41 +58,42 @@ export default function InviteMemberModal({ projectId, projectName, onClose }: I
     setTimeout(() => setCopied(false), 2000)
   }
 
+  useEffect(() => {
+    if (!inviteLink && user) {
+      generateInvite()
+    }
+  }, [user])
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-lg">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Invite Team Member</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Invite Team Member</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          <div className="mb-6">
-            <p className="text-sm text-gray-600 mb-4">
-              Share this invite link with team members to join <span className="font-semibold">{projectName}</span>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Share this invite link with team members to join <span className="font-semibold text-gray-900 dark:text-white">{projectName}</span>
             </p>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
-            {!inviteLink ? (
-              <Button
-                onClick={generateInvite}
-                disabled={loading}
-                className="w-full gap-2"
-              >
-                <LinkIcon className="w-4 h-4" />
-                {loading ? 'Generating Link...' : 'Generate Invite Link'}
-              </Button>
-            ) : (
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+              </div>
+            ) : inviteLink ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <Input
@@ -120,8 +120,8 @@ export default function InviteMemberModal({ projectId, projectName, onClose }: I
                   </Button>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p className="text-xs text-blue-800">
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                  <p className="text-xs text-blue-800 dark:text-blue-200">
                     <strong>Note:</strong> This invite link will expire in 7 days. Anyone with this link can join the project.
                   </p>
                 </div>
@@ -134,7 +134,7 @@ export default function InviteMemberModal({ projectId, projectName, onClose }: I
                   Generate New Link
                 </Button>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </Card>

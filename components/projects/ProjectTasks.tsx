@@ -194,12 +194,11 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
       ) : (
         <div className="bg-white dark:bg-[#2a2a2a] rounded-lg border border-gray-200 dark:border-gray-700">
           {/* Table Header */}
-          <div className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1f1f1f]">
+          <div className="grid grid-cols-[1fr,100px,150px,120px] gap-4 px-6 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1f1f1f]">
             <div className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Name</div>
             <div className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Status</div>
             <div className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Assignee</div>
             <div className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Due date</div>
-            <div className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Remind Me</div>
           </div>
           
           {/* Task Rows */}
@@ -209,13 +208,11 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
             ) : (
               statusFilteredTasks.map((task) => {
                 const deadlineInfo = formatDeadline(task.deadlineAt)
-                // Default reminder to ON if not set
-                const hasReminder = !reminders.has(task.id)
               
                 return (
                   <div
                     key={task.id}
-                    className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 hover:bg-gray-50 dark:hover:bg-[#353535] transition-colors group relative"
+                    className="grid grid-cols-[1fr,100px,150px,120px] gap-4 px-6 py-3 hover:bg-gray-50 dark:hover:bg-[#353535] transition-colors group relative"
                   >
                     {/* Task Name */}
                     <div 
@@ -269,25 +266,6 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                       ) : (
                         <span className="text-xs text-gray-400 dark:text-gray-500">-</span>
                       )}
-                    </div>
-
-                    {/* Toggle Button */}
-                    <div className="flex items-center justify-center">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          toggleReminder(task.id)
-                        }}
-                        className={cn(
-                          "w-11 h-6 rounded-full transition-colors relative",
-                          hasReminder ? "bg-primary-500" : "bg-gray-300 dark:bg-gray-600"
-                        )}
-                      >
-                        <div className={cn(
-                          "w-5 h-5 bg-white rounded-full shadow-sm transition-transform absolute top-0.5",
-                          hasReminder ? "translate-x-5" : "translate-x-0.5"
-                        )} />
-                      </button>
                     </div>
                   </div>
                 )

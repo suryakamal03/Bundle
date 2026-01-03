@@ -5,13 +5,15 @@ import { useRouter } from 'next/navigation'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
-import { CheckSquare, GitBranch, AlertCircle, ExternalLink, Loader2 } from 'lucide-react'
+import TaskDetailsModal from '@/components/projects/TaskDetailsModal'
+import { CheckSquare, GitBranch, AlertCircle, ExternalLink, Loader2, Bell, BellOff } from 'lucide-react'
 import { useAuth } from '@/backend/auth/authContext'
 import { userTaskService, UserTask } from '@/backend/tasks/userTaskService'
 import { userGitHubService, UserGitHubActivity, GitHubIssue } from '@/backend/integrations/userGitHubService'
-import { getRelativeTime } from '@/lib/utils'
-import { getDoc, doc } from 'firebase/firestore'
+import { getRelativeTime, cn } from '@/lib/utils'
+import { getDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import { Task } from '@/types'
 
 type TabType = 'todo' | 'in-review' | 'issues'
 
@@ -26,6 +28,7 @@ export default function MyDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [githubUsername, setGithubUsername] = useState<string>('')
   const [debugInfo, setDebugInfo] = useState<string>('')
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
   useEffect(() => {
     if (!user) {
@@ -106,8 +109,44 @@ export default function MyDashboardPage() {
     router.push(`/projects?project=${projectId}`)
   }
 
+  const handleTaskClick = (task: UserTask) => {
+    // Convert UserTask to Task type for the modal
+    const taskForModal: Task = {
+      id: task.id,
+      title: task.title,
+      description: task.description || '',
+      status: task.status,
+      priority: task.priority || 'Medium',
+      assignedTo: task.assignedTo,
+      assignedToName: task.assignedToName,
+      projectId: task.projectId,
+      createdAt: task.createdAt,
+      deadlineAt: task.deadlineAt,
+      reminderEnabled: task.reminderEnabled,
+      reminderSent: task.reminderSent
+    }
+    setSelectedTask(taskForModal)
+  }
+
   const handleOpenGitHub = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
+  const toggleReminder = async (taskId: string, currentValue: boolean) => {
+    try {
+      const taskRef = doc(db, 'tasks', taskId)
+      await updateDoc(taskRef, {
+        reminderEnabled: !currentValue,
+        reminderSent: false
+      })
+      
+      // Update local state
+      setTodoTasks(prev => prev.map(task => 
+        task.id === taskId ? { ...task, reminderEnabled: !currentValue } : task
+      ))
+    } catch (error) {
+      console.error('Failed to toggle reminder:', error)
+    }
   }
 
   const getActivityIcon = (activityType: string) => {
@@ -167,28 +206,54 @@ export default function MyDashboardPage() {
 
     return (
       <div className="space-y-3">
-        {tasks.map((task) => (
-          <div
-            key={task.id}
-            onClick={() => handleViewProject(task.projectId)}
-            className="p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#2a2a2a] rounded-lg hover:border-primary-500 dark:hover:border-primary-400 hover:bg-[#f5f5f5] dark:hover:bg-[#353535] transition-colors cursor-pointer"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{task.title}</p>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="info" className="text-xs">
-                    {task.projectName || 'Unknown Project'}
-                  </Badge>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {task.status}
-                  </span>
+        {tasks.map((task) => {
+          const hasReminder = task.reminderEnabled ?? true
+          
+          return (
+            <div
+              key={task.id}
+              className="p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#2a2a2a] rounded-lg hover:border-primary-500 dark:hover:border-primary-400 hover:bg-[#f5f5f5] dark:hover:bg-[#353535] transition-colors"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div 
+                  className="flex-1 min-w-0 cursor-pointer"
+                  onClick={() => handleTaskClick(task)}
+                >
+                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{task.title}</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant="info" className="text-xs">
+                      {task.projectName || 'Unknown Project'}
+                    </Badge>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {task.status}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  {activeTab === 'todo' && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleReminder(task.id, hasReminder)
+                      }}
+                      className={cn(
+                        "w-11 h-6 rounded-full transition-colors relative flex-shrink-0",
+                        hasReminder ? "bg-primary-500" : "bg-gray-300 dark:bg-gray-600"
+                      )}
+                      title={hasReminder ? "Reminder enabled" : "Reminder disabled"}
+                    >
+                      <div className={cn(
+                        "w-5 h-5 bg-white rounded-full shadow-sm transition-transform absolute top-0.5",
+                        hasReminder ? "translate-x-5" : "translate-x-0.5"
+                      )} />
+                    </button>
+                  )}
                 </div>
               </div>
-              <ExternalLink className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     )
   }
@@ -244,7 +309,7 @@ export default function MyDashboardPage() {
                   </span>
                 </div>
               </div>
-              <ExternalLink className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+
             </div>
           </div>
         ))}
@@ -254,6 +319,17 @@ export default function MyDashboardPage() {
 
   return (
     <DashboardLayout>
+      {selectedTask && (
+        <TaskDetailsModal
+          task={selectedTask}
+          onClose={() => setSelectedTask(null)}
+          onUpdate={() => {
+            loadUserData()
+            setSelectedTask(null)
+          }}
+        />
+      )}
+
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Dashboard</h1>

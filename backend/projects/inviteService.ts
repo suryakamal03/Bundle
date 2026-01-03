@@ -163,7 +163,7 @@ export const inviteService = {
             id: userDoc.id,
             name: userData.name || userData.email,
             email: userData.email,
-            role: userDoc.id === projectData.createdBy ? 'Owner' : 'Member'
+            role: userDoc.id === projectData.createdBy ? 'Lead' : 'Member'
           });
         });
       }

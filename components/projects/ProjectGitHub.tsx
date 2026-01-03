@@ -131,7 +131,7 @@ export default function ProjectGitHub({ projectId }: ProjectGitHubProps) {
         </div>
       ) : (
         <div className="space-y-4">
-          {activities.map((activity) => {
+          {activities.slice(0, 5).map((activity) => {
             const { icon: Icon, color } = getActivityIcon(activity.activityType)
             return (
               <div

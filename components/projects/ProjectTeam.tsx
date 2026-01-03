@@ -21,7 +21,7 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
   const [members, setMembers] = useState<Array<{ id: string; name: string; email: string; role?: string }>>([])
   const [loading, setLoading] = useState(true)
   const [showInviteModal, setShowInviteModal] = useState(false)
-  const [isOwner, setIsOwner] = useState(false)
+  const [isLead, setIsLead] = useState(false)
   const [projectName, setProjectName] = useState('')
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
       if (projectDoc.exists()) {
         const projectData = projectDoc.data()
         setProjectName(projectData.name)
-        setIsOwner(user?.uid === projectData.createdBy)
+        setIsLead(user?.uid === projectData.createdBy)
       }
 
       const teamMembers = await inviteService.getProjectMembers(projectId)
@@ -89,8 +89,8 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
       <div className="space-y-6">
         <Card>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Team Members</h2>
-            {isOwner && (
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Team Members</h2>
+            {isLead && (
               <Button
                 onClick={() => setShowInviteModal(true)}
                 className="gap-2"
@@ -104,8 +104,8 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
 
           {members.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">No team members yet</p>
-              {isOwner && (
+              <p className="text-gray-500 dark:text-gray-400">No team members yet</p>
+              {isLead && (
                 <Button
                   onClick={() => setShowInviteModal(true)}
                   variant="secondary"
@@ -121,22 +121,22 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
               {members.map((member) => (
                 <div
                   key={member.id}
-                  className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-primary-500 transition-colors"
+                  className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary-500 dark:hover:border-primary-400 transition-colors"
                 >
                   <Avatar name={member.name} size="lg" status />
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-gray-900">{member.name}</h3>
-                      {member.role === 'Owner' && (
-                        <Crown className="w-4 h-4 text-yellow-500" />
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{member.name}</h3>
+                      {member.role === 'Lead' && (
+                        <Crown className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
                       )}
                     </div>
-                    <p className="text-sm text-gray-600">{member.email}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{member.email}</p>
                   </div>
-                  <Badge variant={member.role === 'Owner' ? 'warning' : 'info'}>
+                  <Badge variant={member.role === 'Lead' ? 'warning' : 'info'}>
                     {member.role}
                   </Badge>
-                  {isOwner && member.role !== 'Owner' && (
+                  {isLead && member.role !== 'Lead' && (
                     <Button
                       variant="ghost"
                       size="sm"
