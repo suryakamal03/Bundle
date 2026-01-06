@@ -38,7 +38,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          const needsSetup = !userData.displayName || !userData.githubUsername;
+          // Only check if profile setup is needed if the user was just created
+          // Check metadata to see if this is a new user (created within last 5 minutes)
+          const creationTime = user.metadata.creationTime;
+          const isNewUser = creationTime && (Date.now() - new Date(creationTime).getTime()) < 5 * 60 * 1000;
+          
+          const needsSetup = isNewUser && (!userData.displayName || !userData.githubUsername);
           setNeedsProfileSetup(needsSetup);
         }
       } else {
