@@ -142,16 +142,16 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
 
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-md bg-[#151517] border border-[#26262a] rounded-xl p-6">
+          <div className="w-full max-w-md bg-white dark:bg-[#151517] border border-gray-300 dark:border-[#26262a] rounded-xl p-6">
             <div>
-              <h2 className="text-xl font-semibold text-[#eaeaea] mb-4">Delete Project</h2>
-              <p className="text-[#9a9a9a] mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-[#eaeaea] mb-4">Delete Project</h2>
+              <p className="text-gray-600 dark:text-[#9a9a9a] mb-6">
                 Are you sure you want to delete this project? This action cannot be undone and will remove all tasks, files, and data associated with this project.
               </p>
               <div className="flex items-center gap-3">
                 <Button 
                   variant="secondary" 
-                  className="flex-1 bg-[#1c1c1f] border-[#26262a] text-[#eaeaea] hover:bg-[#26262a]"
+                  className="flex-1 bg-gray-100 dark:bg-[#1c1c1f] border-gray-300 dark:border-[#26262a] text-gray-900 dark:text-[#eaeaea] hover:bg-gray-200 dark:hover:bg-[#26262a]"
                   onClick={() => {
                     setDeleteConfirm(false)
                     setMenuOpen(false)
@@ -175,7 +175,7 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
       <div className="space-y-4">
         {/* Top Bar with Project Name */}
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-[#eaeaea]">{updatedProject.name}</h1>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-[#eaeaea]">{updatedProject.name}</h1>
           
           {isLead && (
             <div className="relative">
@@ -185,19 +185,19 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
                   setMenuOpen(!menuOpen)
                 }}
                 aria-label="Project options"
-                className="p-2 hover:bg-[#1c1c1f] rounded-md transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-[#1c1c1f] rounded-md transition-colors"
               >
                 <MoreVertical className="w-5 h-5 text-[#9a9a9a]" />
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 top-full mt-1 w-48 bg-[#151517] border border-[#26262a] rounded-lg shadow-xl z-10">
+                <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-[#151517] border border-gray-200 dark:border-[#26262a] rounded-lg shadow-xl z-10">
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
                       setShowEditModal(true)
                     }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-[#eaeaea] hover:bg-[#1c1c1f] transition-colors first:rounded-t-lg"
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-gray-900 dark:text-[#eaeaea] hover:bg-gray-100 dark:hover:bg-[#1c1c1f] transition-colors first:rounded-t-lg"
                   >
                     <Edit2 className="w-4 h-4" />
                     <span className="text-sm">Edit</span>
@@ -207,7 +207,7 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
                       e.stopPropagation()
                       setDeleteConfirm(true)
                     }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-red-400 hover:bg-[#1c1c1f] transition-colors last:rounded-b-lg"
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-[#1c1c1f] transition-colors last:rounded-b-lg"
                   >
                     <Trash2 className="w-4 h-4" />
                     <span className="text-sm">Delete</span>
@@ -220,13 +220,13 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
 
         {/* View Switcher Bar (ClickUp style) */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 bg-[#0f0f10] border border-[#26262a] rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-gray-100 dark:bg-[#0f0f10] border border-gray-200 dark:border-[#26262a] rounded-lg p-1">
             <button
               onClick={() => handleTabChange('tasks')}
               className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
                 activeTab === 'tasks'
-                  ? 'bg-[#151517] text-[#eaeaea]'
-                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+                  ? 'bg-white dark:bg-[#151517] text-gray-900 dark:text-[#eaeaea]'
+                  : 'text-gray-600 dark:text-[#9a9a9a] hover:text-gray-900 dark:hover:text-[#eaeaea]'
               }`}
             >
               <List className="w-4 h-4" />
@@ -236,8 +236,8 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
               onClick={() => handleTabChange('github')}
               className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
                 activeTab === 'github'
-                  ? 'bg-[#151517] text-[#eaeaea]'
-                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+                  ? 'bg-white dark:bg-[#151517] text-gray-900 dark:text-[#eaeaea]'
+                  : 'text-gray-600 dark:text-[#9a9a9a] hover:text-gray-900 dark:hover:text-[#eaeaea]'
               }`}
             >
               <GitBranch className="w-4 h-4" />
@@ -247,8 +247,8 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
               onClick={() => handleTabChange('team')}
               className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
                 activeTab === 'team'
-                  ? 'bg-[#151517] text-[#eaeaea]'
-                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+                  ? 'bg-white dark:bg-[#151517] text-gray-900 dark:text-[#eaeaea]'
+                  : 'text-gray-600 dark:text-[#9a9a9a] hover:text-gray-900 dark:hover:text-[#eaeaea]'
               }`}
             >
               <Users className="w-4 h-4" />
@@ -258,8 +258,8 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
               onClick={() => handleTabChange('chat')}
               className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
                 activeTab === 'chat'
-                  ? 'bg-[#151517] text-[#eaeaea]'
-                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+                  ? 'bg-white dark:bg-[#151517] text-gray-900 dark:text-[#eaeaea]'
+                  : 'text-gray-600 dark:text-[#9a9a9a] hover:text-gray-900 dark:hover:text-[#eaeaea]'
               }`}
             >
               <MessageSquare className="w-4 h-4" />
@@ -269,8 +269,8 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
               onClick={() => handleTabChange('ai-assigner')}
               className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
                 activeTab === 'ai-assigner'
-                  ? 'bg-[#151517] text-[#eaeaea]'
-                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+                  ? 'bg-white dark:bg-[#151517] text-gray-900 dark:text-[#eaeaea]'
+                  : 'text-gray-600 dark:text-[#9a9a9a] hover:text-gray-900 dark:hover:text-[#eaeaea]'
               }`}
             >
               <Bot className="w-4 h-4" />
@@ -280,8 +280,8 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
               onClick={() => handleTabChange('webhook')}
               className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
                 activeTab === 'webhook'
-                  ? 'bg-[#151517] text-[#eaeaea]'
-                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+                  ? 'bg-white dark:bg-[#151517] text-gray-900 dark:text-[#eaeaea]'
+                  : 'text-gray-600 dark:text-[#9a9a9a] hover:text-gray-900 dark:hover:text-[#eaeaea]'
               }`}
             >
               <Webhook className="w-4 h-4" />

@@ -51,16 +51,16 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
 
   return (
     <Card className={`sticky top-6 ${isExpanded ? 'fixed inset-4 z-50' : 'h-[calc(100vh-12rem)]'} flex flex-col`} padding={false}>
-      <div className="flex items-center justify-between p-4 border-b border-[#26262a]">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-[#26262a]">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#1c1c1f] rounded-lg flex items-center justify-center border border-[#26262a]">
-            <svg className="w-5 h-5 text-[#eaeaea]" fill="currentColor" viewBox="0 0 20 20">
+          <div className="w-8 h-8 bg-gray-100 dark:bg-[#1c1c1f] rounded-lg flex items-center justify-center border border-gray-200 dark:border-[#26262a]">
+            <svg className="w-5 h-5 text-gray-900 dark:text-[#eaeaea]" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
             </svg>
           </div>
           <div>
-            <h3 className="font-semibold text-[#eaeaea]">AI Project Assistant</h3>
-            <p className="text-xs text-[#9a9a9a]">Always here to help</p>
+            <h3 className="font-semibold text-gray-900 dark:text-[#eaeaea]">AI Project Assistant</h3>
+            <p className="text-xs text-gray-600 dark:text-[#9a9a9a]">Always here to help</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
             {msg.isBot ? (
               <>
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-[#1c1c1f] rounded-lg flex items-center justify-center border border-[#26262a]">
+                  <div className="w-8 h-8 bg-gray-100 dark:bg-[#1c1c1f] rounded-lg flex items-center justify-center border border-gray-200 dark:border-[#26262a]">
                     <svg className="w-5 h-5 text-[#eaeaea]" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
                     </svg>
@@ -96,7 +96,7 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                     <span className="text-sm font-medium text-[#eaeaea]">{msg.sender}</span>
                     <span className="text-xs text-[#9a9a9a]">{msg.timestamp}</span>
                   </div>
-                  <div className="bg-[#151517] border border-[#26262a] p-3 rounded-lg">
+                  <div className="bg-gray-100 dark:bg-[#151517] border border-gray-200 dark:border-[#26262a] p-3 rounded-lg">
                     <p className="text-sm text-[#eaeaea]">{msg.content}</p>
                   </div>
                 </div>
@@ -109,7 +109,7 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
                       <span className="text-xs text-[#9a9a9a]">{msg.timestamp}</span>
                       <span className="text-sm font-medium text-[#eaeaea]">{msg.sender}</span>
                     </div>
-                    <div className="bg-[#1c1c1f] border border-[#26262a] text-[#eaeaea] p-3 rounded-lg">
+                    <div className="bg-blue-500 dark:bg-[#1c1c1f] border-0 dark:border dark:border-[#26262a] text-white dark:text-[#eaeaea] p-3 rounded-lg">
                       <p className="text-sm">{msg.content}</p>
                     </div>
                   </div>
@@ -133,7 +133,7 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
               }
             }}
             placeholder="Ask me anything about this project..."
-            className="flex-1 px-3 py-2 border border-[#26262a] bg-[#0f0f10] text-[#eaeaea] placeholder:text-[#9a9a9a] rounded-lg focus:outline-none focus:border-[#26262a] resize-none"
+            className="flex-1 px-3 py-2 border border-gray-300 dark:border-[#26262a] bg-white dark:bg-[#0f0f10] text-gray-900 dark:text-[#eaeaea] placeholder:text-gray-500 dark:placeholder:text-[#9a9a9a] rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-[#26262a] resize-none"
             rows={2}
           />
           <Button onClick={handleSend} className="gap-2">

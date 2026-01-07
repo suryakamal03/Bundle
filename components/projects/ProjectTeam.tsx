@@ -121,17 +121,17 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
               {members.map((member) => (
                 <div
                   key={member.id}
-                  className="flex items-center gap-4 p-4 border border-[#26262a] rounded-lg hover:border-[#eaeaea] transition-colors bg-[#151517]"
+                  className="flex items-center gap-4 p-4 border border-gray-200 dark:border-[#26262a] rounded-lg hover:border-gray-400 dark:hover:border-[#eaeaea] transition-colors bg-white dark:bg-[#151517]"
                 >
                   <Avatar name={member.name} size="lg" status />
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-[#eaeaea]">{member.name}</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-[#eaeaea]">{member.name}</h3>
                       {member.role === 'Lead' && (
                         <Crown className="w-4 h-4 text-yellow-500" />
                       )}
                     </div>
-                    <p className="text-sm text-[#9a9a9a]">{member.email}</p>
+                    <p className="text-sm text-gray-600 dark:text-[#9a9a9a]">{member.email}</p>
                   </div>
                   <Badge variant={member.role === 'Lead' ? 'warning' : 'info'}>
                     {member.role}

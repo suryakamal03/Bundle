@@ -58,12 +58,12 @@ export default function TaskDetailsModal({ task, onClose, onUpdate }: TaskDetail
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#151517] rounded-lg shadow-xl max-w-lg w-full p-6 border border-[#26262a]">
+      <div className="bg-white dark:bg-[#151517] rounded-lg shadow-xl max-w-lg w-full p-6 border border-gray-200 dark:border-[#26262a]">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-[#eaeaea]">Task Details</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-[#eaeaea]">Task Details</h2>
           <button
             onClick={onClose}
-            className="text-[#9a9a9a] hover:text-[#eaeaea]"
+            className="text-gray-600 dark:text-[#9a9a9a] hover:text-gray-900 dark:hover:text-[#eaeaea]"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -78,10 +78,10 @@ export default function TaskDetailsModal({ task, onClose, onUpdate }: TaskDetail
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#eaeaea] mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-[#eaeaea] mb-1">
               Task Title
             </label>
-            <p className="text-[#eaeaea]">{task.title}</p>
+            <p className="text-gray-900 dark:text-[#eaeaea]">{task.title}</p>
           </div>
 
           <div>
@@ -127,7 +127,7 @@ export default function TaskDetailsModal({ task, onClose, onUpdate }: TaskDetail
                   onClick={() => handleReminderToggle(!reminderEnabled)}
                   disabled={loading}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    reminderEnabled ? 'bg-white' : 'bg-[#26262a]'
+                    reminderEnabled ? 'bg-blue-500' : 'bg-gray-300 dark:bg-[#26262a]'
                   } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   aria-label="Toggle reminder"
                 >

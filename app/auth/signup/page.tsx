@@ -71,23 +71,23 @@ export default function SignupPage() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-[#151517] border border-[#26262a] rounded-lg shadow-lg p-8">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-12 h-12 bg-primary-500 rounded-lg flex items-center justify-center mb-3">
-              <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mb-3">
+              <svg className="w-7 h-7 text-black" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Ontrackr</h1>
+            <h1 className="text-2xl font-bold text-[#eaeaea]">Bundle</h1>
           </div>
           
-          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">Create your Ontrackr account</h2>
-          <p className="text-gray-600 text-center mb-6">Unlock seamless project management and AI-powered insights.</p>
+          <h2 className="text-2xl font-bold text-[#eaeaea] mb-2 text-center">Create your Bundle account</h2>
+          <p className="text-[#9a9a9a] text-center mb-6">Unlock seamless project management and AI-powered insights.</p>
           
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-sm">
               {error}
             </div>
           )}
@@ -107,10 +107,10 @@ export default function SignupPage() {
             
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-[#26262a]"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">OR</span>
+                <span className="px-2 bg-[#151517] text-[#9a9a9a]">OR</span>
               </div>
             </div>
             
@@ -149,15 +149,15 @@ export default function SignupPage() {
                   checked={agreed}
                   onChange={(e) => setAgreed(e.target.checked)}
                   disabled={loading}
-                  className="mt-1 w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
+                  className="mt-1 w-4 h-4 text-blue-500 bg-[#0f0f10] border-[#26262a] rounded focus:ring-blue-500"
                 />
-                <label htmlFor="terms" className="text-sm text-gray-600">
+                <label htmlFor="terms" className="text-sm text-[#9a9a9a]">
                   I agree to the{' '}
-                  <Link href="/terms" className="text-primary-500 hover:text-primary-600">
+                  <Link href="/terms" className="text-blue-400 hover:text-blue-300">
                     Terms of Service
                   </Link>{' '}
                   and{' '}
-                  <Link href="/privacy" className="text-primary-500 hover:text-primary-600">
+                  <Link href="/privacy" className="text-blue-400 hover:text-blue-300">
                     Privacy Policy
                   </Link>
                   .
@@ -169,9 +169,9 @@ export default function SignupPage() {
               </Button>
             </form>
             
-            <p className="text-center text-sm text-gray-600 mt-6">
+            <p className="text-center text-sm text-[#9a9a9a] mt-6">
               Already have an account?{' '}
-              <Link href="/auth/login" className="text-primary-500 hover:text-primary-600 font-medium">
+              <Link href="/auth/login" className="text-blue-400 hover:text-blue-300 font-medium">
                 Log in
               </Link>
             </p>

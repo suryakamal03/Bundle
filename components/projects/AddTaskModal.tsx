@@ -110,12 +110,12 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#151517] rounded-lg shadow-xl max-w-md w-full p-5 border border-[#26262a]">
+      <div className="bg-white dark:bg-[#151517] rounded-lg shadow-xl max-w-md w-full p-5 border border-gray-200 dark:border-[#26262a]">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-semibold text-[#eaeaea]">Add New Task</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-[#eaeaea]">Add New Task</h2>
           <button
             onClick={onClose}
-            className="text-[#9a9a9a] hover:text-[#eaeaea] transition-colors"
+            className="text-gray-600 dark:text-[#9a9a9a] hover:text-gray-900 dark:hover:text-[#eaeaea] transition-colors"
             disabled={loading}
             aria-label="Close modal"
           >
@@ -155,11 +155,11 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
                 disabled={loading}
                 required
                 aria-label="Assign task to team member"
-                className="w-full px-3 py-2 border border-[#26262a] bg-[#0f0f10] text-[#eaeaea] rounded-md focus:outline-none focus:border-[#26262a] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-[#26262a] bg-white dark:bg-[#0f0f10] text-gray-900 dark:text-[#eaeaea] rounded-md focus:outline-none focus:border-blue-500 dark:focus:border-[#26262a] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option value="" className="bg-[#0f0f10]">Select a member</option>
+                <option value="" className="bg-white dark:bg-[#0f0f10]">Select a member</option>
                 {members.map((member) => (
-                  <option key={member.id} value={member.id} className="bg-[#0f0f10]">
+                  <option key={member.id} value={member.id} className="bg-white dark:bg-[#0f0f10]">
                     {member.name} ({member.email})
                   </option>
                 ))}
@@ -187,14 +187,14 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-[#0f0f10] hover:bg-[#1c1c1f] border border-[#26262a] text-[#eaeaea] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 bg-gray-100 dark:bg-[#0f0f10] hover:bg-gray-200 dark:hover:bg-[#1c1c1f] border border-gray-300 dark:border-[#26262a] text-gray-900 dark:text-[#eaeaea] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || loadingMembers}
-              className="flex-1 px-4 py-2 bg-[#1c1c1f] hover:bg-[#26262a] border border-[#26262a] text-[#eaeaea] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 bg-gray-200 dark:bg-[#1c1c1f] hover:bg-gray-300 dark:hover:bg-[#26262a] border border-gray-300 dark:border-[#26262a] text-gray-900 dark:text-[#eaeaea] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating...' : 'Create Task'}
             </button>

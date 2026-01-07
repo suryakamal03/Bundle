@@ -4,7 +4,7 @@ import { AuthProvider } from '@/backend/auth/authContext'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 
 export const metadata: Metadata = {
-  title: 'Ontrackr - Project Management Platform',
+  title: 'Bundle - Project Management Platform',
   description: 'AI-powered project management and team collaboration platform',
 }
 

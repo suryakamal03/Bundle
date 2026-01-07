@@ -70,12 +70,12 @@ export default function CreateProjectModal({ onClose, onSuccess }: CreateProject
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#151517] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[#26262a]">
-        <div className="p-5 border-b border-[#26262a] flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-[#eaeaea]">Create New Project</h2>
+      <div className="bg-white dark:bg-[#151517] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-[#26262a]">
+        <div className="p-5 border-b border-gray-200 dark:border-[#26262a] flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-[#eaeaea]">Create New Project</h2>
           <button
             onClick={onClose}
-            className="text-[#9a9a9a] hover:text-[#eaeaea] transition-colors"
+            className="text-gray-600 dark:text-[#9a9a9a] hover:text-gray-900 dark:hover:text-[#eaeaea] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -108,7 +108,7 @@ export default function CreateProjectModal({ onClose, onSuccess }: CreateProject
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               disabled={loading}
               rows={3}
-              className="w-full px-3 py-2 border border-[#26262a] bg-[#0f0f10] text-[#eaeaea] placeholder:text-[#9a9a9a] rounded-md focus:outline-none focus:border-[#26262a] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-[#26262a] bg-white dark:bg-[#0f0f10] text-gray-900 dark:text-[#eaeaea] placeholder:text-gray-500 dark:placeholder:text-[#9a9a9a] rounded-md focus:outline-none focus:border-blue-500 dark:focus:border-[#26262a] disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -127,14 +127,14 @@ export default function CreateProjectModal({ onClose, onSuccess }: CreateProject
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-[#0f0f10] hover:bg-[#1c1c1f] border border-[#26262a] text-[#eaeaea] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 bg-gray-100 dark:bg-[#0f0f10] hover:bg-gray-200 dark:hover:bg-[#1c1c1f] border border-gray-300 dark:border-[#26262a] text-gray-900 dark:text-[#eaeaea] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-[#1c1c1f] hover:bg-[#26262a] border border-[#26262a] text-[#eaeaea] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 bg-gray-200 dark:bg-[#1c1c1f] hover:bg-gray-300 dark:hover:bg-[#26262a] border border-gray-300 dark:border-[#26262a] text-gray-900 dark:text-[#eaeaea] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating...' : 'Create Project'}
             </button>

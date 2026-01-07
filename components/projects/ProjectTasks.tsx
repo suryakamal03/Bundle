@@ -290,8 +290,8 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
             onClick={() => setSelectedMember(null)}
             className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
               selectedMember === null 
-                ? 'bg-white text-black' 
-                : 'bg-[#0f0f10] border border-[#26262a] text-[#9a9a9a] hover:bg-[#1c1c1f]'
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-100 dark:bg-[#0f0f10] border border-gray-200 dark:border-[#26262a] text-gray-700 dark:text-[#9a9a9a] hover:bg-gray-200 dark:hover:bg-[#1c1c1f]'
             }`}
           >
             All ({tasks.length})
@@ -304,8 +304,8 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                 onClick={() => setSelectedMember(member.id)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
                   selectedMember === member.id 
-                    ? 'bg-white text-black' 
-                    : 'bg-[#0f0f10] border border-[#26262a] text-[#9a9a9a] hover:bg-[#1c1c1f]'
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-gray-100 dark:bg-[#0f0f10] border border-gray-200 dark:border-[#26262a] text-gray-700 dark:text-[#9a9a9a] hover:bg-gray-200 dark:hover:bg-[#1c1c1f]'
                 }`}
               >
                 <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-white font-semibold">
@@ -333,19 +333,19 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                 {/* Group Header */}
                 <button 
                   onClick={() => toggleSection(status)}
-                  className="flex items-center gap-2 px-2 w-full hover:bg-[#1c1c1f] rounded-md transition-colors"
+                  className="flex items-center gap-2 px-2 w-full hover:bg-gray-50 dark:hover:bg-[#1c1c1f] rounded-md transition-colors"
                 >
-                  <ChevronDown className={`w-4 h-4 text-[#9a9a9a] transition-transform ${
+                  <ChevronDown className={`w-4 h-4 text-gray-600 dark:text-[#9a9a9a] transition-transform ${
                     isCollapsed ? '-rotate-90' : ''
                   }`} />
-                  <h3 className="text-sm font-semibold text-[#eaeaea] uppercase tracking-wide">{status}</h3>
-                  <span className="text-xs text-[#9a9a9a]">{groupTasks.length}</span>
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-[#eaeaea] uppercase tracking-wide">{status}</h3>
+                  <span className="text-xs text-gray-600 dark:text-[#9a9a9a]">{groupTasks.length}</span>
                 </button>
 
                 {!isCollapsed && (
                   <>
                     {/* Task List Header */}
-                    <div className="grid grid-cols-[1fr_120px_120px_100px_100px_40px] gap-4 px-4 py-2 text-xs font-medium text-[#9a9a9a] uppercase tracking-wide">
+                    <div className="grid grid-cols-[1fr_120px_120px_100px_100px_40px] gap-4 px-4 py-2 text-xs font-medium text-gray-600 dark:text-[#9a9a9a] uppercase tracking-wide">
                       <div>Name</div>
                       <div>Assignee</div>
                       <div>Due date</div>
@@ -367,7 +367,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                     return (
                       <div
                         key={task.id}
-                        className="grid grid-cols-[1fr_120px_120px_100px_100px_40px] gap-4 px-4 py-2.5 hover:bg-[#1c1c1f] transition-colors group rounded-md relative"
+                        className="grid grid-cols-[1fr_120px_120px_100px_100px_40px] gap-4 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#1c1c1f] transition-colors group rounded-md relative"
                       >
                         {/* Task Name */}
                         <div className="flex items-center min-w-0">
@@ -384,11 +384,11 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                                   setTaskNameValue('')
                                 }
                               }}
-                              className="w-full bg-[#0f0f10] border border-[#26262a] rounded px-2 py-1 text-sm text-[#eaeaea] focus:outline-none focus:border-white"
+                              className="w-full bg-white dark:bg-[#0f0f10] border border-gray-300 dark:border-[#26262a] rounded px-2 py-1 text-sm text-gray-900 dark:text-[#eaeaea] focus:outline-none focus:border-blue-500 dark:focus:border-white"
                               autoFocus
                             />
                           ) : (
-                            <span className="text-sm text-[#eaeaea] truncate group-hover:text-white">
+                            <span className="text-sm text-gray-900 dark:text-[#eaeaea] truncate group-hover:text-gray-700 dark:group-hover:text-white">
                               {task.title}
                             </span>
                           )}
@@ -397,12 +397,12 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                         {/* Assignee - Click to edit */}
                         <div className="flex items-center gap-2 relative" data-dropdown>
                           {editingAssignee === task.id ? (
-                            <div className="absolute left-0 top-0 z-10 bg-[#151517] border border-[#26262a] rounded-md shadow-lg min-w-[180px]">
+                            <div className="absolute left-0 top-0 z-10 bg-white dark:bg-[#151517] border border-gray-200 dark:border-[#26262a] rounded-md shadow-lg min-w-[180px]">
                               {members.map((member) => (
                                 <button
                                   key={member.id}
                                   onClick={() => updateTaskAssignee(task.id, member.id, member.name)}
-                                  className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#1c1c1f] text-left transition-colors first:rounded-t-md last:rounded-b-md"
+                                  className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#1c1c1f] text-left transition-colors first:rounded-t-md last:rounded-b-md"
                                 >
                                   <Avatar name={member.name} size="sm" />
                                   <span className="text-sm text-[#eaeaea]">{member.name}</span>
@@ -458,7 +458,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                                     // Fallback for browsers that don't support showPicker
                                   }
                                 }}
-                                className="bg-[#0f0f10] border border-[#26262a] rounded px-2 py-1 text-xs text-[#eaeaea] focus:outline-none focus:border-white cursor-pointer"
+                                className="bg-white dark:bg-[#0f0f10] border border-gray-300 dark:border-[#26262a] rounded px-2 py-1 text-xs text-gray-900 dark:text-[#eaeaea] focus:outline-none focus:border-blue-500 dark:focus:border-white cursor-pointer"
                                 style={{ colorScheme: 'dark' }}
                                 autoFocus
                               />
@@ -508,17 +508,17 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                         {/* Priority - Click to edit */}
                         <div className="flex items-center relative" data-dropdown>
                           {editingPriority === task.id ? (
-                            <div className="absolute left-0 top-0 z-10 bg-[#151517] border border-[#26262a] rounded-md shadow-lg min-w-[120px]">
+                            <div className="absolute left-0 top-0 z-10 bg-white dark:bg-[#151517] border border-gray-200 dark:border-[#26262a] rounded-md shadow-lg min-w-[120px]">
                               <button
                                 onClick={() => updateTaskPriority(task.id, 'High')}
-                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#1c1c1f] text-left transition-colors first:rounded-t-md"
+                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#1c1c1f] text-left transition-colors last:rounded-b-md"
                               >
-                                <Flag className="w-3.5 h-3.5 text-red-400" />
-                                <span className="text-sm text-red-400">High</span>
+                                <Trash2 className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+                                <span className="text-sm text-red-600 dark:text-red-400">Delete</span>
                               </button>
                               <button
                                 onClick={() => updateTaskPriority(task.id, 'Normal')}
-                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#1c1c1f] text-left transition-colors"
+                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#1c1c1f] text-left transition-colors"
                               >
                                 <Flag className="w-3.5 h-3.5 text-blue-400" />
                                 <span className="text-sm text-blue-400">Normal</span>
@@ -566,12 +566,12 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                               e.stopPropagation()
                               setShowTaskMenu(showTaskMenu === task.id ? null : task.id)
                             }}
-                            className="p-1 hover:bg-[#26262a] rounded transition-colors"
+                            className="p-1 hover:bg-gray-100 dark:hover:bg-[#26262a] rounded transition-colors"
                           >
-                            <MoreHorizontal className="w-4 h-4 text-[#9a9a9a]" />
+                            <MoreHorizontal className="w-4 h-4 text-gray-600 dark:text-[#9a9a9a]" />
                           </button>
                           {showTaskMenu === task.id && (
-                            <div className="absolute right-0 top-8 z-10 bg-[#151517] border border-[#26262a] rounded-md shadow-lg min-w-[140px]">
+                            <div className="absolute right-0 top-8 z-10 bg-white dark:bg-[#151517] border border-gray-200 dark:border-[#26262a] rounded-md shadow-lg min-w-[140px]">
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation()
@@ -579,10 +579,10 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                                   setEditingTaskName(task.id)
                                   setTaskNameValue(task.title)
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#1c1c1f] text-left transition-colors first:rounded-t-md"
+                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#1c1c1f] text-left transition-colors first:rounded-t-md"
                               >
-                                <Edit2 className="w-3.5 h-3.5 text-[#9a9a9a]" />
-                                <span className="text-sm text-[#eaeaea]">Rename</span>
+                                <Edit2 className="w-3.5 h-3.5 text-gray-600 dark:text-[#9a9a9a]" />
+                                <span className="text-sm text-gray-900 dark:text-[#eaeaea]">Rename</span>
                               </button>
                               <button
                                 onClick={(e) => {
@@ -607,7 +607,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
 
               {/* Add Task in Group - Inline Creation */}
               {creatingInlineTask === status ? (
-                <div className="grid grid-cols-[1fr_120px_120px_100px_100px_40px] gap-4 px-4 py-2.5 bg-[#1c1c1f] rounded-md relative" data-dropdown>
+                <div className="grid grid-cols-[1fr_120px_120px_100px_100px_40px] gap-4 px-4 py-2.5 bg-gray-50 dark:bg-[#1c1c1f] rounded-md relative" data-dropdown>
                   {/* Task Name Input */}
                   <div className="flex items-center min-w-0">
                     {assigneeSelected ? (
@@ -633,18 +633,18 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                           }
                         }}
                         placeholder="Task name"
-                        className="w-full bg-[#0f0f10] border border-[#26262a] rounded px-2 py-1 text-sm text-[#eaeaea] placeholder:text-[#9a9a9a] focus:outline-none focus:border-white"
+                        className="w-full bg-white dark:bg-[#0f0f10] border border-gray-300 dark:border-[#26262a] rounded px-2 py-1 text-sm text-gray-900 dark:text-[#eaeaea] placeholder:text-gray-500 dark:placeholder:text-[#9a9a9a] focus:outline-none focus:border-blue-500 dark:focus:border-white"
                         autoFocus
                       />
                     ) : (
-                      <span className="text-sm text-[#9a9a9a]">Select assignee first...</span>
+                      <span className="text-sm text-gray-500 dark:text-[#9a9a9a]">Select assignee first...</span>
                     )}
                   </div>
 
                   {/* Assignee Icon */}
                   <div className="flex items-center gap-2 relative">
                     {showNewAssigneeDropdown ? (
-                      <div className="absolute left-0 top-0 z-10 bg-[#151517] border border-[#26262a] rounded-md shadow-lg min-w-[180px]">
+                      <div className="absolute left-0 top-0 z-10 bg-white dark:bg-[#151517] border border-gray-200 dark:border-[#26262a] rounded-md shadow-lg min-w-[180px]">
                         {members.map((member) => (
                           <button
                             key={member.id}
@@ -654,7 +654,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                               setShowNewAssigneeDropdown(false)
                               setAssigneeSelected(true)
                             }}
-                            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#1c1c1f] text-left transition-colors first:rounded-t-md last:rounded-b-md"
+                            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#1c1c1f] text-left transition-colors first:rounded-t-md last:rounded-b-md"
                           >
                             <Avatar name={member.name} size="sm" />
                             <span className="text-sm text-[#eaeaea]">{member.name}</span>
@@ -696,7 +696,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                               input.showPicker()
                             } catch (err) {}
                           }}
-                          className="bg-[#0f0f10] border border-[#26262a] rounded px-2 py-1 text-xs text-[#eaeaea] focus:outline-none focus:border-white cursor-pointer"
+                          className="bg-white dark:bg-[#0f0f10] border border-gray-300 dark:border-[#26262a] rounded px-2 py-1 text-xs text-gray-900 dark:text-[#eaeaea] focus:outline-none focus:border-blue-500 dark:focus:border-white cursor-pointer"
                           style={{ colorScheme: 'dark' }}
                           autoFocus
                         />
@@ -706,7 +706,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                         onClick={() => setShowNewDatePicker(true)}
                         className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
                       >
-                        <Calendar className="w-4 h-4 text-[#9a9a9a]" />
+                        <Calendar className="w-4 h-4 text-gray-600 dark:text-[#9a9a9a]" />
                         {newTaskDate && (
                           <span className="text-xs text-[#9a9a9a]">
                             {new Date(newTaskDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -726,7 +726,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                   {/* Priority Icon */}
                   <div className="flex items-center relative">
                     {showNewPriorityDropdown ? (
-                      <div className="absolute left-0 top-0 z-10 bg-[#151517] border border-[#26262a] rounded-md shadow-lg min-w-[120px]">
+                      <div className="absolute left-0 top-0 z-10 bg-white dark:bg-[#151517] border border-gray-200 dark:border-[#26262a] rounded-md shadow-lg min-w-[120px]">
                         <button
                           onClick={() => {
                             setNewTaskPriority('High')
@@ -777,7 +777,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                   <div className="flex items-center justify-center gap-1">
                     <button
                       onClick={() => createInlineTask(status)}
-                      className="p-1 hover:bg-[#26262a] rounded transition-colors"
+                      className="p-1 hover:bg-gray-100 dark:hover:bg-[#26262a] rounded transition-colors"
                       disabled={!newTaskName.trim()}
                     >
                       <CheckCircle2 className="w-4 h-4 text-green-400" />
@@ -791,7 +791,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
                     setShowNewAssigneeDropdown(true)
                     setAssigneeSelected(false)
                   }}
-                  className="flex items-center gap-2 px-4 py-2 text-xs text-[#9a9a9a] hover:text-[#eaeaea] hover:bg-[#1c1c1f] rounded-md transition-colors w-full text-left"
+                  className="flex items-center gap-2 px-4 py-2 text-xs text-gray-600 dark:text-[#9a9a9a] hover:text-gray-900 dark:hover:text-[#eaeaea] hover:bg-gray-50 dark:hover:bg-[#1c1c1f] rounded-md transition-colors w-full text-left"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Add Task

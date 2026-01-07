@@ -1,6 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { githubService } from '@/backend/integrations/githubService';
 import { adminDb } from '@/lib/firebase-admin';
+import crypto from 'crypto';
+
+/**
+ * Verify GitHub webhook signature
+ */
+function verifySignature(payload: string, signature: string | null): boolean {
+  if (!signature) {
+    console.warn('[Webhook] No signature provided');
+    return false;
+  }
+
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+  if (!secret) {
+    console.warn('[Webhook] GITHUB_WEBHOOK_SECRET not configured');
+    return false;
+  }
+
+  const hmac = crypto.createHmac('sha256', secret);
+  const digest = 'sha256=' + hmac.update(payload).digest('hex');
+  
+  // Use timing-safe comparison
+  const isValid = crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(digest)
+  );
+
+  if (!isValid) {
+    console.error('[Webhook] Signature verification failed');
+  }
+
+  return isValid;
+}
 
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
@@ -17,7 +49,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing event type' }, { status: 400 });
     }
 
-    const payload = await req.json();
+    // Get raw body for signature verification
+    const rawBody = await req.text();
+    
+    // Verify webhook signature
+    if (!verifySignature(rawBody, signature)) {
+      console.error('[Webhook] Invalid signature');
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    }
+
+    const payload = JSON.parse(rawBody);
 
     if (!payload.repository) {
       console.error('[Webhook] Invalid payload: missing repository');
