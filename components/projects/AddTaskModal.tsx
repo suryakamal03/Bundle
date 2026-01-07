@@ -109,13 +109,13 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">Add New Task</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#151517] rounded-lg shadow-xl max-w-md w-full p-5 border border-[#26262a]">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-semibold text-[#eaeaea]">Add New Task</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-[#9a9a9a] hover:text-[#eaeaea] transition-colors"
             disabled={loading}
             aria-label="Close modal"
           >
@@ -124,7 +124,7 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+          <div className="mb-4 p-3 bg-red-900/20 border border-red-800 text-red-400 rounded-md text-sm">
             {error}
           </div>
         )}
@@ -141,13 +141,13 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#eaeaea] mb-1.5">
               Assign To
             </label>
             {loadingMembers ? (
-              <div className="text-sm text-gray-500">Loading members...</div>
+              <div className="text-sm text-[#9a9a9a]">Loading members...</div>
             ) : members.length === 0 ? (
-              <div className="text-sm text-red-500">No project members found</div>
+              <div className="text-sm text-red-400">No project members found</div>
             ) : (
               <select
                 value={assignedTo}
@@ -155,11 +155,11 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
                 disabled={loading}
                 required
                 aria-label="Assign task to team member"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#26262a] bg-[#0f0f10] text-[#eaeaea] rounded-md focus:outline-none focus:border-[#26262a] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option value="">Select a member</option>
+                <option value="" className="bg-[#0f0f10]">Select a member</option>
                 {members.map((member) => (
-                  <option key={member.id} value={member.id}>
+                  <option key={member.id} value={member.id} className="bg-[#0f0f10]">
                     {member.name} ({member.email})
                   </option>
                 ))}
@@ -168,7 +168,7 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#eaeaea] mb-1.5">
               Task Deadline
             </label>
             <input
@@ -177,24 +177,27 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
               onChange={(e) => setDeadline(e.target.value)}
               disabled={loading}
               min={new Date().toISOString().split('T')[0]}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-3 py-2 border border-[#26262a] bg-[#0f0f10] text-[#eaeaea] rounded-md focus:outline-none focus:border-[#26262a] disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Select task deadline date"
             />
           </div>
 
           <div className="flex gap-3 pt-2">
-            <Button
+            <button
               type="button"
-              variant="secondary"
-              className="flex-1"
               onClick={onClose}
               disabled={loading}
+              className="flex-1 px-4 py-2 bg-[#0f0f10] hover:bg-[#1c1c1f] border border-[#26262a] text-[#eaeaea] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
-            </Button>
-            <Button type="submit" className="flex-1" disabled={loading || loadingMembers}>
+            </button>
+            <button
+              type="submit"
+              disabled={loading || loadingMembers}
+              className="flex-1 px-4 py-2 bg-[#1c1c1f] hover:bg-[#26262a] border border-[#26262a] text-[#eaeaea] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               {loading ? 'Creating...' : 'Create Task'}
-            </Button>
+            </button>
           </div>
         </form>
       </div>

@@ -12,7 +12,7 @@ import ProjectGroupChat from '@/components/projects/ProjectGroupChat'
 import ProjectAssignerAI from '@/components/projects/ProjectAssignerAI'
 import WebhookConfig from '@/components/projects/WebhookConfig'
 import EditProjectModal from '@/components/projects/EditProjectModal'
-import { ChevronLeft, MoreVertical, Users, GitBranch, MessageSquare, Bot, Webhook, Edit2, Trash2 } from 'lucide-react'
+import { ChevronLeft, MoreVertical, Users, GitBranch, MessageSquare, Bot, Webhook, Edit2, Trash2, List, LayoutGrid, Calendar as CalendarIcon, BarChart3, Table, Filter, UserCircle, ChevronDown } from 'lucide-react'
 import { Project, User } from '@/types'
 import { inviteService } from '@/backend/projects/inviteService'
 import { useAuth } from '@/backend/auth/authContext'
@@ -23,18 +23,35 @@ import { useRouter } from 'next/navigation'
 interface ProjectDetailProps {
   project: Project
   onBack: () => void
+  activeTab?: 'tasks' | 'github' | 'team' | 'chat' | 'ai-assigner' | 'webhook'
+  onTabChange?: (tab: 'tasks' | 'github' | 'team' | 'chat' | 'ai-assigner' | 'webhook') => void
 }
 
-export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
+export default function ProjectDetail({ project, onBack, activeTab: externalActiveTab, onTabChange }: ProjectDetailProps) {
   const { user } = useAuth()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'tasks' | 'github' | 'team' | 'chat' | 'ai-assigner' | 'webhook'>('tasks')
+  const [activeTab, setActiveTab] = useState<'tasks' | 'github' | 'team' | 'chat' | 'ai-assigner' | 'webhook'>(externalActiveTab || externalActiveTab || 'tasks')
   const [projectMembers, setProjectMembers] = useState<User[]>([])
   const [menuOpen, setMenuOpen] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [isLead, setIsLead] = useState(false)
   const [updatedProject, setUpdatedProject] = useState(project)
+
+  // Sync external activeTab changes
+  useEffect(() => {
+    if (externalActiveTab) {
+      setActiveTab(externalActiveTab)
+    }
+  }, [externalActiveTab])
+
+  // Handle tab change
+  const handleTabChange = (tab: 'tasks' | 'github' | 'team' | 'chat' | 'ai-assigner' | 'webhook') => {
+    setActiveTab(tab)
+    if (onTabChange) {
+      onTabChange(tab)
+    }
+  }
 
   // Load project members for AI task assignment
   useEffect(() => {
@@ -124,17 +141,17 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
       )}
 
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Delete Project</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-md bg-[#151517] border border-[#26262a] rounded-xl p-6">
+            <div>
+              <h2 className="text-xl font-semibold text-[#eaeaea] mb-4">Delete Project</h2>
+              <p className="text-[#9a9a9a] mb-6">
                 Are you sure you want to delete this project? This action cannot be undone and will remove all tasks, files, and data associated with this project.
               </p>
               <div className="flex items-center gap-3">
                 <Button 
                   variant="secondary" 
-                  className="flex-1"
+                  className="flex-1 bg-[#1c1c1f] border-[#26262a] text-[#eaeaea] hover:bg-[#26262a]"
                   onClick={() => {
                     setDeleteConfirm(false)
                     setMenuOpen(false)
@@ -143,154 +160,154 @@ export default function ProjectDetail({ project, onBack }: ProjectDetailProps) {
                   Cancel
                 </Button>
                 <Button 
-                  className="flex-1 bg-red-500 hover:bg-red-600"
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white"
                   onClick={handleDeleteProject}
                 >
                   Delete
                 </Button>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       )}
 
-      <div className="flex items-center gap-4">
-        <Button variant="secondary" onClick={onBack} className="p-2">
-          <ChevronLeft className="w-4 h-4" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{updatedProject.name}</h1>
+      {/* ClickUp-style Header */}
+      <div className="space-y-4">
+        {/* Top Bar with Project Name */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-[#eaeaea]">{updatedProject.name}</h1>
+          
+          {isLead && (
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setMenuOpen(!menuOpen)
+                }}
+                aria-label="Project options"
+                className="p-2 hover:bg-[#1c1c1f] rounded-md transition-colors"
+              >
+                <MoreVertical className="w-5 h-5 text-[#9a9a9a]" />
+              </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 top-full mt-1 w-48 bg-[#151517] border border-[#26262a] rounded-lg shadow-xl z-10">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setShowEditModal(true)
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-[#eaeaea] hover:bg-[#1c1c1f] transition-colors first:rounded-t-lg"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    <span className="text-sm">Edit</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setDeleteConfirm(true)
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-red-400 hover:bg-[#1c1c1f] transition-colors last:rounded-b-lg"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span className="text-sm">Delete</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-        
-        {isLead && (
-          <div className="relative">
+
+        {/* View Switcher Bar (ClickUp style) */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1 bg-[#0f0f10] border border-[#26262a] rounded-lg p-1">
             <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setMenuOpen(!menuOpen)
-              }}
-              aria-label="Project options"
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              onClick={() => handleTabChange('tasks')}
+              className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                activeTab === 'tasks'
+                  ? 'bg-[#151517] text-[#eaeaea]'
+                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+              }`}
             >
-              <MoreVertical className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <List className="w-4 h-4" />
+              List
             </button>
-
-            {menuOpen && (
-              <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-[#2a2a2a] border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setShowEditModal(true)
-                  }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                >
-                  <Edit2 className="w-4 h-4" />
-                  <span>Edit</span>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setDeleteConfirm(true)
-                  }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  <span>Delete</span>
-                </button>
-              </div>
-            )}
+            <button
+              onClick={() => handleTabChange('github')}
+              className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                activeTab === 'github'
+                  ? 'bg-[#151517] text-[#eaeaea]'
+                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+              }`}
+            >
+              <GitBranch className="w-4 h-4" />
+              GitHub
+            </button>
+            <button
+              onClick={() => handleTabChange('team')}
+              className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                activeTab === 'team'
+                  ? 'bg-[#151517] text-[#eaeaea]'
+                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              Team
+            </button>
+            <button
+              onClick={() => handleTabChange('chat')}
+              className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                activeTab === 'chat'
+                  ? 'bg-[#151517] text-[#eaeaea]'
+                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+              }`}
+            >
+              <MessageSquare className="w-4 h-4" />
+              Chat
+            </button>
+            <button
+              onClick={() => handleTabChange('ai-assigner')}
+              className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                activeTab === 'ai-assigner'
+                  ? 'bg-[#151517] text-[#eaeaea]'
+                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+              }`}
+            >
+              <Bot className="w-4 h-4" />
+              AI
+            </button>
+            <button
+              onClick={() => handleTabChange('webhook')}
+              className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                activeTab === 'webhook'
+                  ? 'bg-[#151517] text-[#eaeaea]'
+                  : 'text-[#9a9a9a] hover:text-[#eaeaea]'
+              }`}
+            >
+              <Webhook className="w-4 h-4" />
+              Webhook
+            </button>
           </div>
-        )}
-      </div>
-
-      <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700">
-        <button
-          onClick={() => setActiveTab('tasks')}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-            activeTab === 'tasks'
-              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          Tasks
-        </button>
-        <button
-          onClick={() => setActiveTab('github')}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-            activeTab === 'github'
-              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-          }`}
-        >
-          <GitBranch className="w-4 h-4" />
-          GitHub Activity
-        </button>
-        <button
-          onClick={() => setActiveTab('team')}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-            activeTab === 'team'
-              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          Team
-        </button>
-        <button
-          onClick={() => setActiveTab('chat')}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-            activeTab === 'chat'
-              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-          }`}
-        >
-          <MessageSquare className="w-4 h-4" />
-          Group Chat
-        </button>
-        <button
-          onClick={() => setActiveTab('ai-assigner')}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-            activeTab === 'ai-assigner'
-              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-          }`}
-        >
-          <Bot className="w-4 h-4" />
-          Project Assigner AI
-        </button>
-        <button
-          onClick={() => setActiveTab('webhook')}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-            activeTab === 'webhook'
-              ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-          }`}
-        >
-          <Webhook className="w-4 h-4" />
-          Webhook Setup
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-3">
-          {activeTab === 'tasks' && <ProjectTasks projectId={project.id} />}
-          {activeTab === 'github' && <ProjectGitHub projectId={project.id} />}
-          {activeTab === 'team' && <ProjectTeam projectId={project.id} />}
-          {activeTab === 'chat' && <ProjectGroupChat projectId={project.id} />}
-          {activeTab === 'ai-assigner' && (
-            <ProjectAssignerAI 
-              projectId={project.id}
-              projectMembers={projectMembers}
-            />
-          )}
-          {activeTab === 'webhook' && (
-            <WebhookConfig 
-              githubOwner={project.githubOwner || ''} 
-              githubRepo={project.githubRepo || ''} 
-            />
-          )}
         </div>
+      </div>
+
+      <div>
+        {activeTab === 'tasks' && <ProjectTasks projectId={project.id} />}
+        {activeTab === 'github' && <ProjectGitHub projectId={project.id} />}
+        {activeTab === 'team' && <ProjectTeam projectId={project.id} />}
+        {activeTab === 'chat' && <ProjectGroupChat projectId={project.id} />}
+        {activeTab === 'ai-assigner' && (
+          <ProjectAssignerAI 
+            projectId={project.id}
+            projectMembers={projectMembers}
+          />
+        )}
+        {activeTab === 'webhook' && (
+          <WebhookConfig 
+            githubOwner={project.githubOwner || ''} 
+            githubRepo={project.githubRepo || ''} 
+          />
+        )}
       </div>
     </div>
   )

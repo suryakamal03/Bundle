@@ -89,7 +89,7 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
       <div className="space-y-6">
         <Card>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Team Members</h2>
+            <h2 className="text-lg font-semibold text-[#eaeaea]">Team Members</h2>
             {isLead && (
               <Button
                 onClick={() => setShowInviteModal(true)}
@@ -104,7 +104,7 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
 
           {members.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 dark:text-gray-400">No team members yet</p>
+              <p className="text-[#9a9a9a]">No team members yet</p>
               {isLead && (
                 <Button
                   onClick={() => setShowInviteModal(true)}
@@ -121,17 +121,17 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
               {members.map((member) => (
                 <div
                   key={member.id}
-                  className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary-500 dark:hover:border-primary-400 transition-colors"
+                  className="flex items-center gap-4 p-4 border border-[#26262a] rounded-lg hover:border-[#eaeaea] transition-colors bg-[#151517]"
                 >
                   <Avatar name={member.name} size="lg" status />
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-gray-900 dark:text-white">{member.name}</h3>
+                      <h3 className="font-semibold text-[#eaeaea]">{member.name}</h3>
                       {member.role === 'Lead' && (
-                        <Crown className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
+                        <Crown className="w-4 h-4 text-yellow-500" />
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{member.email}</p>
+                    <p className="text-sm text-[#9a9a9a]">{member.email}</p>
                   </div>
                   <Badge variant={member.role === 'Lead' ? 'warning' : 'info'}>
                     {member.role}
@@ -141,7 +141,7 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleRemoveMember(member.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
                     >
                       Remove
                     </Button>

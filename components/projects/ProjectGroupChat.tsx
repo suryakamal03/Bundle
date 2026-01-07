@@ -182,30 +182,18 @@ export default function ProjectGroupChat({ projectId }: ProjectGroupChatProps) {
   return (
     <Card className="flex flex-col h-[600px]">
       {/* Chat Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between p-4 border-b border-[#26262a]">
         <div>
-          <h3 className="font-semibold text-gray-900 dark:text-white">Project Group Chat</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {isConnected ? (
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                Connected
-              </span>
-            ) : (
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                Disconnected
-              </span>
-            )}
-          </p>
+          <h3 className="font-semibold text-[#eaeaea]">Project Group Chat</h3>
+          <p className="text-xs text-[#9a9a9a]">Team collaboration</p>
         </div>
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-[#1a1a1a]">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f0f10]">
         {messages.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
+            <p className="text-[#9a9a9a] text-sm">
               No messages yet. Start the conversation!
             </p>
           </div>

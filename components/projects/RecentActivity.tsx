@@ -11,9 +11,10 @@ import { getRelativeTime } from '@/lib/utils'
 interface RecentActivityProps {
   projectId?: string
   projectName?: string
+  onActivityClick?: (projectId: string) => void
 }
 
-export default function RecentActivity({ projectId, projectName }: RecentActivityProps) {
+export default function RecentActivity({ projectId, projectName, onActivityClick }: RecentActivityProps) {
   const [activities, setActivities] = useState<GitHubActivity[]>([])
   const [loading, setLoading] = useState(true)
   const [projectNames, setProjectNames] = useState<Record<string, string>>({})
@@ -111,8 +112,12 @@ export default function RecentActivity({ projectId, projectName }: RecentActivit
     return message.substring(0, maxLength).trim() + '...'
   }
 
-  const handleActivityClick = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer')
+  const handleActivityClick = (activity: GitHubActivity) => {
+    if (onActivityClick && activity.projectId) {
+      onActivityClick(activity.projectId)
+    } else {
+      window.open(activity.githubUrl, '_blank', 'noopener,noreferrer')
+    }
   }
 
   const colorClasses = {
@@ -125,66 +130,71 @@ export default function RecentActivity({ projectId, projectName }: RecentActivit
 
   if (loading) {
     return (
-      <Card>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h2>
-        <div className="space-y-3">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="animate-pulse flex gap-3">
-              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+      <div className="bg-[#151517] border border-[#26262a] rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-[#eaeaea] mb-3 flex items-center gap-2">
+          <Activity className="w-4 h-4" />
+          GitHub Activity
+        </h3>
+        <div className="space-y-2.5">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse flex gap-2.5">
+              <div className="w-7 h-7 bg-[#1c1c1f] rounded"></div>
               <div className="flex-1">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+                <div className="h-3 bg-[#1c1c1f] rounded w-3/4 mb-1.5"></div>
+                <div className="h-2.5 bg-[#1c1c1f] rounded w-2/3 mb-1"></div>
+                <div className="h-2 bg-[#1c1c1f] rounded w-1/3"></div>
               </div>
             </div>
           ))}
         </div>
-      </Card>
+      </div>
     )
   }
 
   return (
-    <Card>
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h2>
+    <div className="bg-[#151517] border border-[#26262a] rounded-lg p-4">
+      <h3 className="text-sm font-semibold text-[#eaeaea] mb-3 flex items-center gap-2">
+        <Activity className="w-4 h-4" />
+        GitHub Activity
+      </h3>
       {activities.length === 0 ? (
-        <div className="text-center py-8">
-          <Activity className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">No recent activity</p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">GitHub activity will appear here</p>
+        <div className="text-center py-6">
+          <Activity className="w-8 h-8 text-[#26262a] mx-auto mb-2" />
+          <p className="text-xs text-[#9a9a9a]">No activity</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {activities.map((activity) => {
+        <div className="space-y-2">
+          {activities.slice(0, 3).map((activity) => {
             const { icon: Icon, color } = getActivityIcon(activity.activityType)
             const displayProjectName = projectName || projectNames[activity.projectId] || 'Project'
             
             return (
               <div
                 key={activity.id}
-                onClick={() => handleActivityClick(activity.githubUrl)}
-                className="flex gap-3 cursor-pointer hover:bg-[#f5f5f5] dark:hover:bg-[#353535] -mx-3 px-3 py-2 rounded-lg transition-colors group"
+                onClick={() => handleActivityClick(activity)}
+                className="flex gap-2.5 cursor-pointer hover:bg-[#1c1c1f] p-2 rounded-md transition-colors"
               >
                 <div className="flex-shrink-0">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${colorClasses[color as keyof typeof colorClasses]}`}>
-                    <Icon className="w-4 h-4" />
+                  <div className={`w-7 h-7 rounded flex items-center justify-center ${colorClasses[color as keyof typeof colorClasses]}`}>
+                    <Icon className="w-3.5 h-3.5" />
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-900 dark:text-white leading-tight mb-1">
-                    <span className="font-medium">{displayProjectName}</span>
-                    <span className="text-gray-500 dark:text-gray-400"> · </span>
-                    <span className="font-mono text-xs text-gray-600 dark:text-gray-400">{activity.githubUsername}</span>
-                    <span className="text-gray-500 dark:text-gray-400"> {getActivityLabel(activity.activityType)}</span>
+                  <p className="text-xs text-[#eaeaea] leading-tight font-medium truncate">
+                    {truncateMessage(activity.title, 35)}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-1 mb-1">
-                    {truncateMessage(activity.title)}
+                  <p className="text-[11px] text-[#9a9a9a] mt-1 truncate">
+                    {displayProjectName}
                   </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">{getRelativeTime(activity.createdAt)}</p>
+                  <p className="text-[10px] text-[#9a9a9a] mt-0.5">
+                    {activity.githubUsername} · {getRelativeTime(activity.createdAt)}
+                  </p>
                 </div>
               </div>
             )
           })}
         </div>
       )}
-    </Card>
+    </div>
   )
 }

@@ -57,13 +57,13 @@ export default function TaskDetailsModal({ task, onClose, onUpdate }: TaskDetail
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#151517] rounded-lg shadow-xl max-w-lg w-full p-6 border border-[#26262a]">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">Task Details</h2>
+          <h2 className="text-xl font-bold text-[#eaeaea]">Task Details</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-[#9a9a9a] hover:text-[#eaeaea]"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -71,54 +71,54 @@ export default function TaskDetailsModal({ task, onClose, onUpdate }: TaskDetail
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+          <div className="mb-4 p-3 bg-red-900/20 border border-red-800 text-red-400 rounded-md text-sm">
             {error}
           </div>
         )}
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#eaeaea] mb-1">
               Task Title
             </label>
-            <p className="text-gray-900">{task.title}</p>
+            <p className="text-[#eaeaea]">{task.title}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#eaeaea] mb-1">
               Assigned To
             </label>
-            <p className="text-gray-900">{task.assignedToName || 'Unassigned'}</p>
+            <p className="text-[#eaeaea]">{task.assignedToName || 'Unassigned'}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#eaeaea] mb-1">
               Status
             </label>
             <span className={`inline-block px-2 py-1 text-xs font-semibold rounded ${
-              task.status === 'Done' ? 'bg-green-100 text-green-800' :
-              task.status === 'In Review' ? 'bg-yellow-100 text-yellow-800' :
-              'bg-blue-100 text-blue-800'
+              task.status === 'Done' ? 'bg-green-500/10 text-green-400' :
+              task.status === 'In Review' ? 'bg-yellow-500/10 text-yellow-400' :
+              'bg-blue-500/10 text-blue-400'
             }`}>
               {task.status}
             </span>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#eaeaea] mb-1">
               Deadline
             </label>
-            <p className="text-gray-900">{formatDate(task.deadlineAt)}</p>
+            <p className="text-[#eaeaea]">{formatDate(task.deadlineAt)}</p>
           </div>
 
           {task.deadlineAt && (
-            <div className="border-t pt-4">
+            <div className="border-t border-[#26262a] pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-[#eaeaea]">
                     Remind Me
                   </label>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-[#9a9a9a] mt-1">
                     Get an email reminder one day before the deadline
                   </p>
                 </div>
@@ -127,12 +127,12 @@ export default function TaskDetailsModal({ task, onClose, onUpdate }: TaskDetail
                   onClick={() => handleReminderToggle(!reminderEnabled)}
                   disabled={loading}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    reminderEnabled ? 'bg-primary-600' : 'bg-gray-200'
+                    reminderEnabled ? 'bg-white' : 'bg-[#26262a]'
                   } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   aria-label="Toggle reminder"
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    className={`inline-block h-4 w-4 transform rounded-full bg-black transition-transform ${
                       reminderEnabled ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />
@@ -140,12 +140,6 @@ export default function TaskDetailsModal({ task, onClose, onUpdate }: TaskDetail
               </div>
             </div>
           )}
-        </div>
-
-        <div className="mt-6">
-          <Button onClick={onClose} className="w-full">
-            Close
-          </Button>
         </div>
       </div>
     </div>

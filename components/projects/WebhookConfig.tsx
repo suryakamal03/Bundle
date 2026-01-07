@@ -65,12 +65,12 @@ export default function WebhookConfig({ githubOwner, githubRepo }: WebhookConfig
   return (
     <Card>
       <div className="flex items-start gap-3 mb-4">
-        <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-          <Webhook className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+        <div className="p-2 bg-[#1c1c1f] rounded-lg border border-[#26262a]">
+          <Webhook className="w-5 h-5 text-[#eaeaea]" />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-900 dark:text-white mb-1">GitHub Webhook Configuration</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <h3 className="font-semibold text-[#eaeaea] mb-1">GitHub Webhook Configuration</h3>
+          <p className="text-sm text-[#9a9a9a]">
             Configure GitHub webhooks to receive real-time updates
           </p>
         </div>
@@ -78,24 +78,24 @@ export default function WebhookConfig({ githubOwner, githubRepo }: WebhookConfig
 
       <div className="space-y-4">
         {isLocalhost && (
-          <div className={`border rounded-lg p-4 ${ngrokDetected ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800'}`}>
+          <div className="border border-[#26262a] rounded-lg p-4 bg-[#151517]">
             <div className="flex items-start gap-2">
               {ngrokDetected ? (
-                <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-[#eaeaea] flex-shrink-0 mt-0.5" />
               ) : (
-                <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400 flex-shrink-0 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-[#9a9a9a] flex-shrink-0 mt-0.5" />
               )}
               <div className="flex-1">
-                <h4 className={`font-medium mb-2 text-sm ${ngrokDetected ? 'text-green-900 dark:text-green-300' : 'text-orange-900 dark:text-orange-300'}`}>
+                <h4 className="font-medium mb-2 text-sm text-[#eaeaea]">
                   {ngrokDetected ? 'ngrok Detected!' : 'Local Development Detected'}
                 </h4>
                 {ngrokDetected ? (
                   <div>
-                    <p className="text-sm text-green-800 dark:text-green-300 mb-2">
+                    <p className="text-sm text-[#9a9a9a] mb-2">
                       ngrok is running and your public URL has been detected automatically.
                     </p>
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 px-3 py-2 bg-white dark:bg-[#2a2a2a] border border-green-300 dark:border-green-700 rounded font-mono text-sm text-green-900 dark:text-green-300 overflow-x-auto">
+                      <div className="flex-1 px-3 py-2 bg-[#0f0f10] border border-[#26262a] rounded font-mono text-sm text-[#eaeaea] overflow-x-auto">
                         {ngrokUrl}
                       </div>
                       <Button
@@ -111,14 +111,14 @@ export default function WebhookConfig({ githubOwner, githubRepo }: WebhookConfig
                   </div>
                 ) : (
                   <div>
-                    <p className="text-sm text-orange-800 dark:text-orange-300 mb-3">
+                    <p className="text-sm text-[#9a9a9a] mb-3">
                       GitHub cannot reach localhost. You need to use ngrok to expose your local server.
                     </p>
-                    <div className="bg-white dark:bg-[#2a2a2a] rounded border border-orange-300 dark:border-orange-700 p-3 mb-3">
-                      <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Setup ngrok:</p>
-                      <ol className="text-xs text-gray-700 dark:text-gray-300 space-y-1 list-decimal list-inside">
+                    <div className="bg-[#0f0f10] rounded border border-[#26262a] p-3 mb-3">
+                      <p className="text-xs font-medium text-[#eaeaea] mb-2">Setup ngrok:</p>
+                      <ol className="text-xs text-[#9a9a9a] space-y-1 list-decimal list-inside">
                         <li>Open a new terminal</li>
-                        <li>Run: <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">npx ngrok http 3000</code></li>
+                        <li>Run: <code className="bg-[#1c1c1f] px-1 py-0.5 rounded">npx ngrok http 3000</code></li>
                         <li>Click the refresh button below to auto-detect</li>
                       </ol>
                     </div>
@@ -140,11 +140,11 @@ export default function WebhookConfig({ githubOwner, githubRepo }: WebhookConfig
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-[#eaeaea] mb-2">
             Webhook Payload URL
           </label>
           <div className="flex items-center gap-2">
-            <div className="flex-1 px-3 py-2 bg-gray-50 dark:bg-[#2a2a2a] border border-gray-300 dark:border-gray-600 rounded-lg font-mono text-sm text-gray-900 dark:text-white overflow-x-auto">
+            <div className="flex-1 px-3 py-2 bg-[#0f0f10] border border-[#26262a] rounded-lg font-mono text-sm text-[#eaeaea] overflow-x-auto">
               {webhookUrl}
             </div>
             <Button
@@ -168,20 +168,20 @@ export default function WebhookConfig({ githubOwner, githubRepo }: WebhookConfig
             </Button>
           </div>
           {isLocalhost && !ngrokUrl && (
-            <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+            <p className="text-xs text-[#9a9a9a] mt-1">
               Start ngrok and click "Detect ngrok URL" to get the webhook URL
             </p>
           )}
         </div>
 
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-2 text-sm">GitHub Setup Instructions:</h4>
-          <ol className="text-sm text-blue-800 dark:text-blue-300 space-y-1 list-decimal list-inside">
+        <div className="bg-[#151517] border border-[#26262a] rounded-lg p-4">
+          <h4 className="font-medium text-[#eaeaea] mb-2 text-sm">GitHub Setup Instructions:</h4>
+          <ol className="text-sm text-[#9a9a9a] space-y-1 list-decimal list-inside">
             <li>Copy the webhook URL above</li>
             <li>Click "Open GitHub Webhook Settings" below</li>
             <li>Click "Add webhook"</li>
             <li>Paste the URL in "Payload URL"</li>
-            <li>Set Content type to: <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">application/json</code></li>
+            <li>Set Content type to: <code className="bg-[#0f0f10] px-1 rounded">application/json</code></li>
             <li>Select events: <strong>Pushes</strong>, <strong>Pull requests</strong>, <strong>Issues</strong></li>
             <li>Click "Add webhook"</li>
           </ol>
@@ -198,14 +198,6 @@ export default function WebhookConfig({ githubOwner, githubRepo }: WebhookConfig
             Open GitHub Webhook Settings
           </Button>
         </div>
-
-        {isLocalhost && (
-          <div className="text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-200 dark:border-gray-700">
-            <p className="font-medium mb-1">Testing your webhook:</p>
-            <p>After adding the webhook in GitHub, make a commit to test.</p>
-            <p className="mt-1">View webhook deliveries at: <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">http://localhost:4040</code> (ngrok web interface)</p>
-          </div>
-        )}
       </div>
     </Card>
   )

@@ -41,26 +41,38 @@ export async function generateTaskAssignments(
     const systemPrompt = `You are an expert project manager and task assignment specialist.
 Your job is to analyze project descriptions and intelligently assign tasks to team members.
 
-CRITICAL RULES FOR TASK TITLES:
-1. ALL task titles MUST be lowercase
-2. ALL task titles MUST start with a verb (add, implement, create, set up, connect, refactor, fix, update, build, design, etc.)
-3. Task titles MUST be short and clear (3-8 words maximum)
-4. NO punctuation at the end
-5. Write like Git commit messages
+CRITICAL RULES FOR TASK TITLES (FOLLOW EXACTLY):
+1. ALL task titles MUST be lowercase - no capital letters anywhere
+2. ALL task titles MUST start with an imperative verb (use present tense, not past tense)
+3. Task titles MUST be concise and actionable (3-8 words maximum)
+4. NO punctuation at the end (no periods, exclamation marks, etc.)
+5. Write exactly like Git commit messages or GitHub issue titles
+6. Be specific and clear about WHAT needs to be done
 
-GOOD EXAMPLES:
-✅ "add user authentication flow"
-✅ "set up websocket server"
-✅ "implement payment gateway integration"
-✅ "create dashboard analytics component"
-✅ "refactor database connection logic"
-✅ "design landing page wireframes"
+VERB GUIDELINES:
+Use action verbs like: add, implement, create, build, set up, configure, connect, integrate, refactor, fix, update, design, develop, write, initialize, install, deploy, test, optimize, enhance, remove, migrate, clean up
 
-BAD EXAMPLES:
-❌ "Added user authentication" (not lowercase, past tense)
-❌ "Work on backend" (not specific, no clear verb)
-❌ "Authentication." (has punctuation)
-❌ "Backend tasks" (too vague)
+STRUCTURE: [verb] [what] [optional: where/how]
+
+PERFECT EXAMPLES:
+✅ "add user authentication with jwt"
+✅ "implement real-time chat websocket"
+✅ "create responsive navbar component"
+✅ "set up postgresql database schema"
+✅ "integrate stripe payment gateway"
+✅ "refactor api error handling logic"
+✅ "design landing page mockups"
+✅ "build admin dashboard ui"
+✅ "configure nginx reverse proxy"
+✅ "write unit tests for auth service"
+
+FORBIDDEN EXAMPLES:
+❌ "Added user authentication" (past tense, capitalized)
+❌ "User Authentication" (not a verb, capitalized)
+❌ "Work on backend." (vague, has period)
+❌ "Backend tasks" (not actionable)
+❌ "Authentication module needs to be implemented" (too long, wordy)
+❌ "Implement authentication system for users with proper security" (too long)
 
 DEADLINE ESTIMATION RULES:
 - Analyze task complexity and role type
