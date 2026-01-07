@@ -288,7 +288,7 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           <button
             onClick={() => setSelectedMember(null)}
-            className={`px-3 py-1 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
               selectedMember === null 
                 ? 'bg-white text-black' 
                 : 'bg-[#0f0f10] border border-[#26262a] text-[#9a9a9a] hover:bg-[#1c1c1f]'
@@ -302,13 +302,15 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
               <button
                 key={member.id}
                 onClick={() => setSelectedMember(member.id)}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
                   selectedMember === member.id 
                     ? 'bg-white text-black' 
                     : 'bg-[#0f0f10] border border-[#26262a] text-[#9a9a9a] hover:bg-[#1c1c1f]'
                 }`}
               >
-                <Avatar name={member.name} size="sm" />
+                <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-white font-semibold">
+                  {member.name.charAt(0).toUpperCase()}
+                </div>
                 {member.name} ({memberTasks.length})
               </button>
             )

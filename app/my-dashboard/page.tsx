@@ -190,7 +190,7 @@ export default function MyDashboardPage() {
     if (loading) {
       return (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-[#9a9a9a] animate-spin" />
         </div>
       )
     }
@@ -198,8 +198,8 @@ export default function MyDashboardPage() {
     if (tasks.length === 0) {
       return (
         <div className="text-center py-12">
-          <CheckSquare className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">No tasks found</p>
+          <CheckSquare className="w-12 h-12 text-[#26262a] mx-auto mb-3" />
+          <p className="text-sm text-[#9a9a9a]">No tasks found</p>
         </div>
       )
     }
@@ -212,19 +212,19 @@ export default function MyDashboardPage() {
           return (
             <div
               key={task.id}
-              className="p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#2a2a2a] rounded-lg hover:border-primary-500 dark:hover:border-primary-400 hover:bg-[#f5f5f5] dark:hover:bg-[#353535] transition-colors"
+              className="p-4 border border-[#26262a] bg-[#151517] rounded-lg hover:bg-[#1c1c1f] transition-colors"
             >
               <div className="flex items-start justify-between gap-3">
                 <div 
                   className="flex-1 min-w-0 cursor-pointer"
                   onClick={() => handleTaskClick(task)}
                 >
-                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{task.title}</p>
+                  <p className="text-sm font-medium text-[#eaeaea] mb-1">{task.title}</p>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <Badge variant="info" className="text-xs">
+                    <Badge variant="info" className="text-xs bg-[#1c1c1f] text-[#9a9a9a] border-[#26262a]">
                       {task.projectName || 'Unknown Project'}
                     </Badge>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                    <span className="text-xs text-[#9a9a9a]">
                       {task.status}
                     </span>
                   </div>
@@ -239,13 +239,13 @@ export default function MyDashboardPage() {
                       }}
                       className={cn(
                         "w-11 h-6 rounded-full transition-colors relative flex-shrink-0",
-                        hasReminder ? "bg-primary-500" : "bg-gray-300 dark:bg-gray-600"
+                        hasReminder ? "bg-white" : "bg-[#26262a]"
                       )}
                       title={hasReminder ? "Reminder enabled" : "Reminder disabled"}
                     >
                       <div className={cn(
-                        "w-5 h-5 bg-white rounded-full shadow-sm transition-transform absolute top-0.5",
-                        hasReminder ? "translate-x-5" : "translate-x-0.5"
+                        "w-5 h-5 rounded-full shadow-sm transition-transform absolute top-0.5",
+                        hasReminder ? "translate-x-5 bg-black" : "translate-x-0.5 bg-[#9a9a9a]"
                       )} />
                     </button>
                   )}
@@ -262,7 +262,7 @@ export default function MyDashboardPage() {
     if (loading) {
       return (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-[#9a9a9a] animate-spin" />
         </div>
       )
     }
@@ -270,9 +270,9 @@ export default function MyDashboardPage() {
     if (!githubUsername) {
       return (
         <div className="text-center py-12">
-          <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-sm text-gray-500">No GitHub username configured</p>
-          <p className="text-xs text-gray-400 mt-1">Add your GitHub username in settings</p>
+          <AlertCircle className="w-12 h-12 text-[#26262a] mx-auto mb-3" />
+          <p className="text-sm text-[#9a9a9a]">No GitHub username configured</p>
+          <p className="text-xs text-[#9a9a9a] mt-1">Add your GitHub username in settings</p>
         </div>
       )
     }
@@ -280,8 +280,8 @@ export default function MyDashboardPage() {
     if (issues.length === 0) {
       return (
         <div className="text-center py-12">
-          <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-sm text-gray-500">No open issues found</p>
+          <AlertCircle className="w-12 h-12 text-[#26262a] mx-auto mb-3" />
+          <p className="text-sm text-[#9a9a9a]">No open issues found</p>
         </div>
       )
     }
@@ -292,19 +292,19 @@ export default function MyDashboardPage() {
           <div
             key={issue.id}
             onClick={() => handleOpenGitHub(issue.githubUrl)}
-            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-red-500 dark:hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors cursor-pointer"
+            className="p-4 border border-[#26262a] bg-[#151517] rounded-lg hover:bg-[#1c1c1f] transition-colors cursor-pointer"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{issue.title}</p>
+                <p className="text-sm font-medium text-[#eaeaea] mb-1">{issue.title}</p>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="info" className="text-xs">
+                  <Badge variant="info" className="text-xs bg-[#1c1c1f] text-[#9a9a9a] border-[#26262a]">
                     {issue.projectName || 'Unknown Project'}
                   </Badge>
-                  <Badge variant={issue.state === 'open' ? 'danger' : 'success'} className="text-xs">
+                  <Badge variant={issue.state === 'open' ? 'danger' : 'success'} className="text-xs bg-[#1c1c1f] text-[#9a9a9a] border-[#26262a]">
                     {issue.state}
                   </Badge>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                  <span className="text-xs text-[#9a9a9a]">
                     #{issue.number} · {getRelativeTime(issue.createdAt)}
                   </span>
                 </div>
@@ -332,22 +332,22 @@ export default function MyDashboardPage() {
 
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Dashboard</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Your personal command center</p>
+          <h1 className="text-2xl font-bold text-[#eaeaea]">My Dashboard</h1>
+          <p className="text-sm text-[#9a9a9a] mt-1">Your personal command center</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Task Section */}
-          <Card className="lg:col-span-2">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">My Tasks</h2>
+          <Card className="lg:col-span-2 bg-[#0f0f10] border-[#26262a]">
+            <h2 className="text-lg font-semibold text-[#eaeaea] mb-4">My Tasks</h2>
 
-            <div className="flex gap-2 mb-4 border-b border-gray-200">
+            <div className="flex gap-2 mb-4 border-b border-[#26262a]">
               <button
                 onClick={() => setActiveTab('todo')}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeTab === 'todo'
-                    ? 'text-primary-600 border-b-2 border-primary-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-[#eaeaea] border-b-2 border-white'
+                    : 'text-[#9a9a9a] hover:text-[#eaeaea]'
                 }`}
               >
                 To Do ({todoTasks.length})
@@ -356,8 +356,8 @@ export default function MyDashboardPage() {
                 onClick={() => setActiveTab('in-review')}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeTab === 'in-review'
-                    ? 'text-primary-600 border-b-2 border-primary-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-[#eaeaea] border-b-2 border-white'
+                    : 'text-[#9a9a9a] hover:text-[#eaeaea]'
                 }`}
               >
                 In Review ({inReviewTasks.length})
@@ -366,8 +366,8 @@ export default function MyDashboardPage() {
                 onClick={() => setActiveTab('issues')}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeTab === 'issues'
-                    ? 'text-primary-600 border-b-2 border-primary-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-[#eaeaea] border-b-2 border-white'
+                    : 'text-[#9a9a9a] hover:text-[#eaeaea]'
                 }`}
               >
                 Issues ({issues.length})
@@ -382,22 +382,22 @@ export default function MyDashboardPage() {
           </Card>
 
           {/* Personal GitHub Activity Section */}
-          <Card>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">GitHub Activity</h2>
+          <Card className="bg-[#0f0f10] border-[#26262a]">
+            <h2 className="text-lg font-semibold text-[#eaeaea] mb-4">GitHub Activity</h2>
 
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 text-primary-500 animate-spin" />
+                <Loader2 className="w-6 h-6 text-[#9a9a9a] animate-spin" />
               </div>
             ) : !githubUsername ? (
               <div className="text-center py-8">
-                <GitBranch className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm text-gray-500">No GitHub connected</p>
+                <GitBranch className="w-10 h-10 text-[#26262a] mx-auto mb-2" />
+                <p className="text-sm text-[#9a9a9a]">No GitHub connected</p>
               </div>
             ) : activities.length === 0 ? (
               <div className="text-center py-8">
-                <GitBranch className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm text-gray-500">No recent activity</p>
+                <GitBranch className="w-10 h-10 text-[#26262a] mx-auto mb-2" />
+                <p className="text-sm text-[#9a9a9a]">No recent activity</p>
               </div>
             ) : (
               <div className="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto hide-scrollbar pr-2">{" "}
@@ -408,22 +408,22 @@ export default function MyDashboardPage() {
                     <div
                       key={activity.id}
                       onClick={() => handleOpenGitHub(activity.githubUrl)}
-                      className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                      className="flex gap-3 p-2 rounded-lg bg-[#151517] border border-[#26262a] hover:bg-[#1c1c1f] transition-colors cursor-pointer"
                     >
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${color}`}>
-                        <Icon className="w-4 h-4" />
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#1c1c1f] border border-[#26262a]`}>
+                        <Icon className="w-4 h-4 text-[#9a9a9a]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-gray-900 mb-0.5">
+                        <p className="text-xs font-medium text-[#eaeaea] mb-0.5">
                           {getActivityLabel(activity.activityType)}
                         </p>
-                        <p className="text-xs text-gray-600 line-clamp-1 mb-1">
+                        <p className="text-xs text-[#9a9a9a] line-clamp-1 mb-1">
                           {truncateMessage(activity.title)}
                         </p>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-500">{activity.projectName}</span>
-                          <span className="text-xs text-gray-400">·</span>
-                          <span className="text-xs text-gray-400">{getRelativeTime(activity.createdAt)}</span>
+                          <span className="text-xs text-[#9a9a9a]">{activity.projectName}</span>
+                          <span className="text-xs text-[#9a9a9a]">·</span>
+                          <span className="text-xs text-[#9a9a9a]">{getRelativeTime(activity.createdAt)}</span>
                         </div>
                       </div>
                     </div>
