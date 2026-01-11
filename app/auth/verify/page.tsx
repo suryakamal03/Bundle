@@ -5,21 +5,21 @@ import Button from '@/components/ui/Button'
 
 export default function VerifyEmailPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">Check your email</h2>
-          <p className="text-gray-600 text-center mb-6">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-white mb-2 text-center">Check your email</h2>
+          <p className="text-gray-400 text-center mb-6">
             We've sent a verification link to{' '}
-            <span className="font-medium text-gray-900">user@ontrackr.com</span>. Please click the link in the email to confirm your account.
+            <span className="font-medium text-white">user@bundle.com</span>. Please click the link in the email to confirm your account.
           </p>
           
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <h3 className="font-medium text-gray-900 mb-2">How to verify:</h3>
-            <ol className="space-y-2 text-sm text-gray-600">
+          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-6">
+            <h3 className="font-medium text-white mb-2">How to verify:</h3>
+            <ol className="space-y-2 text-sm text-gray-400">
               <li className="flex gap-2">
                 <span className="font-medium">1.</span>
-                <span>Look for an email from Ontrackr in your inbox.</span>
+                <span>Look for an email from Bundle in your inbox.</span>
               </li>
               <li className="flex gap-2">
                 <span className="font-medium">2.</span>
@@ -31,7 +31,7 @@ export default function VerifyEmailPage() {
               </li>
               <li className="flex gap-2">
                 <span className="font-medium">4.</span>
-                <span>You'll be redirected to your Ontrackr dashboard upon successful verification.</span>
+                <span>You'll be redirected to your Bundle dashboard upon successful verification.</span>
               </li>
             </ol>
           </div>
@@ -41,7 +41,7 @@ export default function VerifyEmailPage() {
               Resend verification email
             </Button>
             
-            <Link href="/auth/login" className="block text-center text-sm text-primary-500 hover:text-primary-600 font-medium">
+            <Link href="/auth/login" className="block text-center text-sm text-primary-400 hover:text-primary-300 font-medium">
               Change email address
             </Link>
           </div>
