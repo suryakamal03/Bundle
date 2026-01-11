@@ -90,15 +90,15 @@ export default function TaskManagementPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[#eaeaea]">Task Management</h1>
-            <p className="text-sm text-[#9a9a9a] mt-1">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-[#eaeaea]">Task Management</h1>
+            <p className="text-sm text-gray-600 dark:text-[#9a9a9a] mt-1">
               {tasks.length > 0 ? `Managing ${tasks.length} tasks across your projects` : 'No tasks to display'}
             </p>
           </div>
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-2 border-b border-[#26262a]">
+        <div className="flex items-center gap-2 border-b border-gray-200 dark:border-[#26262a]">
           {(['All', 'To Do', 'In Review'] as FilterStatus[]).map((filter) => (
             <button
               key={filter}
@@ -106,12 +106,12 @@ export default function TaskManagementPage() {
               className={cn(
                 'px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px',
                 activeFilter === filter
-                  ? 'text-[#eaeaea] border-white'
-                  : 'text-[#9a9a9a] border-transparent hover:text-[#eaeaea]'
+                  ? 'text-gray-900 dark:text-[#eaeaea] border-blue-600 dark:border-white'
+                  : 'text-gray-500 dark:text-[#9a9a9a] border-transparent hover:text-gray-900 dark:hover:text-[#eaeaea]'
               )}
             >
               {filter}
-              <span className="ml-2 px-2 py-0.5 rounded-full bg-[#1c1c1f] text-[#eaeaea] text-xs">
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-gray-200 dark:bg-[#1c1c1f] text-gray-900 dark:text-[#eaeaea] text-xs">
                 {statusCounts[filter]}
               </span>
             </button>
@@ -120,12 +120,12 @@ export default function TaskManagementPage() {
         
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 text-[#9a9a9a] animate-spin" />
+            <Loader2 className="w-8 h-8 text-gray-400 dark:text-[#9a9a9a] animate-spin" />
           </div>
         ) : filteredTasks.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-[#9a9a9a]">No tasks found</p>
-            <p className="text-sm text-[#9a9a9a] mt-1">
+            <p className="text-gray-600 dark:text-[#9a9a9a]">No tasks found</p>
+            <p className="text-sm text-gray-500 dark:text-[#9a9a9a] mt-1">
               {user 
                 ? activeFilter === 'All' 
                   ? 'Task Management is available for project leads only' 
@@ -134,18 +134,18 @@ export default function TaskManagementPage() {
             </p>
           </div>
         ) : (
-          <div className="bg-[#0f0f10] rounded-lg border border-[#26262a]">
+          <div className="bg-white dark:bg-[#0f0f10] rounded-lg border border-gray-200 dark:border-[#26262a]">
             {/* Table Header */}
-            <div className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 border-b border-[#26262a] bg-[#151517]">
-              <div className="text-xs font-semibold text-[#9a9a9a] uppercase">Name</div>
-              <div className="text-xs font-semibold text-[#9a9a9a] uppercase">Status</div>
-              <div className="text-xs font-semibold text-[#9a9a9a] uppercase">Assignee</div>
-              <div className="text-xs font-semibold text-[#9a9a9a] uppercase">Due date</div>
-              <div className="text-xs font-semibold text-[#9a9a9a] uppercase">Remind Me</div>
+            <div className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 border-b border-gray-200 dark:border-[#26262a] bg-gray-50 dark:bg-[#151517]">
+              <div className="text-xs font-semibold text-gray-600 dark:text-[#9a9a9a] uppercase">Name</div>
+              <div className="text-xs font-semibold text-gray-600 dark:text-[#9a9a9a] uppercase">Status</div>
+              <div className="text-xs font-semibold text-gray-600 dark:text-[#9a9a9a] uppercase">Assignee</div>
+              <div className="text-xs font-semibold text-gray-600 dark:text-[#9a9a9a] uppercase">Due date</div>
+              <div className="text-xs font-semibold text-gray-600 dark:text-[#9a9a9a] uppercase">Remind Me</div>
             </div>
             
             {/* Task Rows */}
-            <div className="divide-y divide-[#26262a]">
+            <div className="divide-y divide-gray-200 dark:divide-[#26262a]">
               {filteredTasks.map((task) => {
                 const deadlineInfo = formatDeadline(task.deadlineAt)
                 const hasReminder = !reminders.has(task.id)
@@ -153,14 +153,14 @@ export default function TaskManagementPage() {
                 return (
                   <div
                     key={task.id}
-                    className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 hover:bg-[#1c1c1f] transition-colors group relative"
+                    className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 hover:bg-gray-50 dark:hover:bg-[#1c1c1f] transition-colors group relative"
                   >
                     {/* Task Title */}
                     <div 
                       className="flex-1 min-w-0 cursor-pointer flex items-center"
                       onClick={() => handleTaskClick(task.projectId)}
                     >
-                      <p className="text-sm font-medium text-[#eaeaea] group-hover:text-white truncate">
+                      <p className="text-sm font-medium text-gray-900 dark:text-[#eaeaea] group-hover:text-blue-600 dark:group-hover:text-white truncate">
                         {task.title}
                       </p>
                     </div>
@@ -173,7 +173,7 @@ export default function TaskManagementPage() {
                           task.status === 'In Review' ? 'warning' : 
                           'info'
                         }
-                        className="text-xs bg-[#1c1c1f] text-[#9a9a9a] border-[#26262a]"
+                        className="text-xs bg-gray-100 dark:bg-[#1c1c1f] text-gray-600 dark:text-[#9a9a9a] border-gray-300 dark:border-[#26262a]"
                       >
                         {task.status}
                       </Badge>
@@ -184,16 +184,16 @@ export default function TaskManagementPage() {
                       {task.assignedToName ? (
                         <>
                           <Avatar name={task.assignedToName} size="sm" />
-                          <span className="text-sm text-[#eaeaea] truncate">
+                          <span className="text-sm text-gray-900 dark:text-[#eaeaea] truncate">
                             {task.assignedToName}
                           </span>
                         </>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-[#1c1c1f] flex items-center justify-center">
-                            <span className="text-xs text-[#9a9a9a]">?</span>
+                          <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-[#1c1c1f] flex items-center justify-center">
+                            <span className="text-xs text-gray-500 dark:text-[#9a9a9a]">?</span>
                           </div>
-                          <span className="text-sm text-[#9a9a9a]">Unassigned</span>
+                          <span className="text-sm text-gray-500 dark:text-[#9a9a9a]">Unassigned</span>
                         </div>
                       )}
                     </div>
@@ -202,18 +202,18 @@ export default function TaskManagementPage() {
                     <div className="flex items-center gap-1.5">
                       {deadlineInfo ? (
                         <>
-                          <Calendar className="w-3.5 h-3.5 text-[#9a9a9a]" />
+                          <Calendar className="w-3.5 h-3.5 text-gray-500 dark:text-[#9a9a9a]" />
                           <span className={cn(
                             "text-xs font-medium",
                             deadlineInfo.isOverdue 
                               ? "text-red-400" 
-                              : "text-[#eaeaea]"
+                              : "text-gray-900 dark:text-[#eaeaea]"
                           )}>
                             {deadlineInfo.text}
                           </span>
                         </>
                       ) : (
-                        <span className="text-xs text-[#9a9a9a]">-</span>
+                        <span className="text-xs text-gray-500 dark:text-[#9a9a9a]">-</span>
                       )}
                     </div>
 
@@ -226,12 +226,12 @@ export default function TaskManagementPage() {
                         }}
                         className={cn(
                           "w-11 h-6 rounded-full transition-colors relative",
-                          hasReminder ? "bg-white" : "bg-[#26262a]"
+                          hasReminder ? "bg-blue-600 dark:bg-white" : "bg-gray-300 dark:bg-[#26262a]"
                         )}
                       >
                         <div className={cn(
                           "w-5 h-5 rounded-full shadow-sm transition-transform absolute top-0.5",
-                          hasReminder ? "translate-x-5 bg-black" : "translate-x-0.5 bg-[#9a9a9a]"
+                          hasReminder ? "translate-x-5 bg-white dark:bg-black" : "translate-x-0.5 bg-gray-500 dark:bg-[#9a9a9a]"
                         )} />
                       </button>
                     </div>
@@ -242,7 +242,7 @@ export default function TaskManagementPage() {
           </div>
         )}
         
-        <div className="flex items-center justify-center text-sm text-[#9a9a9a]">
+        <div className="flex items-center justify-center text-sm text-gray-500 dark:text-[#9a9a9a]">
           © 2025 Ontrackr. All rights reserved.
         </div>
       </div>

@@ -48,18 +48,18 @@ export default function Header() {
   
   return (
     <>
-      <header className="fixed top-0 right-0 left-0 z-50 bg-black/95 backdrop-blur-md border-b border-gray-800">
+      <header className="fixed top-0 right-0 left-0 z-50 bg-white dark:bg-black/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-full mx-auto px-6 py-1.5">
           <div className="flex items-center justify-between">
             {/* Left - Logo */}
             <Link href="/projects" className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
+              <div className="w-7 h-7 bg-black dark:bg-white rounded-lg flex items-center justify-center">
+                <svg className="w-4 h-4 text-white dark:text-black" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
                 </svg>
               </div>
               <span 
-                className="text-base font-bold text-white tracking-tight"
+                className="text-base font-bold text-gray-900 dark:text-white tracking-tight"
                 style={{ fontFamily: 'var(--font-quadria)' }}
               >
                 Bundle
@@ -78,7 +78,7 @@ export default function Header() {
                     className={cn(
                       "flex flex-col items-center justify-center gap-0.5 px-5 py-1.5 rounded-xl transition-all",
                       isActive 
-                        ? "text-white dark:text-white" 
+                        ? "text-gray-900 dark:text-white" 
                         : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                     )}
                   >
@@ -93,7 +93,7 @@ export default function Header() {
             <div className="flex items-center gap-3">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 {isDark ? (
                   <Sun className="w-5 h-5 text-white" />
@@ -105,7 +105,7 @@ export default function Header() {
               <div className="relative">
                 <button 
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="p-1.5 hover:bg-gray-800 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                 >
                   <Avatar name={user?.displayName || user?.email || 'User'} status size="md" />
                 </button>
@@ -116,13 +116,13 @@ export default function Header() {
                       className="fixed inset-0 z-10" 
                       onClick={() => setShowUserMenu(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-56 bg-[#141414] rounded-xl shadow-xl border border-gray-800 py-1.5 z-20">
+                    <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#141414] rounded-xl shadow-xl border border-gray-200 dark:border-gray-800 py-1.5 z-20">
                       <button
                         onClick={() => {
                           setShowUserMenu(false)
                           router.push('/settings')
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       >
                         <Settings className="w-4 h-4" />
                         Settings
@@ -132,7 +132,7 @@ export default function Header() {
                           setShowUserMenu(false)
                           toggleTheme()
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       >
                         {isDark ? (
                           <>
@@ -146,13 +146,13 @@ export default function Header() {
                           </>
                         )}
                       </button>
-                      <div className="border-t border-gray-800 my-1.5" />
+                      <div className="border-t border-gray-200 dark:border-gray-800 my-1.5" />
                       <button
                         onClick={() => {
                           setShowUserMenu(false)
                           setShowLogoutModal(true)
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-900/20 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                       >
                         <LogOut className="w-4 h-4" />
                         Logout

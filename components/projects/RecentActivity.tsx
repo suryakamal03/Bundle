@@ -130,19 +130,19 @@ export default function RecentActivity({ projectId, projectName, onActivityClick
 
   if (loading) {
     return (
-      <div className="bg-[#151517] border border-[#26262a] rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-[#eaeaea] mb-3 flex items-center gap-2">
+      <div className="bg-white dark:bg-[#151517] border border-gray-200 dark:border-[#26262a] rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-[#eaeaea] mb-3 flex items-center gap-2">
           <Activity className="w-4 h-4" />
           GitHub Activity
         </h3>
         <div className="space-y-2.5">
           {[1, 2, 3].map((i) => (
             <div key={i} className="animate-pulse flex gap-2.5">
-              <div className="w-7 h-7 bg-[#1c1c1f] rounded"></div>
+              <div className="w-7 h-7 bg-gray-200 dark:bg-[#1c1c1f] rounded"></div>
               <div className="flex-1">
-                <div className="h-3 bg-[#1c1c1f] rounded w-3/4 mb-1.5"></div>
-                <div className="h-2.5 bg-[#1c1c1f] rounded w-2/3 mb-1"></div>
-                <div className="h-2 bg-[#1c1c1f] rounded w-1/3"></div>
+                <div className="h-3 bg-gray-200 dark:bg-[#1c1c1f] rounded w-3/4 mb-1.5"></div>
+                <div className="h-2.5 bg-gray-200 dark:bg-[#1c1c1f] rounded w-2/3 mb-1"></div>
+                <div className="h-2 bg-gray-200 dark:bg-[#1c1c1f] rounded w-1/3"></div>
               </div>
             </div>
           ))}
@@ -152,15 +152,15 @@ export default function RecentActivity({ projectId, projectName, onActivityClick
   }
 
   return (
-    <div className="bg-[#151517] border border-[#26262a] rounded-lg p-4">
-      <h3 className="text-sm font-semibold text-[#eaeaea] mb-3 flex items-center gap-2">
+    <div className="bg-white dark:bg-[#151517] border border-gray-200 dark:border-[#26262a] rounded-lg p-4">
+      <h3 className="text-sm font-semibold text-gray-900 dark:text-[#eaeaea] mb-3 flex items-center gap-2">
         <Activity className="w-4 h-4" />
         GitHub Activity
       </h3>
       {activities.length === 0 ? (
         <div className="text-center py-6">
-          <Activity className="w-8 h-8 text-[#26262a] mx-auto mb-2" />
-          <p className="text-xs text-[#9a9a9a]">No activity</p>
+          <Activity className="w-8 h-8 text-gray-300 dark:text-[#26262a] mx-auto mb-2" />
+          <p className="text-xs text-gray-500 dark:text-[#9a9a9a]">No activity</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -172,7 +172,7 @@ export default function RecentActivity({ projectId, projectName, onActivityClick
               <div
                 key={activity.id}
                 onClick={() => handleActivityClick(activity)}
-                className="flex gap-2.5 cursor-pointer hover:bg-[#1c1c1f] p-2 rounded-md transition-colors"
+                className="flex gap-2.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-[#1c1c1f] p-2 rounded-md transition-colors"
               >
                 <div className="flex-shrink-0">
                   <div className={`w-7 h-7 rounded flex items-center justify-center ${colorClasses[color as keyof typeof colorClasses]}`}>
@@ -180,13 +180,13 @@ export default function RecentActivity({ projectId, projectName, onActivityClick
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-[#eaeaea] leading-tight font-medium truncate">
+                  <p className="text-xs text-gray-900 dark:text-[#eaeaea] leading-tight font-medium truncate">
                     {truncateMessage(activity.title, 35)}
                   </p>
-                  <p className="text-[11px] text-[#9a9a9a] mt-1 truncate">
+                  <p className="text-[11px] text-gray-500 dark:text-[#9a9a9a] mt-1 truncate">
                     {displayProjectName}
                   </p>
-                  <p className="text-[10px] text-[#9a9a9a] mt-0.5">
+                  <p className="text-[10px] text-gray-400 dark:text-[#9a9a9a] mt-0.5">
                     {activity.githubUsername} · {getRelativeTime(activity.createdAt)}
                   </p>
                 </div>

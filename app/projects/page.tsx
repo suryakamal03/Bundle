@@ -62,11 +62,11 @@ export default function ProjectsPage() {
           ) : (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <h2 className="text-xl font-semibold text-[#eaeaea] mb-2">Select a project</h2>
-                <p className="text-sm text-[#9a9a9a] mb-6">Choose a project from the left to view details</p>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-[#eaeaea] mb-2">Select a project</h2>
+                <p className="text-sm text-gray-600 dark:text-[#9a9a9a] mb-6">Choose a project from the left to view details</p>
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#151517] hover:bg-[#1c1c1f] border border-[#26262a] text-[#eaeaea] text-sm font-medium rounded-md transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-[#151517] hover:bg-gray-200 dark:hover:bg-[#1c1c1f] border border-gray-300 dark:border-[#26262a] text-gray-900 dark:text-[#eaeaea] text-sm font-medium rounded-md transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Create Project

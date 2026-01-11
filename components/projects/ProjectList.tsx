@@ -134,16 +134,16 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
 
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-md bg-[#151517] border border-[#26262a] rounded-xl p-6">
+          <div className="w-full max-w-md bg-white dark:bg-[#151517] border border-gray-300 dark:border-[#26262a] rounded-xl p-6">
             <div>
-              <h2 className="text-xl font-semibold text-[#eaeaea] mb-4">Delete Project</h2>
-              <p className="text-[#9a9a9a] mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-[#eaeaea] mb-4">Delete Project</h2>
+              <p className="text-gray-600 dark:text-[#9a9a9a] mb-6">
                 Are you sure you want to delete this project? This action cannot be undone and will remove all tasks, files, and data associated with this project.
               </p>
               <div className="flex items-center gap-3">
                 <Button 
                   variant="secondary" 
-                  className="flex-1 bg-[#1c1c1f] border-[#26262a] text-[#eaeaea] hover:bg-[#26262a]"
+                  className="flex-1 bg-gray-100 dark:bg-[#1c1c1f] border-gray-300 dark:border-[#26262a] text-gray-900 dark:text-[#eaeaea] hover:bg-gray-200 dark:hover:bg-[#26262a]"
                   onClick={() => {
                     setDeleteConfirm(null)
                     setMenuOpen(null)
@@ -166,25 +166,25 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
       <div className="space-y-3">
         {/* Header with Add Button */}
         <div className="flex items-center justify-between px-3">
-          <h2 className="text-sm font-semibold text-[#eaeaea]">Projects</h2>
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-[#eaeaea]">Projects</h2>
           <button 
             onClick={() => setShowCreateModal(true)}
-            className="p-1 hover:bg-[#1c1c1f] rounded transition-colors"
+            className="p-1 hover:bg-gray-200 dark:hover:bg-[#1c1c1f] rounded transition-colors"
           >
-            <Plus className="w-4 h-4 text-[#9a9a9a]" />
+            <Plus className="w-4 h-4 text-gray-600 dark:text-[#9a9a9a]" />
           </button>
         </div>
 
         {/* Search */}
         <div className="px-3">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#9a9a9a]" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500 dark:text-[#9a9a9a]" />
             <input
               type="text"
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 border border-[#26262a] bg-[#0f0f10] text-[#eaeaea] placeholder:text-[#9a9a9a] rounded-md focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-transparent transition-all text-xs"
+              className="w-full pl-8 pr-3 py-1.5 border border-gray-300 dark:border-[#26262a] bg-white dark:bg-[#0f0f10] text-gray-900 dark:text-[#eaeaea] placeholder:text-gray-400 dark:placeholder:text-[#9a9a9a] rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-white/20 focus:border-transparent transition-all text-xs"
             />
           </div>
         </div>
@@ -192,11 +192,11 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
         {/* Project List */}
         {loading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-white"></div>
           </div>
         ) : filteredProjects.length === 0 ? (
           <div className="px-3 py-8 text-center">
-            <p className="text-xs text-[#9a9a9a]">
+            <p className="text-xs text-gray-500 dark:text-[#9a9a9a]">
               {searchQuery ? 'No projects found' : 'No projects yet'}
             </p>
           </div>
@@ -212,8 +212,8 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
                   onClick={() => onSelectProject(project)}
                   className={`flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer transition-all group relative ${
                     isSelected 
-                      ? 'bg-white/10 text-[#eaeaea]' 
-                      : 'hover:bg-[#1c1c1f] text-[#9a9a9a]'
+                      ? 'bg-blue-100 dark:bg-white/10 text-gray-900 dark:text-[#eaeaea]' 
+                      : 'hover:bg-gray-100 dark:hover:bg-[#1c1c1f] text-gray-600 dark:text-[#9a9a9a]'
                   }`}
                 >
                   <div className="flex-1 min-w-0">
@@ -226,20 +226,20 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
                         e.stopPropagation()
                         setMenuOpen(menuOpen === project.id ? null : project.id)
                       }}
-                      className="p-1 hover:bg-[#26262a] rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="p-1 hover:bg-gray-200 dark:hover:bg-[#26262a] rounded opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <MoreVertical className="w-3.5 h-3.5" />
                     </button>
                   )}
 
                   {isLead && menuOpen === project.id && (
-                    <div className="absolute right-0 top-full mt-1 w-40 bg-[#151517] border border-[#26262a] rounded-lg shadow-xl z-20">
+                    <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-[#151517] border border-gray-300 dark:border-[#26262a] rounded-lg shadow-xl z-20">
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
                           setEditProject(project)
                         }}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-left text-[#eaeaea] hover:bg-[#1c1c1f] transition-colors text-xs rounded-t-lg"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-left text-gray-900 dark:text-[#eaeaea] hover:bg-gray-100 dark:hover:bg-[#1c1c1f] transition-colors text-xs rounded-t-lg"
                       >
                         <Edit2 className="w-3 h-3" />
                         <span>Edit</span>
@@ -249,7 +249,7 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
                           e.stopPropagation()
                           setDeleteConfirm(project.id)
                         }}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-left text-red-400 hover:bg-[#1c1c1f] transition-colors text-xs rounded-b-lg"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-left text-red-400 hover:bg-red-50 dark:hover:bg-[#1c1c1f] transition-colors text-xs rounded-b-lg"
                       >
                         <Trash2 className="w-3 h-3" />
                         <span>Delete</span>
