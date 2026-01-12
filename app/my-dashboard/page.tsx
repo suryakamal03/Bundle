@@ -88,11 +88,11 @@ export default function MyDashboardPage() {
       setTodoTasks(todo)
       setInReviewTasks(inReview)
 
-      // Load GitHub data if username exists
+      // Load GitHub data if username exists - pass userId to filter by user's projects
       if (username) {
         const [userIssues, userActivities] = await Promise.all([
-          userGitHubService.getUserGitHubIssues(username),
-          userGitHubService.getUserGitHubActivities(username, 10)
+          userGitHubService.getUserGitHubIssues(username, user.uid),
+          userGitHubService.getUserGitHubActivities(username, 10, user.uid)
         ])
 
         setIssues(userIssues)
@@ -381,26 +381,23 @@ export default function MyDashboardPage() {
             </div>
           </Card>
 
-          {/* Personal GitHub Activity Section */}
-          <Card className="bg-white dark:bg-[#0f0f10] border-gray-200 dark:border-[#26262a]">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-[#eaeaea] mb-4">GitHub Activity</h2>
+          {/* Personal GitHub Activity Section - Only show if user has GitHub connected */}
+          {githubUsername && (
+            <Card className="bg-white dark:bg-[#0f0f10] border-gray-200 dark:border-[#26262a]">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-[#eaeaea] mb-4">Recent GitHub Activity</h2>
 
-            {loading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 text-gray-400 dark:text-[#9a9a9a] animate-spin" />
-              </div>
-            ) : !githubUsername ? (
-              <div className="text-center py-8">
-                <GitBranch className="w-10 h-10 text-gray-300 dark:text-[#26262a] mx-auto mb-2" />
-                <p className="text-sm text-gray-500 dark:text-[#9a9a9a]">No GitHub connected</p>
-              </div>
-            ) : activities.length === 0 ? (
-              <div className="text-center py-8">
-                <GitBranch className="w-10 h-10 text-gray-300 dark:text-[#26262a] mx-auto mb-2" />
-                <p className="text-sm text-gray-500 dark:text-[#9a9a9a]">No recent activity</p>
-              </div>
-            ) : (
-              <div className="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto hide-scrollbar pr-2">{" "}
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 text-gray-400 dark:text-[#9a9a9a] animate-spin" />
+                </div>
+              ) : activities.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <GitBranch className="w-12 h-12 text-gray-300 dark:text-[#3a3a3d] mb-3" />
+                  <p className="text-sm text-gray-500 dark:text-[#9a9a9a] mb-1">No recent activity</p>
+                  <p className="text-xs text-gray-400 dark:text-[#6e6e73]">GitHub activity from the last 7 days will appear here</p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto hide-scrollbar pr-2">{" "}
                 {activities.slice(0, 8).map((activity) => {
                   const { icon: Icon, color } = getActivityIcon(activity.activityType)
 
@@ -429,9 +426,10 @@ export default function MyDashboardPage() {
                     </div>
                   )
                 })}
-              </div>
-            )}
-          </Card>
+                </div>
+              )}
+            </Card>
+          )}
         </div>
       </div>
     </DashboardLayout>

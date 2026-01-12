@@ -26,6 +26,8 @@ export default function ProjectGitHub({ projectId }: ProjectGitHubProps) {
         projectId,
         (updatedActivities) => {
           console.log('[ProjectGitHub] Received activities:', updatedActivities.length)
+          
+          // Show ALL GitHub activities (no 7-day filter in project GitHub tab)
           setActivities(updatedActivities)
           setLoading(false)
         },
@@ -94,43 +96,24 @@ export default function ProjectGitHub({ projectId }: ProjectGitHubProps) {
   }
 
   if (loading) {
-    return (
-      <Card>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">GitHub Activity</h2>
-        <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading activities...</div>
-      </Card>
-    )
+    return null // Don't show while loading
   }
 
   if (error) {
-    return (
-      <Card>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">GitHub Activity</h2>
-        <div className="text-center py-8">
-          <AlertCircle className="w-12 h-12 text-red-300 dark:text-red-600 mx-auto mb-3" />
-          <p className="text-red-500 dark:text-red-400 text-sm mb-1">Error loading activities</p>
-          <p className="text-gray-400 dark:text-gray-500 text-xs">{error}</p>
-        </div>
-      </Card>
-    )
+    return null // Don't show on error
   }
 
   return (
     <Card>
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">GitHub Activity</h2>
       {activities.length === 0 ? (
-        <div className="text-center py-12">
-          <GitBranch className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-          <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">No GitHub activity yet</p>
-          <p className="text-gray-400 dark:text-gray-500 text-xs mb-2">
-            Activity will appear here when team members push commits, open PRs, or create issues
-          </p>
-          <p className="text-gray-400 dark:text-gray-500 text-xs font-mono bg-gray-50 dark:bg-[#2a2a2a] px-3 py-2 rounded inline-block">
-            Project ID: {projectId}
-          </p>
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <GitBranch className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">No GitHub activity yet</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500">Activity from your connected GitHub repository will appear here</p>
         </div>
       ) : (
-        <div className="space-y-4">
+      <div className="space-y-4">
           {activities.slice(0, 5).map((activity) => {
             const { icon: Icon, color } = getActivityIcon(activity.activityType)
             return (

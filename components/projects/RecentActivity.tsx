@@ -33,10 +33,21 @@ export default function RecentActivity({ projectId, projectName, onActivityClick
       q,
       (snapshot) => {
         console.log('[RecentActivity] Received', snapshot.docs.length, 'activities')
-        const fetchedActivities = snapshot.docs.map(docSnap => ({
-          id: docSnap.id,
-          ...docSnap.data()
-        } as GitHubActivity))
+        
+        // Filter activities to only include last 7 days
+        const sevenDaysAgo = new Date()
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+        
+        const fetchedActivities = snapshot.docs
+          .map(docSnap => ({
+            id: docSnap.id,
+            ...docSnap.data()
+          } as GitHubActivity))
+          .filter(activity => {
+            const activityDate = activity.createdAt?.toDate?.() || new Date(0)
+            return activityDate >= sevenDaysAgo
+          })
+        
         setActivities(fetchedActivities)
         
         // Fetch project names if showing activities from multiple projects
@@ -151,19 +162,18 @@ export default function RecentActivity({ projectId, projectName, onActivityClick
     )
   }
 
+  // Don't show anything if there are no activities
+  if (activities.length === 0) {
+    return null
+  }
+
   return (
     <div className="bg-white dark:bg-[#151517] border border-gray-200 dark:border-[#26262a] rounded-lg p-4">
       <h3 className="text-sm font-semibold text-gray-900 dark:text-[#eaeaea] mb-3 flex items-center gap-2">
         <Activity className="w-4 h-4" />
         GitHub Activity
       </h3>
-      {activities.length === 0 ? (
-        <div className="text-center py-6">
-          <Activity className="w-8 h-8 text-gray-300 dark:text-[#26262a] mx-auto mb-2" />
-          <p className="text-xs text-gray-500 dark:text-[#9a9a9a]">No activity</p>
-        </div>
-      ) : (
-        <div className="space-y-2">
+      <div className="space-y-2">
           {activities.slice(0, 3).map((activity) => {
             const { icon: Icon, color } = getActivityIcon(activity.activityType)
             const displayProjectName = projectName || projectNames[activity.projectId] || 'Project'
@@ -194,7 +204,6 @@ export default function RecentActivity({ projectId, projectName, onActivityClick
             )
           })}
         </div>
-      )}
     </div>
   )
 }
