@@ -32,54 +32,105 @@ export const taskServiceAdmin = {
     const messageKeywords = this.extractKeywords(commitMessage);
     console.log('Extracted Keywords from Commit:', messageKeywords);
     
-    const tasksSnapshot = await adminDb.collection('tasks')
-      .where('projectId', '==', projectId)
-      .where('status', '==', 'To Do')
-      .get();
+    if (messageKeywords.length === 0) {
+      console.log('⚠️  No valid keywords extracted from commit message');
+      console.log('=== END MATCHING ===');
+      return;
+    }
     
-    console.log('Found Tasks in To Do:', tasksSnapshot.size);
+    // If committing to main branch, check both "To Do" and "In Review" tasks
+    // Otherwise, only check "To Do" tasks
+    const statusesToCheck = isMainBranch ? ['To Do', 'In Review'] : ['To Do'];
     
-    for (const taskDoc of tasksSnapshot.docs) {
-      const task = taskDoc.data();
-      console.log('Checking Task:', task.title);
-      console.log('Task Keywords:', task.keywords);
-      console.log('Assigned To:', task.assignedTo);
+    console.log(`Checking tasks in status: ${statusesToCheck.join(', ')}`);
+    
+    for (const status of statusesToCheck) {
+      const tasksSnapshot = await adminDb.collection('tasks')
+        .where('projectId', '==', projectId)
+        .where('status', '==', status)
+        .get();
       
-      const userDoc = await adminDb.collection('users').doc(task.assignedTo).get();
+      console.log(`Found Tasks in "${status}":`, tasksSnapshot.size);
       
-      if (userDoc.exists) {
-        const userData = userDoc.data();
-        console.log('User GitHub Username:', userData?.githubUsername);
+      for (const taskDoc of tasksSnapshot.docs) {
+        const task = taskDoc.data();
+        console.log(`\n--- Checking Task: ${task.title}`);
+        console.log('Task ID:', taskDoc.id);
+        console.log('Current Status:', status);
+        console.log('Task Keywords:', task.keywords || 'MISSING!');
+        console.log('Assigned To:', task.assignedTo);
         
-        if (userData?.githubUsername?.toLowerCase() === githubUsername.toLowerCase()) {
-          console.log('✓ GitHub username matches!');
+        // Check if task has keywords
+        if (!task.keywords || !Array.isArray(task.keywords) || task.keywords.length === 0) {
+          console.log('✗ Task has no keywords - regenerating from title');
+          const regeneratedKeywords = this.extractKeywords(task.title);
+          await taskDoc.ref.update({
+            keywords: regeneratedKeywords,
+            updatedAt: Timestamp.now()
+          });
+          console.log('✓ Keywords regenerated:', regeneratedKeywords);
+          task.keywords = regeneratedKeywords;
+        }
+        
+        const userDoc = await adminDb.collection('users').doc(task.assignedTo).get();
+        
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          const userGithubUsername = userData?.githubUsername?.toLowerCase().trim();
+          const commitGithubUsername = githubUsername.toLowerCase().trim();
           
-          const keywordMatch = task.keywords.some((keyword: string) => 
-            messageKeywords.includes(keyword)
-          );
+          console.log('User GitHub Username:', userData?.githubUsername || 'NOT SET!');
           
-          console.log('Keyword match result:', keywordMatch);
+          if (!userData?.githubUsername) {
+            console.log('✗ User has no GitHub username set in their profile');
+            continue;
+          }
           
-          if (keywordMatch) {
-            const newStatus = isMainBranch ? 'Done' : 'In Review';
+          if (userGithubUsername === commitGithubUsername) {
+            console.log('✓ GitHub username matches!');
             
-            await taskDoc.ref.update({
-              status: newStatus,
-              updatedAt: Timestamp.now()
-            });
+            const keywordMatch = task.keywords.some((keyword: string) => 
+              messageKeywords.includes(keyword.toLowerCase())
+            );
             
-            console.log(`✓✓✓ Task ${taskDoc.id} moved to ${newStatus}!`);
+            console.log('Keyword match result:', keywordMatch);
+            
+            if (keywordMatch) {
+              let newStatus: string;
+              if (isMainBranch) {
+                newStatus = 'Done';
+              } else {
+                newStatus = 'In Review';
+              }
+              
+              await taskDoc.ref.update({
+                status: newStatus,
+                updatedAt: Timestamp.now()
+              });
+              
+              console.log(`✅✅✅ SUCCESS! Task "${task.title}" moved from "${status}" to "${newStatus}"!`);
+              console.log(`Task ID: ${taskDoc.id}`);
+              console.log('=== END MATCHING ===');
+              return;
+            } else {
+              console.log('✗ Keywords do not match');
+              console.log('  Task keywords:', task.keywords);
+              console.log('  Commit keywords:', messageKeywords);
+              console.log('  Suggestion: Include one of these words in your commit:', task.keywords.join(', '));
+            }
           } else {
-            console.log('✗ Keywords do not match');
+            console.log('✗ GitHub username does not match');
+            console.log(`  Expected: ${commitGithubUsername}`);
+            console.log(`  Got: ${userGithubUsername}`);
+            console.log('  Suggestion: Update GitHub username in user settings');
           }
         } else {
-          console.log('✗ GitHub username does not match');
-          console.log(`Expected: ${githubUsername.toLowerCase()}, Got: ${userData?.githubUsername?.toLowerCase()}`);
+          console.log('✗ User document not found for ID:', task.assignedTo);
         }
-      } else {
-        console.log('✗ User document not found');
       }
     }
+    
+    console.log('\n⚠️  No matching tasks found');
     console.log('=== END MATCHING ===');
   },
 
@@ -98,6 +149,12 @@ export const taskServiceAdmin = {
     const prKeywords = this.extractKeywords(combinedText);
     console.log('Extracted Keywords from PR:', prKeywords);
     
+    if (prKeywords.length === 0) {
+      console.log('⚠️  No valid keywords extracted from PR title/body');
+      console.log('=== END PR MERGE MATCHING ===');
+      return;
+    }
+    
     const tasksSnapshot = await adminDb.collection('tasks')
       .where('projectId', '==', projectId)
       .where('status', '==', 'In Review')
@@ -105,22 +162,49 @@ export const taskServiceAdmin = {
     
     console.log('Found Tasks in In Review:', tasksSnapshot.size);
     
+    if (tasksSnapshot.empty) {
+      console.log('⚠️  No tasks in "In Review" status for this project');
+      console.log('=== END PR MERGE MATCHING ===');
+      return;
+    }
+    
     for (const taskDoc of tasksSnapshot.docs) {
       const task = taskDoc.data();
-      console.log('Checking Task:', task.title);
-      console.log('Task Keywords:', task.keywords);
+      console.log('\n--- Checking Task:', task.title);
+      console.log('Task ID:', taskDoc.id);
+      console.log('Task Keywords:', task.keywords || 'MISSING!');
+      
+      // Check if task has keywords
+      if (!task.keywords || !Array.isArray(task.keywords) || task.keywords.length === 0) {
+        console.log('✗ Task has no keywords - regenerating from title');
+        const regeneratedKeywords = this.extractKeywords(task.title);
+        await taskDoc.ref.update({
+          keywords: regeneratedKeywords,
+          updatedAt: Timestamp.now()
+        });
+        console.log('✓ Keywords regenerated:', regeneratedKeywords);
+        task.keywords = regeneratedKeywords;
+      }
       
       const userDoc = await adminDb.collection('users').doc(task.assignedTo).get();
       
       if (userDoc.exists) {
         const userData = userDoc.data();
-        console.log('User GitHub Username:', userData?.githubUsername);
+        const userGithubUsername = userData?.githubUsername?.toLowerCase().trim();
+        const commitGithubUsername = githubUsername.toLowerCase().trim();
         
-        if (userData?.githubUsername?.toLowerCase() === githubUsername.toLowerCase()) {
+        console.log('User GitHub Username:', userData?.githubUsername || 'NOT SET!');
+        
+        if (!userData?.githubUsername) {
+          console.log('✗ User has no GitHub username set in their profile');
+          continue;
+        }
+        
+        if (userGithubUsername === commitGithubUsername) {
           console.log('✓ GitHub username matches!');
           
           const keywordMatch = task.keywords.some((keyword: string) => 
-            prKeywords.includes(keyword)
+            prKeywords.includes(keyword.toLowerCase())
           );
           
           console.log('Keyword match result:', keywordMatch);
@@ -130,17 +214,26 @@ export const taskServiceAdmin = {
               status: 'Done',
               updatedAt: Timestamp.now()
             });
-            console.log(`✓✓✓ Task ${taskDoc.id} moved to Done!`);
+            console.log(`✅✅✅ SUCCESS! Task "${task.title}" moved to Done!`);
+            console.log(`Task ID: ${taskDoc.id}`);
+            console.log('=== END PR MERGE MATCHING ===');
+            return;
           } else {
             console.log('✗ Keywords do not match');
+            console.log('  Task keywords:', task.keywords);
+            console.log('  PR keywords:', prKeywords);
+            console.log('  Suggestion: Include one of these words in your PR title/description:', task.keywords.join(', '));
           }
         } else {
           console.log('✗ GitHub username does not match');
+          console.log(`  Expected: ${commitGithubUsername}`);
+          console.log(`  Got: ${userGithubUsername}`);
         }
       } else {
-        console.log('✗ User document not found');
+        console.log('✗ User document not found for ID:', task.assignedTo);
       }
     }
+    console.log('\n⚠️  No matching tasks found');
     console.log('=== END PR MERGE MATCHING ===');
   }
 };

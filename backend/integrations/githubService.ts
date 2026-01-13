@@ -199,6 +199,7 @@ export const githubService = {
           
           // Try to match task
           try {
+            console.log(`[GitHub] Matching task for commit - Branch: ${branchName}, Is Main: ${isMainBranch}`);
             await taskServiceAdmin.matchTaskForCommit(
               projectId, 
               commitMessage, 
@@ -297,18 +298,20 @@ export const githubService = {
           
           console.log(`[GitHub] Stored PR merged activity: #${prNumber} by ${githubUsername}`);
           
-          // Try to match task for merged PR
-          const isMainBranch = pr.base?.ref === 'main' || pr.base?.ref === 'master';
+          // Try to match task for merged PR (any branch)
+          const baseBranch = pr.base?.ref || 'unknown';
+          const isMainBranch = baseBranch === 'main' || baseBranch === 'master';
           
-          if (isMainBranch) {
-            const prTitle = pr.title;
-            const prBody = pr.body || '';
-            
-            try {
-              await taskServiceAdmin.matchTaskForMerge(projectId, prTitle, prBody, githubUsername);
-            } catch (error) {
-              console.error(`[GitHub] Error matching task for merged PR #${prNumber}:`, error);
-            }
+          console.log(`[GitHub] PR merged to branch: ${baseBranch}, Is main branch: ${isMainBranch}`);
+          
+          const prTitle = pr.title;
+          const prBody = pr.body || '';
+          
+          try {
+            // Always try to match tasks when PR is merged, regardless of target branch
+            await taskServiceAdmin.matchTaskForMerge(projectId, prTitle, prBody, githubUsername);
+          } catch (error) {
+            console.error(`[GitHub] Error matching task for merged PR #${prNumber}:`, error);
           }
         } catch (error) {
           console.error(`[GitHub] Error storing PR merged activity #${prNumber}:`, error);

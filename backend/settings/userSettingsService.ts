@@ -50,6 +50,9 @@ export async function getUserSettings(userId: string): Promise<UserSettings> {
 
 export async function updateProfile(userId: string, data: { fullName?: string; githubUsername?: string }) {
   try {
+    console.log('[UserSettings] Updating profile for user:', userId);
+    console.log('[UserSettings] Update data:', data);
+    
     const updates: any = {
       updatedAt: new Date()
     }
@@ -57,16 +60,49 @@ export async function updateProfile(userId: string, data: { fullName?: string; g
     if (data.fullName !== undefined) updates.fullName = data.fullName
     if (data.githubUsername !== undefined) updates.githubUsername = data.githubUsername
     
-    await updateDoc(doc(db, 'userSettings', userId), updates)
+    // Update or create userSettings collection
+    try {
+      await updateDoc(doc(db, 'userSettings', userId), updates);
+      console.log('[UserSettings] Updated userSettings collection');
+    } catch (error: any) {
+      if (error.code === 'not-found') {
+        console.log('[UserSettings] userSettings document not found, creating it');
+        await setDoc(doc(db, 'userSettings', userId), updates);
+      } else {
+        throw error;
+      }
+    }
     
     // Also update the users collection
     const userUpdates: any = {}
     if (data.fullName !== undefined) userUpdates.name = data.fullName
     if (data.githubUsername !== undefined) userUpdates.githubUsername = data.githubUsername
     
-    await updateDoc(doc(db, 'users', userId), userUpdates)
+    try {
+      await updateDoc(doc(db, 'users', userId), userUpdates);
+      console.log('[UserSettings] Updated users collection with:', userUpdates);
+    } catch (error: any) {
+      if (error.code === 'not-found') {
+        console.log('[UserSettings] users document not found, creating it');
+        await setDoc(doc(db, 'users', userId), {
+          ...userUpdates,
+          createdAt: new Date()
+        });
+      } else {
+        throw error;
+      }
+    }
+    
+    // Verify the update
+    const userDoc = await getDoc(doc(db, 'users', userId));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      console.log('[UserSettings] ✅ Verification - GitHub username in users collection:', userData.githubUsername);
+    } else {
+      console.error('[UserSettings] ❌ User document still does not exist after update!');
+    }
   } catch (error) {
-    console.error('Error updating profile:', error)
+    console.error('[UserSettings] Error updating profile:', error)
     throw error
   }
 }

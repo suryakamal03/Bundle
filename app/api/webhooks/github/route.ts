@@ -9,15 +9,35 @@ export async function POST(req: NextRequest) {
     const signature = req.headers.get('x-hub-signature-256');
     const event = req.headers.get('x-github-event');
     const deliveryId = req.headers.get('x-github-delivery');
+    const contentType = req.headers.get('content-type');
     
     console.log(`[Webhook] Received GitHub event: ${event} (delivery: ${deliveryId})`);
+    console.log(`[Webhook] Content-Type: ${contentType}`);
     
     if (!event) {
       console.error('[Webhook] Missing event type header');
       return NextResponse.json({ error: 'Missing event type' }, { status: 400 });
     }
 
-    const payload = await req.json();
+    // Parse payload based on content type
+    let payload;
+    if (contentType?.includes('application/json')) {
+      // GitHub sends JSON directly
+      payload = await req.json();
+    } else if (contentType?.includes('application/x-www-form-urlencoded')) {
+      // GitHub sends form-encoded data with payload field
+      const text = await req.text();
+      const params = new URLSearchParams(text);
+      const payloadStr = params.get('payload');
+      if (!payloadStr) {
+        console.error('[Webhook] No payload field in form data');
+        return NextResponse.json({ error: 'Invalid payload format' }, { status: 400 });
+      }
+      payload = JSON.parse(payloadStr);
+    } else {
+      // Fallback: try parsing as JSON
+      payload = await req.json();
+    }
 
     if (!payload.repository) {
       console.error('[Webhook] Invalid payload: missing repository');
