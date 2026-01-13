@@ -14,6 +14,7 @@ import { getRelativeTime, cn } from '@/lib/utils'
 import { getDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { Task } from '@/types'
+import { AnimatedList } from '@/components/ui/animated-list'
 
 type TabType = 'todo' | 'in-review' | 'issues'
 
@@ -397,7 +398,8 @@ export default function MyDashboardPage() {
                   <p className="text-xs text-gray-400 dark:text-[#6e6e73]">GitHub activity from the last 7 days will appear here</p>
                 </div>
               ) : (
-                <div className="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto hide-scrollbar pr-2">{" "}
+                <div className="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto hide-scrollbar pr-2">
+                <AnimatedList>
                 {activities.slice(0, 8).map((activity) => {
                   const { icon: Icon, color } = getActivityIcon(activity.activityType)
 
@@ -426,6 +428,7 @@ export default function MyDashboardPage() {
                     </div>
                   )
                 })}
+                </AnimatedList>
                 </div>
               )}
             </Card>
