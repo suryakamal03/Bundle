@@ -55,13 +55,11 @@ IssueSkeleton.displayName = 'IssueSkeleton'
 const TodoTab = memo(({ 
   tasks, 
   loading, 
-  onTaskClick, 
-  onToggleReminder 
+  onTaskClick
 }: { 
   tasks: UserTask[]
   loading: boolean
   onTaskClick: (task: UserTask) => void
-  onToggleReminder: (id: string, current: boolean) => void
 }) => {
   if (loading) return <TaskSkeleton />
   
@@ -77,41 +75,18 @@ const TodoTab = memo(({
   return (
     <div className="space-y-3">
       {tasks.map((task) => {
-        const hasReminder = task.reminderEnabled ?? true
         return (
           <div
             key={task.id}
-            className="p-4 border border-gray-200 dark:border-[#26262a] bg-white dark:bg-[#151517] rounded-lg hover:bg-gray-50 dark:hover:bg-[#1c1c1f] transition-colors"
+            className="p-4 border border-gray-200 dark:border-[#26262a] bg-white dark:bg-[#151517] rounded-lg hover:bg-gray-50 dark:hover:bg-[#1c1c1f] transition-colors cursor-pointer"
+            onClick={() => onTaskClick(task)}
           >
-            <div className="flex items-start justify-between gap-3">
-              <div 
-                className="flex-1 min-w-0 cursor-pointer"
-                onClick={() => onTaskClick(task)}
-              >
-                <p className="text-sm font-medium text-gray-900 dark:text-[#eaeaea] mb-1">{task.title}</p>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="info" className="text-xs bg-gray-100 dark:bg-[#1c1c1f] text-gray-600 dark:text-[#9a9a9a] border-gray-300 dark:border-[#26262a]">
-                    {task.projectName || 'Unknown Project'}
-                  </Badge>
-                  <span className="text-xs text-gray-500 dark:text-[#9a9a9a]">{task.status}</span>
-                </div>
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onToggleReminder(task.id, hasReminder)
-                }}
-                className={cn(
-                  "w-11 h-6 rounded-full transition-colors relative flex-shrink-0",
-                  hasReminder ? "bg-blue-600 dark:bg-white" : "bg-gray-300 dark:bg-[#26262a]"
-                )}
-                title={hasReminder ? "Reminder enabled" : "Reminder disabled"}
-              >
-                <div className={cn(
-                  "w-5 h-5 rounded-full shadow-sm transition-transform absolute top-0.5",
-                  hasReminder ? "translate-x-5 bg-white dark:bg-black" : "translate-x-0.5 bg-gray-500 dark:bg-[#9a9a9a]"
-                )} />
-              </button>
+            <p className="text-sm font-medium text-gray-900 dark:text-[#eaeaea] mb-1">{task.title}</p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="info" className="text-xs bg-gray-100 dark:bg-[#1c1c1f] text-gray-600 dark:text-[#9a9a9a] border-gray-300 dark:border-[#26262a]">
+                {task.projectName || 'Unknown Project'}
+              </Badge>
+              <span className="text-xs text-gray-500 dark:text-[#9a9a9a]">{task.status}</span>
             </div>
           </div>
         )
@@ -346,24 +321,6 @@ export default function MyDashboardPage() {
     window.open(url, '_blank', 'noopener,noreferrer')
   }, [])
 
-  const toggleReminder = useCallback(async (taskId: string, currentValue: boolean) => {
-    try {
-      await updateDoc(doc(db, 'tasks', taskId), {
-        reminderEnabled: !currentValue,
-        reminderSent: false
-      })
-      
-      setTodoTasks(prev => prev.map(task => 
-        task.id === taskId ? { ...task, reminderEnabled: !currentValue } : task
-      ))
-      setInReviewTasks(prev => prev.map(task => 
-        task.id === taskId ? { ...task, reminderEnabled: !currentValue } : task
-      ))
-    } catch (error) {
-      console.error('Failed to toggle reminder:', error)
-    }
-  }, [])
-
   const handleTaskUpdate = useCallback(async () => {
     if (user) {
       // Clear cache when task is updated
@@ -451,7 +408,6 @@ export default function MyDashboardPage() {
                   tasks={todoTasks} 
                   loading={loading} 
                   onTaskClick={handleTaskClick}
-                  onToggleReminder={toggleReminder}
                 />
               </div>
               <div style={{ display: activeTab === 'in-review' ? 'block' : 'none' }}>

@@ -19,7 +19,6 @@ export default function TaskManagementPage() {
   const [tasks, setTasks] = useState<TaskManagementItem[]>([])
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState<FilterStatus>('All')
-  const [reminders, setReminders] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     if (!user) {
@@ -60,18 +59,6 @@ export default function TaskManagementPage() {
     } catch (error) {
       return null
     }
-  }
-
-  const toggleReminder = (taskId: string) => {
-    setReminders(prev => {
-      const newSet = new Set(prev)
-      if (newSet.has(taskId)) {
-        newSet.delete(taskId)
-      } else {
-        newSet.add(taskId)
-      }
-      return newSet
-    })
   }
 
   const filteredTasks = tasks.filter(task => {
@@ -136,24 +123,22 @@ export default function TaskManagementPage() {
         ) : (
           <div className="bg-white dark:bg-[#0f0f10] rounded-lg border border-gray-200 dark:border-[#26262a]">
             {/* Table Header */}
-            <div className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 border-b border-gray-200 dark:border-[#26262a] bg-gray-50 dark:bg-[#151517]">
+            <div className="grid grid-cols-[1fr,100px,150px,120px] gap-4 px-6 py-3 border-b border-gray-200 dark:border-[#26262a] bg-gray-50 dark:bg-[#151517]">
               <div className="text-xs font-semibold text-gray-600 dark:text-[#9a9a9a] uppercase">Name</div>
               <div className="text-xs font-semibold text-gray-600 dark:text-[#9a9a9a] uppercase">Status</div>
               <div className="text-xs font-semibold text-gray-600 dark:text-[#9a9a9a] uppercase">Assignee</div>
               <div className="text-xs font-semibold text-gray-600 dark:text-[#9a9a9a] uppercase">Due date</div>
-              <div className="text-xs font-semibold text-gray-600 dark:text-[#9a9a9a] uppercase">Remind Me</div>
             </div>
             
             {/* Task Rows */}
             <div className="divide-y divide-gray-200 dark:divide-[#26262a]">
               {filteredTasks.map((task) => {
                 const deadlineInfo = formatDeadline(task.deadlineAt)
-                const hasReminder = !reminders.has(task.id)
                 
                 return (
                   <div
                     key={task.id}
-                    className="grid grid-cols-[1fr,100px,150px,120px,100px] gap-4 px-6 py-3 hover:bg-gray-50 dark:hover:bg-[#1c1c1f] transition-colors group relative"
+                    className="grid grid-cols-[1fr,100px,150px,120px] gap-4 px-6 py-3 hover:bg-gray-50 dark:hover:bg-[#1c1c1f] transition-colors group relative"
                   >
                     {/* Task Title */}
                     <div 
@@ -215,25 +200,6 @@ export default function TaskManagementPage() {
                       ) : (
                         <span className="text-xs text-gray-500 dark:text-[#9a9a9a]">-</span>
                       )}
-                    </div>
-
-                    {/* Toggle Button */}
-                    <div className="flex items-center justify-center">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          toggleReminder(task.id)
-                        }}
-                        className={cn(
-                          "w-11 h-6 rounded-full transition-colors relative",
-                          hasReminder ? "bg-blue-600 dark:bg-white" : "bg-gray-300 dark:bg-[#26262a]"
-                        )}
-                      >
-                        <div className={cn(
-                          "w-5 h-5 rounded-full shadow-sm transition-transform absolute top-0.5",
-                          hasReminder ? "translate-x-5 bg-white dark:bg-black" : "translate-x-0.5 bg-gray-500 dark:bg-[#9a9a9a]"
-                        )} />
-                      </button>
                     </div>
                   </div>
                 )
