@@ -82,8 +82,11 @@ export async function POST(request: NextRequest) {
             memberName: task.assignedToName || userData.name || 'Team Member'
           })
 
+          // Use delivered@resend.dev for testing, or configure your own verified domain
+          const from = process.env.RESEND_FROM_EMAIL || 'Bundle <onboarding@resend.dev>'
+
           await resend.emails.send({
-            from: 'Ontrackr <noreply@ontrackr.app>',
+            from: from,
             to: userEmail,
             subject: `Task Reminder: ${task.title}`,
             html: emailHTML

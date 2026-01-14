@@ -60,11 +60,11 @@ export default function VerticalNav() {
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full" />
               )}
               <Icon className={cn(
-                'w-6 h-6 transition-transform',
+                'w-7 h-7 transition-transform',
                 isActive ? 'scale-110' : 'group-hover:scale-110'
               )} />
               <span className={cn(
-                'text-[10px] font-medium',
+                'text-[11px] font-medium',
                 isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'
               )}>
                 {item.name}
@@ -76,8 +76,8 @@ export default function VerticalNav() {
 
       {/* More Button */}
       <button className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all mt-auto">
-        <MoreHorizontal className="w-6 h-6" />
-        <span className="text-[10px] font-medium text-gray-500">More</span>
+        <MoreHorizontal className="w-7 h-7" />
+        <span className="text-[11px] font-medium text-gray-500">More</span>
       </button>
     </nav>
   )

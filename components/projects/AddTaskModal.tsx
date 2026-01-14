@@ -99,6 +99,10 @@ export default function AddTaskModal({ projectId, onClose, onTaskCreated }: AddT
         reminderEnabled: autoReminder
       })
 
+      // Clear dashboard cache so new task appears immediately
+      const cacheKey = `dashboard_cache_${assignedTo}`
+      sessionStorage.removeItem(cacheKey)
+
       onTaskCreated()
       onClose()
     } catch (err: any) {

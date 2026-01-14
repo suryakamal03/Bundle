@@ -138,6 +138,14 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
         assignedTo: memberId,
         assignedToName: memberName
       })
+      
+      // Clear dashboard cache for both old and new assignee
+      const task = tasks.find(t => t.id === taskId)
+      if (task?.assignedTo) {
+        sessionStorage.removeItem(`dashboard_cache_${task.assignedTo}`)
+      }
+      sessionStorage.removeItem(`dashboard_cache_${memberId}`)
+      
       setEditingAssignee(null)
     } catch (error) {
       console.error('Failed to update assignee:', error)
@@ -150,6 +158,13 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
       await updateDoc(taskRef, {
         deadlineAt: new Date(date)
       })
+      
+      // Clear dashboard cache for assigned user
+      const task = tasks.find(t => t.id === taskId)
+      if (task?.assignedTo) {
+        sessionStorage.removeItem(`dashboard_cache_${task.assignedTo}`)
+      }
+      
       setEditingDate(null)
     } catch (error) {
       console.error('Failed to update deadline:', error)
@@ -162,6 +177,13 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
       await updateDoc(taskRef, {
         priority: priority
       })
+      
+      // Clear dashboard cache for assigned user
+      const task = tasks.find(t => t.id === taskId)
+      if (task?.assignedTo) {
+        sessionStorage.removeItem(`dashboard_cache_${task.assignedTo}`)
+      }
+      
       setEditingPriority(null)
     } catch (error) {
       console.error('Failed to update priority:', error)
@@ -175,6 +197,13 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
       await updateDoc(taskRef, {
         title: newName.trim()
       })
+      
+      // Clear dashboard cache for assigned user
+      const task = tasks.find(t => t.id === taskId)
+      if (task?.assignedTo) {
+        sessionStorage.removeItem(`dashboard_cache_${task.assignedTo}`)
+      }
+      
       setEditingTaskName(null)
       setTaskNameValue('')
     } catch (error) {
@@ -206,6 +235,9 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
       }
       
       await taskService.createTask(taskData)
+      
+      // Clear dashboard cache for the assigned user
+      sessionStorage.removeItem(`dashboard_cache_${newTaskAssignee}`)
       
       // Reset form but keep creation mode and assignee for next task
       setNewTaskName('')

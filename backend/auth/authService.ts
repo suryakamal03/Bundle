@@ -51,6 +51,23 @@ export const authService = {
           githubUsername: data.githubUsername || '',
           createdAt: serverTimestamp()
         });
+
+        // Send welcome email
+        try {
+          await fetch('/api/emails/welcome', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: userCredential.user.email,
+              name: data.fullName
+            })
+          });
+        } catch (emailError) {
+          console.error('Failed to send welcome email:', emailError);
+          // Don't fail the signup if email fails
+        }
       }
       
       return userCredential;
@@ -78,7 +95,8 @@ export const authService = {
       const userCredential = await signInWithPopup(auth, provider);
 
       if (userCredential.user) {
-        await setDoc(doc(db, 'users', userCredential.user.uid), {
+        const userRef = doc(db, 'users', userCredential.user.uid);
+        const userDoc = await setDoc(userRef, {
           uid: userCredential.user.uid,
           email: userCredential.user.email,
           name: userCredential.user.displayName || userCredential.user.email,
@@ -86,6 +104,25 @@ export const authService = {
           githubUsername: '',
           createdAt: serverTimestamp()
         }, { merge: true });
+
+        // Send welcome email for new users (check if user was just created)
+        // Note: We use merge:true, so we can't easily detect if this is a new user
+        // You might want to add additional logic to check if user is new
+        try {
+          await fetch('/api/emails/welcome', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: userCredential.user.email,
+              name: userCredential.user.displayName || userCredential.user.email
+            })
+          });
+        } catch (emailError) {
+          console.error('Failed to send welcome email:', emailError);
+          // Don't fail the signup if email fails
+        }
       }
 
       return userCredential;

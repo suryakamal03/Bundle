@@ -48,6 +48,11 @@ export default function TaskDetailsModal({ task, onClose, onUpdate }: TaskDetail
         reminderSent: false
       })
       setReminderEnabled(enabled)
+      
+      // Clear dashboard cache for the assigned user
+      const cacheKey = `dashboard_cache_${task.assignedTo}`
+      sessionStorage.removeItem(cacheKey)
+      
       onUpdate()
     } catch (err: any) {
       setError(err.message || 'Failed to update reminder settings')
