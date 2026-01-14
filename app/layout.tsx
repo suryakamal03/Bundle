@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { AuthProvider } from '@/backend/auth/authContext'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { ToastProvider } from '@/contexts/ToastContext'
 
 export const metadata: Metadata = {
   title: 'Bundle - Project Management Platform',
@@ -18,7 +19,9 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <ThemeProvider>
-            {children}
+            <ToastProvider>
+              {children}
+            </ToastProvider>
           </ThemeProvider>
         </AuthProvider>
       </body>

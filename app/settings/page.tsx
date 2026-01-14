@@ -5,12 +5,10 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { User } from 'lucide-react'
 import { useAuth } from '@/backend/auth/authContext'
 import { getUserSettings, updateProfile } from '@/backend/settings/userSettingsService'
+import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
-import { signOut } from 'firebase/auth'
-import ChangePasswordModal from '@/components/settings/ChangePasswordModal'
 
 interface UserSettings {
   fullName: string
@@ -23,11 +21,16 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<UserSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [changingPassword, setChangingPassword] = useState(false)
   
   // Form states
   const [fullName, setFullName] = useState('')
   const [githubUsername, setGithubUsername] = useState('')
+  
+  // Password states
+  const [oldPassword, setOldPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   
   useEffect(() => {
     if (user?.uid) {
@@ -67,17 +70,49 @@ export default function SettingsPage() {
     }
   }
 
-  const handleLogout = async () => {
-    if (confirm('Are you sure you want to logout?')) {
-      try {
-        await signOut(auth)
-        window.location.href = '/auth/login'
-      } catch (error) {
-        console.error('Logout error:', error)
-        alert('Failed to logout')
+  const handleChangePassword = async () => {
+    if (!auth.currentUser || !settings) return
+
+    if (newPassword !== confirmPassword) {
+      alert('New passwords do not match!')
+      return
+    }
+
+    if (newPassword.length < 6) {
+      alert('Password must be at least 6 characters long!')
+      return
+    }
+
+    try {
+      setChangingPassword(true)
+
+      // Re-authenticate user
+      const credential = EmailAuthProvider.credential(settings.email, oldPassword)
+      await reauthenticateWithCredential(auth.currentUser, credential)
+
+      // Update password
+      await updatePassword(auth.currentUser, newPassword)
+
+      alert('Password changed successfully!')
+      setOldPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    } catch (error: any) {
+      console.error('Error changing password:', error)
+      if (error.code === 'auth/wrong-password') {
+        alert('Current password is incorrect!')
+      } else {
+        alert('Failed to change password. Please try again.')
       }
+    } finally {
+      setChangingPassword(false)
     }
   }
+
+  // Check if user is using email/password authentication
+  const isEmailPasswordUser = auth.currentUser?.providerData.some(
+    provider => provider.providerId === 'password'
+  )
 
   if (loading) {
     return (
@@ -144,47 +179,62 @@ export default function SettingsPage() {
             </div>
           </Card>
           
-          <Card className="border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
+          {isEmailPasswordUser && (
+            <Card className="border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                  <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Security</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Manage your password and account security</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Security</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Manage your password and account security</p>
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              <Button 
-                onClick={() => setShowPasswordModal(true)} 
-                variant="secondary"
-                className="w-full justify-center"
-              >
-                Change Password
-              </Button>
               
-              <Button 
-                onClick={handleLogout} 
-                variant="secondary" 
-                className="w-full justify-center text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-800"
-              >
-                Logout
-              </Button>
+              <div className="space-y-4">
+              <Input 
+                label="Current Password" 
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                disabled={changingPassword}
+                placeholder="Enter your current password"
+              />
+              
+              <Input 
+                label="New Password" 
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                disabled={changingPassword}
+                placeholder="Enter new password (min. 6 characters)"
+              />
+              
+              <Input 
+                label="Confirm New Password" 
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                disabled={changingPassword}
+                placeholder="Re-enter new password"
+              />
+              
+              <div className="flex justify-end pt-2">
+                <Button 
+                  onClick={handleChangePassword} 
+                  disabled={changingPassword || !oldPassword || !newPassword || !confirmPassword}
+                  className="min-w-[140px]"
+                >
+                  {changingPassword ? 'Changing...' : 'Change Password'}
+                </Button>
+              </div>
             </div>
-          </Card>
+            </Card>
+          )}
         </div>
       </div>
-      
-      {showPasswordModal && settings && (
-        <ChangePasswordModal 
-          onClose={() => setShowPasswordModal(false)}
-          userEmail={settings.email}
-          userName={settings.fullName}
-        />
-      )}
     </DashboardLayout>
   )
 }
