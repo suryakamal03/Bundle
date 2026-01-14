@@ -91,60 +91,90 @@ export default function SettingsPage() {
   
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Manage your account settings</p>
+        </div>
         
-        <div className="grid grid-cols-1 gap-6">
-          <div className="space-y-6">
-            <Card>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Personal Information</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Update your personal details here.</p>
+        <div className="space-y-6">
+          <Card className="border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Personal Information</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Update your personal details and profile</p>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <Input 
+                label="Full Name" 
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                disabled={saving}
+                placeholder="Enter your full name"
+              />
               
-              <div className="space-y-4">
-                <Input 
-                  label="Full Name" 
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  disabled={saving}
-                />
-                
-                <Input 
-                  label="Email Address" 
-                  type="email" 
-                  value={settings?.email || ''}
-                  disabled
-                  className="bg-gray-50 dark:bg-gray-900"
-                />
-                
-                <Input 
-                  label="GitHub Username" 
-                  value={githubUsername}
-                  onChange={(e) => setGithubUsername(e.target.value)}
-                  placeholder="Enter your GitHub username"
-                  disabled={saving}
-                />
-                
-                <Button onClick={handleSaveProfile} disabled={saving}>
+              <Input 
+                label="Email Address" 
+                type="email" 
+                value={settings?.email || ''}
+                disabled
+                className="bg-gray-50 dark:bg-gray-900 cursor-not-allowed"
+              />
+              
+              <Input 
+                label="GitHub Username" 
+                value={githubUsername}
+                onChange={(e) => setGithubUsername(e.target.value)}
+                placeholder="Enter your GitHub username"
+                disabled={saving}
+              />
+              
+              <div className="flex justify-end pt-2">
+                <Button onClick={handleSaveProfile} disabled={saving} className="min-w-[140px]">
                   {saving ? 'Saving...' : 'Save Changes'}
                 </Button>
               </div>
-            </Card>
-            
-            <Card>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Security</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Manage your password and account security.</p>
-              
-              <div className="space-y-3">
-                <Button onClick={() => setShowPasswordModal(true)} variant="secondary">
-                  Change Password
-                </Button>
-                
-                <Button onClick={handleLogout} variant="secondary" className="w-full text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20">
-                  Logout
-                </Button>
+            </div>
+          </Card>
+          
+          <Card className="border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
               </div>
-            </Card>
-          </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Security</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Manage your password and account security</p>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <Button 
+                onClick={() => setShowPasswordModal(true)} 
+                variant="secondary"
+                className="w-full justify-center"
+              >
+                Change Password
+              </Button>
+              
+              <Button 
+                onClick={handleLogout} 
+                variant="secondary" 
+                className="w-full justify-center text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-800"
+              >
+                Logout
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
       
