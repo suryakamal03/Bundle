@@ -6,10 +6,12 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Avatar from '@/components/ui/Avatar'
+import TaskDetailsModal from '@/components/projects/TaskDetailsModal'
 import { Calendar, Loader2 } from 'lucide-react'
 import { useAuth } from '@/backend/auth/authContext'
 import { taskManagementService, TaskManagementItem } from '@/backend/tasks/taskManagementService'
 import { cn } from '@/lib/utils'
+import { Task } from '@/types'
 
 type FilterStatus = 'All' | 'To Do' | 'In Review'
 
@@ -19,6 +21,7 @@ export default function TaskManagementPage() {
   const [tasks, setTasks] = useState<TaskManagementItem[]>([])
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState<FilterStatus>('All')
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
   useEffect(() => {
     if (!user) {
@@ -35,8 +38,30 @@ export default function TaskManagementPage() {
     return () => unsubscribe()
   }, [user])
 
-  const handleTaskClick = (projectId: string) => {
-    router.push(`/projects?project=${projectId}`)
+  const handleTaskClick = (task: TaskManagementItem) => {
+    // Convert TaskManagementItem to Task type for the modal
+    const taskForModal: Task = {
+      id: task.id,
+      title: task.title,
+      description: task.description || '',
+      status: task.status,
+      assignedTo: task.assignedTo,
+      assignedToName: task.assignedToName,
+      projectId: task.projectId,
+      deadlineAt: task.deadlineAt,
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+      projectName: task.projectName
+    }
+    setSelectedTask(taskForModal)
+  }
+
+  const handleCloseModal = () => {
+    setSelectedTask(null)
+  }
+
+  const handleTaskUpdate = () => {
+    setSelectedTask(null)
   }
 
   const formatDeadline = (deadline: any) => {
@@ -138,13 +163,11 @@ export default function TaskManagementPage() {
                 return (
                   <div
                     key={task.id}
-                    className="grid grid-cols-[1fr,100px,150px,120px] gap-4 px-6 py-3 hover:bg-gray-50 dark:hover:bg-[#1c1c1f] transition-colors group relative"
+                    className="grid grid-cols-[1fr,100px,150px,120px] gap-4 px-6 py-3 hover:bg-gray-50 dark:hover:bg-[#1c1c1f] transition-colors group relative cursor-pointer"
+                    onClick={() => handleTaskClick(task)}
                   >
                     {/* Task Title */}
-                    <div 
-                      className="flex-1 min-w-0 cursor-pointer flex items-center"
-                      onClick={() => handleTaskClick(task.projectId)}
-                    >
+                    <div className="flex-1 min-w-0 flex items-center">
                       <p className="text-sm font-medium text-gray-900 dark:text-[#eaeaea] group-hover:text-blue-600 dark:group-hover:text-white truncate">
                         {task.title}
                       </p>
@@ -212,6 +235,14 @@ export default function TaskManagementPage() {
           © 2025 Ontrackr. All rights reserved.
         </div>
       </div>
+
+      {selectedTask && (
+        <TaskDetailsModal
+          task={selectedTask}
+          onClose={handleCloseModal}
+          onUpdate={handleTaskUpdate}
+        />
+      )}
     </DashboardLayout>
   )
 }
