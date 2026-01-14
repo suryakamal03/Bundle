@@ -33,15 +33,19 @@ export const userTaskService = {
           id: docSnap.id
         }
 
-        // Fetch project name
+        // Fetch project name and verify project still exists
         if (task.projectId) {
           const projectDoc = await getDoc(doc(db, 'projects', task.projectId))
           if (projectDoc.exists()) {
             task.projectName = projectDoc.data()?.name || 'Unknown Project'
+            tasks.push(task)
+          } else {
+            // Skip tasks from deleted projects
+            console.log(`[UserTaskService] Skipping task ${docSnap.id} - project ${task.projectId} no longer exists`)
           }
+        } else {
+          tasks.push(task)
         }
-
-        tasks.push(task)
       }
 
       console.log(`[UserTaskService] Returning ${tasks.length} tasks`)
@@ -80,15 +84,19 @@ export const userTaskService = {
           id: docSnap.id
         }
 
-        // Fetch project name
+        // Fetch project name and verify project still exists
         if (task.projectId) {
           const projectDoc = await getDoc(doc(db, 'projects', task.projectId))
           if (projectDoc.exists()) {
             task.projectName = projectDoc.data()?.name || 'Unknown Project'
+            tasks.push(task)
+          } else {
+            // Skip tasks from deleted projects
+            console.log(`[UserTaskService] Skipping task ${docSnap.id} - project ${task.projectId} no longer exists`)
           }
+        } else {
+          tasks.push(task)
         }
-
-        tasks.push(task)
       }
 
       return tasks

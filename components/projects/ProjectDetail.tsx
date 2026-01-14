@@ -16,7 +16,7 @@ import { ChevronLeft, MoreVertical, Users, GitBranch, MessageSquare, Bot, Webhoo
 import { Project, User } from '@/types'
 import { inviteService } from '@/backend/projects/inviteService'
 import { useAuth } from '@/backend/auth/authContext'
-import { doc, deleteDoc, getDoc } from 'firebase/firestore'
+import { doc, deleteDoc, getDoc, collection, query, where, getDocs, writeBatch } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useRouter } from 'next/navigation'
 
@@ -101,7 +101,36 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
     if (!user) return
 
     try {
+      // Delete all related data in batches
+      const batch = writeBatch(db)
+      
+      // Delete all tasks associated with this project
+      const tasksQuery = query(collection(db, 'tasks'), where('projectId', '==', project.id))
+      const tasksSnapshot = await getDocs(tasksQuery)
+      tasksSnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      
+      // Delete all project members
+      const membersQuery = query(collection(db, 'projectMembers'), where('projectId', '==', project.id))
+      const membersSnapshot = await getDocs(membersQuery)
+      membersSnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      
+      // Delete all GitHub activities
+      const activitiesQuery = query(collection(db, 'githubActivity'), where('projectId', '==', project.id))
+      const activitiesSnapshot = await getDocs(activitiesQuery)
+      activitiesSnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      
+      // Commit all deletions
+      await batch.commit()
+      
+      // Finally delete the project itself
       await deleteDoc(doc(db, 'projects', project.id))
+      
       onBack()
     } catch (error) {
       console.error('Failed to delete project:', error)

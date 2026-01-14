@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
@@ -11,7 +11,7 @@ import { projectService, ProjectData } from '@/backend/projects/projectService'
 import { useAuth } from '@/backend/auth/authContext'
 import CreateProjectModal from './CreateProjectModal'
 import EditProjectModal from './EditProjectModal'
-import { doc, getDoc, deleteDoc } from 'firebase/firestore'
+import { doc, getDoc, deleteDoc, collection, query, where, getDocs, writeBatch } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 
 interface ProjectListProps {
@@ -21,13 +21,40 @@ interface ProjectListProps {
 
 export default function ProjectList({ onSelectProject, selectedProject }: ProjectListProps) {
   const { user } = useAuth()
+  
+  // Check cache immediately during initialization
+  const getInitialProjects = () => {
+    if (!user) return { loading: true, projects: [] }
+    
+    const cacheKey = `projects_cache_${user.uid}`
+    const cachedData = sessionStorage.getItem(cacheKey)
+    
+    if (cachedData) {
+      try {
+        const parsed = JSON.parse(cachedData)
+        const cacheAge = Date.now() - parsed.timestamp
+        
+        // Use cache if less than 5 minutes old
+        if (cacheAge < 5 * 60 * 1000) {
+          return { loading: false, projects: parsed.projects || [] }
+        }
+      } catch (e) {
+        // Invalid cache
+      }
+    }
+    return { loading: true, projects: [] }
+  }
+  
+  const initialState = getInitialProjects()
+  
   const [searchQuery, setSearchQuery] = useState('')
-  const [projects, setProjects] = useState<Array<Project>>([])
-  const [loading, setLoading] = useState(true)
+  const [projects, setProjects] = useState<Array<Project>>(initialState.projects)
+  const [loading, setLoading] = useState(initialState.loading)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [menuOpen, setMenuOpen] = useState<string | null>(null)
   const [editProject, setEditProject] = useState<Project | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const hasLoadedData = useRef(!!initialState.projects.length)
 
   const loadProjects = async () => {
     if (!user) return
@@ -67,6 +94,13 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
       )
 
       setProjects(projectsWithLeads)
+      
+      // Cache the data
+      const cacheKey = `projects_cache_${user.uid}`
+      sessionStorage.setItem(cacheKey, JSON.stringify({
+        projects: projectsWithLeads,
+        timestamp: Date.now()
+      }))
     } catch (error) {
       console.error('Failed to load projects:', error)
     } finally {
@@ -75,6 +109,8 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
   }
 
   useEffect(() => {
+    if (!user || hasLoadedData.current) return
+    hasLoadedData.current = true
     loadProjects()
   }, [user])
 
@@ -91,6 +127,11 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
   )
 
   const handleProjectCreated = () => {
+    // Clear cache when new project is created
+    if (user) {
+      const cacheKey = `projects_cache_${user.uid}`
+      sessionStorage.removeItem(cacheKey)
+    }
     loadProjects()
   }
 
@@ -98,7 +139,40 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
     if (!user) return
 
     try {
+      // Delete all related data in batches
+      const batch = writeBatch(db)
+      
+      // Delete all tasks associated with this project
+      const tasksQuery = query(collection(db, 'tasks'), where('projectId', '==', projectId))
+      const tasksSnapshot = await getDocs(tasksQuery)
+      tasksSnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      
+      // Delete all project members
+      const membersQuery = query(collection(db, 'projectMembers'), where('projectId', '==', projectId))
+      const membersSnapshot = await getDocs(membersQuery)
+      membersSnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      
+      // Delete all GitHub activities
+      const activitiesQuery = query(collection(db, 'githubActivity'), where('projectId', '==', projectId))
+      const activitiesSnapshot = await getDocs(activitiesQuery)
+      activitiesSnapshot.forEach((doc) => {
+        batch.delete(doc.ref)
+      })
+      
+      // Commit all deletions
+      await batch.commit()
+      
+      // Finally delete the project itself
       await deleteDoc(doc(db, 'projects', projectId))
+      
+      // Clear cache after deletion
+      const cacheKey = `projects_cache_${user.uid}`
+      sessionStorage.removeItem(cacheKey)
+      
       setDeleteConfirm(null)
       setMenuOpen(null)
       loadProjects()
