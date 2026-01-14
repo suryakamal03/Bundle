@@ -47,26 +47,26 @@ export default function TaskDetailsModal({ task, onClose, onUpdate }: TaskDetail
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-[#eaeaea] mb-1">
+            <label className="block text-xs font-medium text-[#9a9a9a] uppercase tracking-wide mb-2">
               Task Title
             </label>
-            <p className="text-[#eaeaea]">{task.title}</p>
+            <p className="text-base text-[#eaeaea] font-medium">{task.title}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#eaeaea] mb-1">
+            <label className="block text-xs font-medium text-[#9a9a9a] uppercase tracking-wide mb-2">
               Assigned To
             </label>
-            <p className="text-[#eaeaea]">{task.assignedToName || 'Unassigned'}</p>
+            <p className="text-base text-[#eaeaea]">{task.assignedToName || 'Unassigned'}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#eaeaea] mb-1">
+            <label className="block text-xs font-medium text-[#9a9a9a] uppercase tracking-wide mb-2">
               Status
             </label>
-            <span className={`inline-block px-2 py-1 text-xs font-semibold rounded ${
+            <span className={`inline-block px-3 py-1.5 text-sm font-semibold rounded ${
               task.status === 'Done' ? 'bg-green-500/10 text-green-400' :
               task.status === 'In Review' ? 'bg-yellow-500/10 text-yellow-400' :
               'bg-blue-500/10 text-blue-400'
@@ -76,10 +76,10 @@ export default function TaskDetailsModal({ task, onClose, onUpdate }: TaskDetail
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#eaeaea] mb-1">
+            <label className="block text-xs font-medium text-[#9a9a9a] uppercase tracking-wide mb-2">
               Deadline
             </label>
-            <p className="text-[#eaeaea]">{formatDate(task.deadlineAt)}</p>
+            <p className="text-base text-[#eaeaea]">{formatDate(task.deadlineAt)}</p>
           </div>
         </div>
       </div>
