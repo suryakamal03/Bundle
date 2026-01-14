@@ -137,7 +137,7 @@ curl http://localhost:3000/api/reminders/test
 Required in `.env.local`:
 ```bash
 # Resend API Key (Required)
-RESEND_API_KEY=re_grHiM3GV_LJSckTRtttaiNYtDkvXyx7r7
+RESEND_API_KEY=your_resend_api_key_here
 
 # Optional: Custom sender email (requires domain verification)
 RESEND_FROM_EMAIL=Bundle <noreply@ontrackr.app>
