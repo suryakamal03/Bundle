@@ -173,6 +173,9 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
 
   const updateTaskPriority = async (taskId: string, priority: string) => {
     try {
+      // Close dropdown immediately
+      setEditingPriority(null)
+      
       const taskRef = doc(db, 'tasks', taskId)
       await updateDoc(taskRef, {
         priority: priority
@@ -183,8 +186,6 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
       if (task?.assignedTo) {
         sessionStorage.removeItem(`dashboard_cache_${task.assignedTo}`)
       }
-      
-      setEditingPriority(null)
     } catch (error) {
       console.error('Failed to update priority:', error)
     }

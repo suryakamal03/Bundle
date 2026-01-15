@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import ProjectList from '@/components/projects/ProjectList'
 import ProjectDetail from '@/components/projects/ProjectDetail'
@@ -12,9 +13,106 @@ import { db } from '@/lib/firebase'
 import { Plus } from 'lucide-react'
 
 export default function ProjectsPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [activeTab, setActiveTab] = useState<'tasks' | 'github' | 'team' | 'chat' | 'ai-assigner' | 'webhook'>('tasks')
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Load project from URL or localStorage on mount and refresh
+  useEffect(() => {
+    const loadProject = async () => {
+      // First check URL params
+      let projectId = searchParams.get('projectId')
+      let tab = searchParams.get('tab') as typeof activeTab
+      
+      // If not in URL, check localStorage
+      if (!projectId) {
+        const savedProjectId = localStorage.getItem('lastSelectedProjectId')
+        const savedTab = localStorage.getItem('lastSelectedProjectTab') as typeof activeTab
+        
+        if (savedProjectId) {
+          projectId = savedProjectId
+          tab = savedTab || 'tasks'
+        }
+      }
+      
+      if (projectId) {
+        try {
+          const projectDoc = await getDoc(doc(db, 'projects', projectId))
+          if (projectDoc.exists()) {
+            const projectData = projectDoc.data()
+            const project: Project = {
+              id: projectDoc.id,
+              name: projectData.name,
+              description: projectData.description,
+              status: projectData.status,
+              progress: projectData.progress,
+              githubOwner: projectData.githubOwner,
+              githubRepo: projectData.githubRepo,
+              githubRepoUrl: projectData.githubRepoUrl,
+              lead: null
+            }
+            setSelectedProject(project)
+            
+            // Restore tab if specified
+            if (tab && ['tasks', 'github', 'team', 'chat', 'ai-assigner', 'webhook'].includes(tab)) {
+              setActiveTab(tab)
+            }
+            
+            // Update URL to reflect the state
+            const params = new URLSearchParams()
+            params.set('projectId', project.id)
+            params.set('tab', tab || 'tasks')
+            router.replace(`/projects?${params.toString()}`, { scroll: false })
+          }
+        } catch (error) {
+          console.error('Failed to load project:', error)
+        }
+      }
+      setIsLoading(false)
+    }
+    
+    loadProject()
+  }, [searchParams])
+
+  // Update URL when project or tab changes
+  const handleSelectProject = (project: Project | null) => {
+    setSelectedProject(project)
+    
+    if (project) {
+      // Save to localStorage
+      localStorage.setItem('lastSelectedProjectId', project.id)
+      localStorage.setItem('lastSelectedProjectTab', activeTab)
+      
+      // Update URL with project ID and current tab
+      const params = new URLSearchParams()
+      params.set('projectId', project.id)
+      params.set('tab', activeTab)
+      router.push(`/projects?${params.toString()}`, { scroll: false })
+    } else {
+      // Clear localStorage and URL params when no project selected
+      localStorage.removeItem('lastSelectedProjectId')
+      localStorage.removeItem('lastSelectedProjectTab')
+      router.push('/projects', { scroll: false })
+    }
+  }
+
+  // Update URL when tab changes
+  const handleTabChange = (tab: typeof activeTab) => {
+    setActiveTab(tab)
+    
+    if (selectedProject) {
+      // Save to localStorage
+      localStorage.setItem('lastSelectedProjectTab', tab)
+      
+      const params = new URLSearchParams()
+      params.set('projectId', selectedProject.id)
+      params.set('tab', tab)
+      router.push(`/projects?${params.toString()}`, { scroll: false })
+    }
+  }
 
   const handleActivityClick = async (projectId: string) => {
     try {
@@ -34,11 +132,33 @@ export default function ProjectsPage() {
           lead: null
         }
         setSelectedProject(project)
-        setActiveTab('github') // Switch to GitHub tab
+        setActiveTab('github')
+        
+        // Save to localStorage
+        localStorage.setItem('lastSelectedProjectId', project.id)
+        localStorage.setItem('lastSelectedProjectTab', 'github')
+        
+        // Update URL
+        const params = new URLSearchParams()
+        params.set('projectId', project.id)
+        params.set('tab', 'github')
+        router.push(`/projects?${params.toString()}`, { scroll: false })
       }
     } catch (error) {
       console.error('Failed to load project:', error)
     }
+  }
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <p className="text-sm text-gray-600 dark:text-[#9a9a9a]">Loading...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    )
   }
 
   return (
@@ -46,7 +166,7 @@ export default function ProjectsPage() {
       <div className="flex gap-4 h-full">
         {/* Left Sidebar - Projects & Activity */}
         <div className="w-80 flex-shrink-0 space-y-4 overflow-y-auto">
-          <ProjectList onSelectProject={setSelectedProject} selectedProject={selectedProject} />
+          <ProjectList onSelectProject={handleSelectProject} selectedProject={selectedProject} />
           <RecentActivity onActivityClick={handleActivityClick} />
         </div>
 
@@ -55,9 +175,9 @@ export default function ProjectsPage() {
           {selectedProject ? (
             <ProjectDetail 
               project={selectedProject} 
-              onBack={() => setSelectedProject(null)}
+              onBack={() => handleSelectProject(null)}
               activeTab={activeTab}
-              onTabChange={setActiveTab}
+              onTabChange={handleTabChange}
             />
           ) : (
             <div className="flex items-center justify-center h-full">
