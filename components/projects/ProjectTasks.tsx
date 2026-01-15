@@ -24,17 +24,18 @@ interface ProjectMember {
 
 interface ProjectTasksProps {
   projectId: string
+  showAddTaskModal: boolean
+  setShowAddTaskModal: (show: boolean) => void
 }
 
 // Simple in-memory cache for members to prevent re-fetching on tab switches
 const membersCache = new Map<string, { data: ProjectMember[], timestamp: number }>()
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
-export default function ProjectTasks({ projectId }: ProjectTasksProps) {
+export default function ProjectTasks({ projectId, showAddTaskModal, setShowAddTaskModal }: ProjectTasksProps) {
   const [tasks, setTasks] = useState<Task[]>([])
   const [members, setMembers] = useState<ProjectMember[]>([])
   const [selectedMember, setSelectedMember] = useState<string | null>(null)
-  const [showAddModal, setShowAddModal] = useState(false)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [loading, setLoading] = useState(true)
   const [loadingMembers, setLoadingMembers] = useState(true)
@@ -308,14 +309,6 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
 
   return (
     <div className="space-y-4">
-      {/* Add Task Button */}
-      <div className="flex items-center justify-end">
-        <Button size="sm" className="gap-2 bg-white text-black hover:bg-gray-200" onClick={() => setShowAddModal(true)}>
-          <Plus className="w-4 h-4" />
-          Add Task
-        </Button>
-      </div>
-
       {/* Member Pills (Secondary Filter) */}
       {!loadingMembers && members.length > 0 && (
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
@@ -838,10 +831,10 @@ export default function ProjectTasks({ projectId }: ProjectTasksProps) {
         </div>
       )}
 
-      {showAddModal && (
+      {showAddTaskModal && (
         <AddTaskModal
           projectId={projectId}
-          onClose={() => setShowAddModal(false)}
+          onClose={() => setShowAddTaskModal(false)}
           onTaskCreated={() => {}}
         />
       )}

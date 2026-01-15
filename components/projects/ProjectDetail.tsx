@@ -12,7 +12,7 @@ import ProjectGroupChat from '@/components/projects/ProjectGroupChat'
 import ProjectAssignerAI from '@/components/projects/ProjectAssignerAI'
 import WebhookConfig from '@/components/projects/WebhookConfig'
 import EditProjectModal from '@/components/projects/EditProjectModal'
-import { ChevronLeft, MoreVertical, Users, GitBranch, MessageSquare, Bot, Webhook, Edit2, Trash2, List, LayoutGrid, Calendar as CalendarIcon, BarChart3, Table, Filter, UserCircle, ChevronDown } from 'lucide-react'
+import { ChevronLeft, MoreVertical, Users, GitBranch, MessageSquare, Bot, Webhook, Edit2, Trash2, List, LayoutGrid, Calendar as CalendarIcon, BarChart3, Table, Filter, UserCircle, ChevronDown, Plus } from 'lucide-react'
 import { Project, User } from '@/types'
 import { inviteService } from '@/backend/projects/inviteService'
 import { useAuth } from '@/backend/auth/authContext'
@@ -37,6 +37,7 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [isLead, setIsLead] = useState(false)
   const [updatedProject, setUpdatedProject] = useState(project)
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false)
 
   // Sync external activeTab changes
   useEffect(() => {
@@ -155,7 +156,7 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full">
       {showEditModal && (
         <EditProjectModal
           projectId={project.id}
@@ -200,8 +201,8 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
         </div>
       )}
 
-      {/* ClickUp-style Header */}
-      <div className="space-y-4">
+      {/* Fixed Header Section */}
+      <div className="flex-shrink-0 space-y-4 pb-4">
         {/* Top Bar with Project Name */}
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold text-[#eaeaea]">{updatedProject.name}</h1>
@@ -247,8 +248,8 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
           )}
         </div>
 
-        {/* View Switcher Bar (ClickUp style) */}
-        <div className="flex items-center justify-between">
+        {/* View Switcher Bar (ClickUp style) - Now in same line with Add Task button */}
+        <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1 bg-[#0f0f10] border border-[#26262a] rounded-lg p-1">
             <button
               onClick={() => handleTabChange('tasks')}
@@ -317,11 +318,23 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
               Webhook
             </button>
           </div>
+          
+          {/* Add Task Button - Only visible on tasks tab */}
+          {activeTab === 'tasks' && (
+            <button
+              onClick={() => setShowAddTaskModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-md text-sm font-medium transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Add Task
+            </button>
+          )}
         </div>
       </div>
 
-      <div>
-        {activeTab === 'tasks' && <ProjectTasks projectId={project.id} />}
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto">
+        {activeTab === 'tasks' && <ProjectTasks projectId={project.id} showAddTaskModal={showAddTaskModal} setShowAddTaskModal={setShowAddTaskModal} />}
         {activeTab === 'github' && <ProjectGitHub projectId={project.id} />}
         {activeTab === 'team' && <ProjectTeam projectId={project.id} />}
         {activeTab === 'chat' && <ProjectGroupChat projectId={project.id} />}
