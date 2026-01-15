@@ -182,7 +182,12 @@ export default function TaskManagementPage() {
                           task.status === 'In Review' ? 'warning' : 
                           'info'
                         }
-                        className="text-xs bg-gray-100 dark:bg-[#1c1c1f] text-gray-600 dark:text-[#9a9a9a] border-gray-300 dark:border-[#26262a]"
+                        className={cn(
+                          "text-xs",
+                          task.status === 'Done' 
+                            ? "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-300 dark:border-green-800" 
+                            : "bg-gray-100 dark:bg-[#1c1c1f] text-gray-600 dark:text-[#9a9a9a] border-gray-300 dark:border-[#26262a]"
+                        )}
                       >
                         {task.status}
                       </Badge>
