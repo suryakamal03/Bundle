@@ -7,11 +7,12 @@ import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Avatar from '@/components/ui/Avatar'
 import TaskDetailsModal from '@/components/projects/TaskDetailsModal'
-import { Calendar, Loader2 } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { useAuth } from '@/backend/auth/authContext'
 import { taskManagementService, TaskManagementItem } from '@/backend/tasks/taskManagementService'
 import { cn } from '@/lib/utils'
 import { Task } from '@/types'
+import Loading from '@/components/ui/Loading'
 
 type FilterStatus = 'All' | 'To Do' | 'In Review'
 
@@ -132,7 +133,7 @@ export default function TaskManagementPage() {
         
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 text-gray-400 dark:text-[#9a9a9a] animate-spin" />
+            <Loading />
           </div>
         ) : filteredTasks.length === 0 ? (
           <div className="text-center py-12">

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, Sparkles, Check, X, Loader2, AlertCircle } from 'lucide-react'
+import { Send, Sparkles, Check, X, AlertCircle } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
@@ -9,6 +9,7 @@ import Avatar from '@/components/ui/Avatar'
 import { generateTaskAssignments, AIGeneratedTask } from '@/backend/integrations/taskAssignerService'
 import { taskService } from '@/backend/tasks/taskService'
 import { User } from '@/types'
+import Loading from '@/components/ui/Loading'
 
 interface ProjectAssignerAIProps {
   projectId: string
@@ -294,8 +295,8 @@ Use @ to mention team members...`}
           >
             {isGenerating ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Generating Tasks...
+                <Loading size={16} />
+                <span className="ml-2">Generating Tasks...</span>
               </>
             ) : (
               <>
@@ -415,8 +416,8 @@ Use @ to mention team members...`}
             >
               {isAssigning ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Assigning Tasks...
+                  <Loading size={16} />
+                  <span className="ml-2">Assigning Tasks...</span>
                 </>
               ) : (
                 <>

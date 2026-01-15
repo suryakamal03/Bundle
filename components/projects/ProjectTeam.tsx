@@ -6,8 +6,9 @@ import Badge from '@/components/ui/Badge'
 import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
 import InviteMemberModal from './InviteMemberModal'
-import { UserPlus, Crown, Loader } from 'lucide-react'
+import { UserPlus, Crown } from 'lucide-react'
 import { inviteService } from '@/backend/projects/inviteService'
+import Loading from '@/components/ui/Loading'
 import { useAuth } from '@/backend/auth/authContext'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
@@ -70,7 +71,7 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
     return (
       <Card>
         <div className="flex items-center justify-center py-12">
-          <Loader className="w-8 h-8 text-primary-500 animate-spin" />
+          <Loading />
         </div>
       </Card>
     )

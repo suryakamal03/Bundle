@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
-import { Sparkles, Download, Save, Trash2, Eye, Loader2, AlertCircle, Copy, Check } from 'lucide-react'
+import { Sparkles, Download, Save, Trash2, Eye, AlertCircle, Copy, Check } from 'lucide-react'
 import { useAuth } from '@/backend/auth/authContext'
 import { generateFlowchart } from '@/backend/integrations/geminiService'
 import { flowchartService } from '@/backend/projects/flowchartService'
 import { Flowchart } from '@/types'
+import Loading from '@/components/ui/Loading'
 
 interface ProjectFlowchartProps {
   projectId: string
@@ -180,7 +181,7 @@ export default function ProjectFlowchart({ projectId }: ProjectFlowchartProps) {
             >
               {generating ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loading size={16} />
                   Generating...
                 </>
               ) : (
@@ -228,7 +229,7 @@ export default function ProjectFlowchart({ projectId }: ProjectFlowchartProps) {
                   >
                     {saving ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loading size={16} />
                         Saving...
                       </>
                     ) : (

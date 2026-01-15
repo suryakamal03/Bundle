@@ -6,7 +6,8 @@ import { useAuth } from '@/backend/auth/authContext'
 import { inviteService } from '@/backend/projects/inviteService'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
-import { UserPlus, CheckCircle, XCircle, Loader } from 'lucide-react'
+import { UserPlus, CheckCircle, XCircle } from 'lucide-react'
+import Loading from '@/components/ui/Loading'
 
 interface InvitePageProps {
   params: {
@@ -107,8 +108,8 @@ export default function InvitePage({ params }: InvitePageProps) {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md p-8">
           <div className="flex flex-col items-center">
-            <Loader className="w-12 h-12 text-primary-500 animate-spin mb-4" />
-            <p className="text-gray-600">Validating invite...</p>
+            <Loading size={48} />
+            <p className="text-gray-600 mt-4">Validating invite...</p>
           </div>
         </Card>
       </div>

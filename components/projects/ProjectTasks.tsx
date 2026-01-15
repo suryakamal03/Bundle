@@ -14,6 +14,7 @@ import { Task } from '@/types'
 import { cn } from '@/lib/utils'
 import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import Loading from '@/components/ui/Loading'
 
 interface ProjectMember {
   id: string
@@ -347,7 +348,7 @@ export default function ProjectTasks({ projectId, showAddTaskModal, setShowAddTa
       {/* ClickUp-style Task Table */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+          <Loading />
         </div>
       ) : (
         <div className="space-y-6">

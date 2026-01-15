@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Send, Loader2 } from 'lucide-react'
+import { Send } from 'lucide-react'
 import { getSocket } from '@/lib/socket'
 import { useAuth } from '@/backend/auth/authContext'
 import Card from '@/components/ui/Card'
 import Avatar from '@/components/ui/Avatar'
+import Loading from '@/components/ui/Loading'
 
 interface ChatMessage {
   id: string
@@ -274,7 +275,7 @@ export default function ProjectGroupChat({ projectId }: ProjectGroupChatProps) {
             aria-label="Send message"
           >
             {isSending ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loading size={20} />
             ) : (
               <Send className="w-5 h-5" />
             )}
