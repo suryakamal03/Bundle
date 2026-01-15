@@ -163,14 +163,14 @@ export default function ProjectsPage() {
 
   return (
     <DashboardLayout>
-      <div className="flex gap-4 h-full">
-        {/* Left Sidebar - Projects & Activity */}
+      <div className="flex gap-4 h-[calc(100vh-7rem)] overflow-hidden">
+        {/* Left Sidebar - Projects & Activity - Fixed, no scroll on parent */}
         <div className="w-80 flex-shrink-0 space-y-4 overflow-y-auto">
           <ProjectList onSelectProject={handleSelectProject} selectedProject={selectedProject} />
           <RecentActivity onActivityClick={handleActivityClick} />
         </div>
 
-        {/* Right Content Area */}
+        {/* Right Content Area - Scrollable */}
         <div className="flex-1 overflow-y-auto">
           {selectedProject ? (
             <ProjectDetail 
