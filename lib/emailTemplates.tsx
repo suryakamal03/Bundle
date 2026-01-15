@@ -118,7 +118,7 @@ export const TaskReminderEmailTemplate = ({
       <body>
         <div className="container">
           <div className="header">
-            <h1>Ontrackr Task Reminder</h1>
+            <h1>Bundle Task Reminder</h1>
           </div>
           <div className="content">
             <p className="greeting">Hi {memberName},</p>
@@ -141,16 +141,16 @@ export const TaskReminderEmailTemplate = ({
               </div>
             </div>
             <p className="message">
-              Please log in to Ontrackr to view the task details and update its status if you have already completed it.
+              Please log in to Bundle to view the task details and update its status if you have already completed it.
             </p>
             <div style={{ textAlign: 'center' }}>
-              <a href="https://ontrackr.app" className="cta-button">
+              <a href="https://bundle.app" className="cta-button">
                 View Task
               </a>
             </div>
           </div>
           <div className="footer">
-            <p>This is an automated reminder from Ontrackr</p>
+            <p>This is an automated reminder from Bundle</p>
             <p>To manage your notification preferences, log in to your account</p>
           </div>
         </div>
@@ -267,7 +267,7 @@ export const generateTaskReminderHTML = (props: EmailTemplateProps): string => {
   <body>
     <div class="container">
       <div class="header">
-        <h1>Ontrackr Task Reminder</h1>
+        <h1>Bundle Task Reminder</h1>
       </div>
       <div class="content">
         <p class="greeting">Hi ${memberName},</p>
@@ -290,16 +290,16 @@ export const generateTaskReminderHTML = (props: EmailTemplateProps): string => {
           </div>
         </div>
         <p class="message">
-          Please log in to Ontrackr to view the task details and update its status if you have already completed it.
+          Please log in to Bundle to view the task details and update its status if you have already completed it.
         </p>
         <div style="text-align: center;">
-          <a href="https://ontrackr.app" class="cta-button">
+          <a href="https://bundle.app" class="cta-button">
             View Task
           </a>
         </div>
       </div>
       <div class="footer">
-        <p>This is an automated reminder from Ontrackr</p>
+        <p>This is an automated reminder from Bundle</p>
         <p>To manage your notification preferences, log in to your account</p>
       </div>
     </div>
@@ -485,7 +485,7 @@ export const generateWelcomeEmailHTML = ({ name }: WelcomeEmailProps): string =>
         </div>
 
         <div style="text-align: center;">
-          <a href="https://ontrackr.app/projects" class="cta-button">
+          <a href="https://bundle.app/projects" class="cta-button">
             Get Started Now
           </a>
         </div>
@@ -501,7 +501,7 @@ export const generateWelcomeEmailHTML = ({ name }: WelcomeEmailProps): string =>
       </div>
       <div class="footer">
         <p>This email was sent to you because you created a Bundle account</p>
-        <p>Need help? Visit our <a href="https://ontrackr.app">Help Center</a></p>
+        <p>Need help? Visit our <a href="https://bundle.app">Help Center</a></p>
       </div>
     </div>
   </body>

@@ -1,10 +1,10 @@
 # Task and Project Deadline Reminders
 
-This document explains the deadline and reminder system implemented in Ontrackr.
+This document explains the deadline and reminder system implemented in Bundle.
 
 ## Overview
 
-Ontrackr now supports project-level and task-level deadlines with automated email reminders sent one day before task deadlines.
+Bundle now supports project-level and task-level deadlines with automated email reminders sent one day before task deadlines.
 
 ## Features
 
@@ -51,7 +51,7 @@ Email reminders are sent via Resend and include:
 - Task title
 - Project name
 - Task deadline date
-- Branded Ontrackr template
+- Branded Bundle template
 - Clear call-to-action to view the task
 
 ## Technical Implementation
@@ -126,7 +126,7 @@ Email reminders are sent via Resend and include:
 ### Email Template
 
 The email template (`lib/emailTemplates.tsx`) provides:
-- Branded HTML email with Ontrackr styling
+- Branded HTML email with Bundle styling
 - Clear task information
 - Responsive design
 - Professional appearance
@@ -197,7 +197,7 @@ curl -X POST https://your-domain.com/api/reminders/send \
 2. Update the "from" address in `app/api/reminders/send/route.ts` to match your verified domain:
 
 ```typescript
-from: 'Ontrackr <noreply@your-domain.com>'
+from: 'Bundle <noreply@your-domain.com>'
 ```
 
 ## Usage

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the complete backend implementation for tracking GitHub repository activities in real-time within the Ontrackr application.
+This document describes the complete backend implementation for tracking GitHub repository activities in real-time within the Bundle application.
 
 ## Architecture
 

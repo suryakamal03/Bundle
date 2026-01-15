@@ -6,7 +6,7 @@ Complete Firebase Authentication integration with Email/Password and Google Sign
 ## Folder Structure
 
 ```
-Ontrackr/
+Bundle/
 ├── backend/
 │   └── auth/
 │       ├── authService.ts       # Core authentication functions

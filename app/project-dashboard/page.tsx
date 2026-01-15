@@ -15,9 +15,9 @@ export default function ProjectDashboardPage() {
         
         <Card>
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Ontrackr Core Development</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Bundle Core Development</h2>
             <p className="text-sm text-gray-600 mb-4">
-              Develop and refine the core features of the Ontrackr SaaS platform, focusing on task management, GitHub integration, and AI-powered risk assessment for optimal team productivity.
+              Develop and refine the core features of the Bundle SaaS platform, focusing on task management, GitHub integration, and AI-powered risk assessment for optimal team productivity.
             </p>
             <div className="flex items-center gap-3">
               <Badge variant="warning">Project Health: Warning</Badge>

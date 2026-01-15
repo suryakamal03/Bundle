@@ -3,7 +3,7 @@
   "description": "Sends email reminders for tasks due tomorrow",
   "schedule": "0 9 * * *",
   "timezone": "UTC",
-  "url": "https://your-ontrackr-domain.com/api/reminders/send",
+  "url": "https://your-bundle-domain.com/api/reminders/send",
   "method": "POST",
   "headers": {
     "Authorization": "Bearer YOUR_CRON_SECRET",

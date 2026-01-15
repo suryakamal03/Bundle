@@ -1,7 +1,7 @@
 # Task Management System Implementation
 
 ## Overview
-This implementation adds a complete task management system with GitHub integration to the Ontrackr application. Tasks can be created, assigned to project members, and automatically progress through workflow stages based on verified GitHub commits and merges.
+This implementation adds a complete task management system with GitHub integration to the Bundle application. Tasks can be created, assigned to project members, and automatically progress through workflow stages based on verified GitHub commits and merges.
 
 ## Implementation Summary
 

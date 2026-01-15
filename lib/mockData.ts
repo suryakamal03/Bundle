@@ -4,7 +4,7 @@ export const mockDevelopers: Developer[] = [
   {
     id: '1',
     name: 'Alice Johnson',
-    email: 'alice.johnson@ontrackr.com',
+    email: 'alice.johnson@bundle.com',
     role: 'Frontend Dev',
     status: 'Active',
     avatar: '/avatars/alice.jpg',
@@ -12,7 +12,7 @@ export const mockDevelopers: Developer[] = [
   {
     id: '2',
     name: 'Bob Smith',
-    email: 'bob.smith@ontrackr.com',
+    email: 'bob.smith@bundle.com',
     role: 'Backend Dev',
     status: 'Active',
     avatar: '/avatars/bob.jpg',
@@ -20,7 +20,7 @@ export const mockDevelopers: Developer[] = [
   {
     id: '3',
     name: 'Charlie Brown',
-    email: 'charlie.brown@ontrackr.com',
+    email: 'charlie.brown@bundle.com',
     role: 'DevOps Engineer',
     status: 'Inactive',
     avatar: '/avatars/charlie.jpg',
@@ -28,7 +28,7 @@ export const mockDevelopers: Developer[] = [
   {
     id: '4',
     name: 'Diana Prince',
-    email: 'diana.prince@ontrackr.com',
+    email: 'diana.prince@bundle.com',
     role: 'Fullstack Dev',
     status: 'Active',
     avatar: '/avatars/diana.jpg',
@@ -36,7 +36,7 @@ export const mockDevelopers: Developer[] = [
   {
     id: '5',
     name: 'Eve Adams',
-    email: 'eve.adams@ontrackr.com',
+    email: 'eve.adams@bundle.com',
     role: 'QA Engineer',
     status: 'Active',
     avatar: '/avatars/eve.jpg',
@@ -46,16 +46,16 @@ export const mockDevelopers: Developer[] = [
 export const mockProjects: Project[] = [
   {
     id: '1',
-    name: 'Ontrackr Frontend',
-    description: 'Frontend application for Ontrackr',
+    name: 'Bundle Frontend',
+    description: 'Frontend application for Bundle',
     lead: mockDevelopers[0],
     status: 'Active',
     progress: 75,
   },
   {
     id: '2',
-    name: 'Ontrackr Backend',
-    description: 'Backend API for Ontrackr',
+    name: 'Bundle Backend',
+    description: 'Backend API for Bundle',
     lead: mockDevelopers[1],
     status: 'Active',
     progress: 60,
@@ -253,7 +253,7 @@ export const mockChatMessages: ChatMessage[] = [
     sender: {
       id: 'ai',
       name: 'AI Assistant',
-      email: 'ai@ontrackr.com',
+      email: 'ai@bundle.com',
       role: 'AI Assistant',
     },
     content: "Based on tasks marked as 'completed' this week, the team's sprint velocity is currently tracking at 85% of the projected target. Key contributors are John and Jane with 5 and 4 completed tasks respectively. There are 2 overdue tasks that might impact the final velocity.",
@@ -280,7 +280,7 @@ export const mockActivityItems: ActivityItem[] = [
   {
     id: '3',
     type: 'issue',
-    description: 'AI detected a potential risk in project Ontrackr Core.',
+    description: 'AI detected a potential risk in project Bundle Core.',
     timestamp: 'Yesterday',
   },
   {

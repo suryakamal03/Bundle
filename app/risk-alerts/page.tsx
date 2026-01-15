@@ -127,7 +127,7 @@ export default function RiskAlertsPage() {
         </div>
         
         <div className="flex items-center justify-center text-sm text-gray-600">
-          © 2025 Ontrackr. All rights reserved.
+          © 2025 Bundle. All rights reserved.
         </div>
       </div>
     </DashboardLayout>

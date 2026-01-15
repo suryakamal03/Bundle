@@ -20,7 +20,7 @@
 ### For Developers
 
 **Setting Up Your Profile**
-1. Sign up or log in to Ontrackr
+1. Sign up or log in to Bundle
 2. Enter your Display Name when prompted
 3. Enter your GitHub Username (must match your GitHub account exactly)
 4. Click "Complete Profile"
@@ -113,7 +113,7 @@ taskService.matchTaskForMerge(projectId: string, prTitle: string, prBody: string
 ## Troubleshooting
 
 ### Task Not Moving to In Review
-- Verify GitHub username in Ontrackr matches GitHub commit author
+- Verify GitHub username in Bundle matches GitHub commit author
 - Check commit message contains at least one keyword from task title
 - Keywords must be 3+ characters, not common words (the, and, etc.)
 - User must be member of the project in `project_members` collection

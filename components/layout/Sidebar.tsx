@@ -48,7 +48,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
           </svg>
         </div>
-        <span className="text-xl font-bold text-gray-900 dark:text-white">Ontrackr</span>
+        <span className="text-xl font-bold text-gray-900 dark:text-white">Bundle</span>
       </button>
       
       <nav className="flex-1 px-3 py-4 overflow-y-auto">

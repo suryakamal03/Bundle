@@ -232,7 +232,7 @@ export default function TaskManagementPage() {
         )}
         
         <div className="flex items-center justify-center text-sm text-gray-500 dark:text-[#9a9a9a]">
-          © 2025 Ontrackr. All rights reserved.
+          © 2025 Bundle. All rights reserved.
         </div>
       </div>
 

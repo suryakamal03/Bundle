@@ -2,7 +2,7 @@
 
 ## ✅ Complete Implementation
 
-The GitHub Activity tracking backend has been fully implemented for the Ontrackr application. All GitHub repository events are now captured, processed, stored in Firestore, and displayed in real-time in the GitHub Activity tab.
+The GitHub Activity tracking backend has been fully implemented for the Bundle application. All GitHub repository events are now captured, processed, stored in Firestore, and displayed in real-time in the GitHub Activity tab.
 
 ---
 

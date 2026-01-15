@@ -35,7 +35,7 @@ ngrok http 3000
 
 ### Step 4: Link Repository to Project
 
-In your project in Ontrackr, ensure these fields are set:
+In your project in Bundle, ensure these fields are set:
 
 ```typescript
 {
@@ -66,7 +66,7 @@ git push origin main
    - Under "Recent Deliveries" you should see a green checkmark ✅
    - Response code: 200
 
-3. **Ontrackr UI** - Go to Project Dashboard → GitHub Activity tab
+3. **Bundle UI** - Go to Project Dashboard → GitHub Activity tab
    - You should see your commit appear automatically! 🎉
 
 ---
@@ -278,7 +278,7 @@ git push origin main
 The GitHub Activity tab is fully responsive!
 
 **Test on mobile:**
-1. Open Ontrackr on mobile browser
+1. Open Bundle on mobile browser
 2. Navigate to project
 3. Tap GitHub Activity tab
 4. Make commit from desktop

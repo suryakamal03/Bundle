@@ -7,7 +7,7 @@ This guide explains the real-time group chat feature using Socket.IO and Firebas
 
 ### Folder Structure
 ```
-Ontrackr/
+Bundle/
 ├── server.js                          # Socket.IO backend server
 ├── backend/
 │   └── chat/

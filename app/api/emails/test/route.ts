@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     // Try to send a test email
     const result = await resend.emails.send({
-      from: 'Bundle Test <noreply@ontrackr.app>',
+      from: 'Bundle Test <noreply@bundle.app>',
       to: 'test@example.com', // This will fail but we can check the API connection
       subject: 'Test Email from Bundle',
       html: '<h1>Test Email</h1><p>This is a test email to verify Resend API is working.</p>'

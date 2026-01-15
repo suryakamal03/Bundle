@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     // Send password change confirmation email
     await resend.emails.send({
-      from: 'Ontrackr <noreply@ontrackr.app>',
+      from: 'Bundle <noreply@bundle.app>',
       to: email,
       subject: 'Password Changed Successfully',
       html: `
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
               </div>
             </div>
             <div class="footer">
-              <p>© 2025 Ontrackr. All rights reserved.</p>
+              <p>© 2025 Bundle. All rights reserved.</p>
             </div>
           </div>
         </body>

@@ -147,7 +147,7 @@ export default function ChatPage() {
         </Card>
         
         <div className="flex items-center justify-center text-sm text-gray-600 mt-4">
-          © 2025 Ontrackr. All rights reserved.
+          © 2025 Bundle. All rights reserved.
         </div>
       </div>
     </DashboardLayout>

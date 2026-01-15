@@ -41,18 +41,18 @@ const from = process.env.RESEND_FROM_EMAIL || 'Bundle <onboarding@resend.dev>'
    - Perfect for testing
 
 2. **Production** (Requires Domain Verification):
-   - Set `RESEND_FROM_EMAIL=Bundle <noreply@ontrackr.app>`
+   - Set `RESEND_FROM_EMAIL=Bundle <noreply@bundle.app>`
    - Requires domain verification at https://resend.com/domains
-   - Error message: "The ontrackr.app domain is not verified"
+   - Error message: "The bundle.app domain is not verified"
 
 ### To Verify Your Domain:
 1. Go to https://resend.com/domains
-2. Add your domain (e.g., `ontrackr.app`)
+2. Add your domain (e.g., `bundle.app`)
 3. Add the provided DNS records to your domain provider
 4. Wait for verification (usually a few minutes)
 5. Update `.env.local`:
    ```
-   RESEND_FROM_EMAIL=Bundle <noreply@ontrackr.app>
+   RESEND_FROM_EMAIL=Bundle <noreply@bundle.app>
    ```
 
 ## Testing the Email System
@@ -140,7 +140,7 @@ Required in `.env.local`:
 RESEND_API_KEY=your_resend_api_key_here
 
 # Optional: Custom sender email (requires domain verification)
-RESEND_FROM_EMAIL=Bundle <noreply@ontrackr.app>
+RESEND_FROM_EMAIL=Bundle <noreply@bundle.app>
 
 # For testing reminders endpoint
 CRON_SECRET=your_cron_secret_here
