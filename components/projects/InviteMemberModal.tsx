@@ -101,38 +101,18 @@ export default function InviteMemberModal({ projectId, projectName, onClose }: I
                     readOnly
                     className="flex-1 font-mono text-sm"
                   />
-                  <Button
-                    variant="secondary"
+                  <button
                     onClick={handleCopy}
-                    className="gap-2"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+                    title={copied ? "Copied!" : "Copy"}
                   >
                     {copied ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        Copied
-                      </>
+                      <Check className="w-4 h-4 text-green-500" />
                     ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        Copy
-                      </>
+                      <Copy className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     )}
-                  </Button>
+                  </button>
                 </div>
-
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-                  <p className="text-xs text-blue-800 dark:text-blue-200">
-                    <strong>Note:</strong> This invite link will expire in 7 days. Anyone with this link can join the project.
-                  </p>
-                </div>
-
-                <Button
-                  variant="secondary"
-                  onClick={() => setInviteLink('')}
-                  className="w-full"
-                >
-                  Generate New Link
-                </Button>
               </div>
             ) : null}
           </div>

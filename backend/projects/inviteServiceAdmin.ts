@@ -25,14 +25,6 @@ export const inviteServiceAdmin = {
         return { success: false, message: 'Invite expired' };
       }
 
-      const now = new Date();
-      const expiresAt = invite.expiresAt.toDate();
-
-      if (now > expiresAt) {
-        await inviteRef.update({ status: 'expired' });
-        return { success: false, message: 'Invite expired' };
-      }
-
       const projectRef = adminDb.collection('projects').doc(invite.projectId);
       const projectDoc = await projectRef.get();
 
@@ -72,15 +64,27 @@ export const inviteServiceAdmin = {
   },
 
   async createInvite(projectId: string, createdBy: string): Promise<{ inviteId: string; inviteLink: string }> {
-    const expirationDays = 7;
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + expirationDays);
-
+    // Check if there's already a pending invite for this project
+    const invitesSnapshot = await adminDb.collection('invites')
+      .where('projectId', '==', projectId)
+      .where('status', '==', 'pending')
+      .limit(1)
+      .get();
+    
+    // If a pending invite exists, return it
+    if (!invitesSnapshot.empty) {
+      const existingInvite = invitesSnapshot.docs[0];
+      return {
+        inviteId: existingInvite.id,
+        inviteLink: `/invites/${existingInvite.id}`
+      };
+    }
+    
+    // Otherwise create a new invite
     const inviteData = {
       projectId,
       createdBy,
       createdAt: FieldValue.serverTimestamp(),
-      expiresAt: expiresAt,
       status: 'pending'
     };
 

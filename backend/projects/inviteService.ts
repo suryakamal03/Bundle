@@ -14,15 +14,30 @@ export interface ProjectInvite {
 
 export const inviteService = {
   async createInvite(projectId: string, createdBy: string): Promise<{ inviteId: string; inviteLink: string }> {
-    const expirationDays = 7;
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + expirationDays);
-
+    // Check if there's already a pending invite for this project
+    const invitesRef = collection(db, 'invites');
+    const q = query(
+      invitesRef,
+      where('projectId', '==', projectId),
+      where('status', '==', 'pending')
+    );
+    
+    const existingInvites = await getDocs(q);
+    
+    // If a pending invite exists, return it
+    if (!existingInvites.empty) {
+      const existingInvite = existingInvites.docs[0];
+      return {
+        inviteId: existingInvite.id,
+        inviteLink: `/invites/${existingInvite.id}`
+      };
+    }
+    
+    // Otherwise create a new invite
     const inviteData = {
       projectId,
       createdBy,
       createdAt: serverTimestamp(),
-      expiresAt: Timestamp.fromDate(expiresAt),
       status: 'pending' as const
     };
 
@@ -60,16 +75,6 @@ export const inviteService = {
     }
 
     if (invite.status === 'expired') {
-      return { valid: false, reason: 'Invite expired' };
-    }
-
-    const now = new Date();
-    const expiresAt = invite.expiresAt.toDate();
-
-    if (now > expiresAt) {
-      await updateDoc(doc(db, 'invites', inviteId), {
-        status: 'expired'
-      });
       return { valid: false, reason: 'Invite expired' };
     }
 
