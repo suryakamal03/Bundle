@@ -5,7 +5,7 @@ Built with a **clean frontend–backend architecture** and focused on **project-
 
 ---
 
-## 🚀 Overview
+##  Overview
 
 Traditional project management tools rely heavily on manual updates and disconnected workflows, which often result in outdated task statuses and reduced productivity.  
 
@@ -19,7 +19,7 @@ Traditional project management tools rely heavily on manual updates and disconne
 
 ---
 
-## ✨ Features
+##  Features
 
 ### Core Features
 - **Unified Project Dashboard** - View and manage all projects from a single interface with detailed insights
@@ -36,17 +36,11 @@ Traditional project management tools rely heavily on manual updates and disconne
 - **Risk Alert Detection** - Proactive identification of project risks
 
 ### Administrative
-- **Admin Panel** - Comprehensive user, project, and system-level management
-- **Developer Profiles** - Detailed profiles with GitHub activity integration
 - **Authentication** - Secure login, signup, email verification, and password reset
-
-### Customization
-- **Settings & Preferences** - Profile management, notifications, GitHub integration, and theme customization
-- **Theme Support** - Light/dark mode with customizable color schemes
 
 ---
 
-## 🧠 Tech Stack
+##  Tech Stack
 
 ### Frontend
 - **Framework:** Next.js 14 (App Router)
@@ -86,7 +80,7 @@ This project requires **three terminals** to run locally.
 - **Firebase project** (for Firestore & Auth)
 - **ngrok account** (for webhook testing)
 
-### 1️⃣ Terminal 1 – Frontend (Next.js)
+### 1️ Terminal 1 – Frontend (Next.js)
 
 ```bash
 # Install dependencies
@@ -98,7 +92,7 @@ npm run dev
 
 **Runs at:** `http://localhost:3000`
 
-### 2️⃣ Terminal 2 – Backend (Node.js + Express + Socket.IO)
+### 2️ Terminal 2 – Backend (Node.js + Express + Socket.IO)
 
 ```bash
 # Start the backend server
@@ -112,7 +106,7 @@ nodemon server.js
 - Real-time Socket.IO communication
 - GitHub webhook processing
 
-### 3️⃣ Terminal 3 – ngrok (Expose Local Server)
+### 3️ Terminal 3 – ngrok (Expose Local Server)
 
 ```bash
 # Expose local server for external access
@@ -126,7 +120,7 @@ npx ngrok http 3000
 
 ---
 
-## 🔐 Environment Variables
+##  Environment Variables
 
 Create a `.env.local` file in the root directory:
 
@@ -161,7 +155,7 @@ EMAIL_SERVICE_API_KEY=your_email_api_key
 
 ---
 
-## 📜 Available Scripts
+##  Available Scripts
 
 ```bash
 npm run dev      # Start Next.js development server
@@ -172,7 +166,7 @@ npm run lint     # Run ESLint
 
 ---
 
-## 📄 Pages & Routes
+##  Pages & Routes
 
 ### Authentication
 - `/auth/login` - User login
@@ -207,37 +201,7 @@ npm run lint     # Run ESLint
 - `/api/webhooks/*` - GitHub webhook handlers
 
 ---
-
-## 🎨 Customization
-
-### Theme Colors
-Update colors in [tailwind.config.ts](tailwind.config.ts):
-
-```typescript
-colors: {
-  primary: {
-    500: '#3b82f6',
-    600: '#2563eb',
-  },
-}
-```
-
-### UI Components
-Reusable UI components are located in [components/ui/](components/ui/).  
-They can be customized or extended as needed:
-- `Button.tsx` - Button variants and sizes
-- `Card.tsx` - Card layouts
-- `Input.tsx` - Form inputs
-- `Badge.tsx` - Status badges
-- `Avatar.tsx` - User avatars
-
-### Theme Context
-The app supports light/dark mode through [ThemeContext.tsx](contexts/ThemeContext.tsx).  
-Users can toggle themes from the settings page.
-
----
-
-## 📌 Architecture Notes
+##  Architecture Notes
 
 ### Frontend–Backend Separation
 - **Frontend:** Next.js handles all UI, routing, and client-side logic
@@ -269,55 +233,7 @@ All business logic is organized into dedicated services:
 - Hot reload for both frontend and backend during development
 
 ---
-
-## 🚀 Deployment
-
-### Frontend (Vercel Recommended)
-
-```bash
-# Build the frontend
-npm run build
-
-# Deploy to Vercel
-vercel deploy
-```
-
-**Environment Variables:**  
-Add all `NEXT_PUBLIC_*` variables to your Vercel project settings.
-
-### Backend (Node.js Server)
-
-Deploy to any Node.js hosting platform:
-- **Railway**
-- **Render**
-- **DigitalOcean**
-- **AWS EC2**
-- **Azure App Service**
-
-```bash
-# Start production server
-npm start
-```
-
-**Requirements:**
-- Node.js 18.x or higher
-- Environment variables configured
-- Firebase credentials available
-
-### Database (Firebase)
-- Firestore database is managed through Firebase Console
-- Deploy security rules: `firebase deploy --only firestore:rules`
-- Deploy indexes: `firebase deploy --only firestore:indexes`
-
-### GitHub Webhooks (Production)
-Update webhook URL in your GitHub repository settings:
-```
-https://your-production-domain.com/api/webhooks/github
-```
-
----
-
-## 📚 Additional Documentation
+##  Additional Documentation
 
 For detailed implementation guides, refer to:
 - [GITHUB_ACTIVITY_GUIDE.md](GITHUB_ACTIVITY_QUICKSTART.md) - GitHub integration setup
@@ -329,12 +245,12 @@ For detailed implementation guides, refer to:
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 This is a private project. For questions or suggestions, please contact the maintainer.
 
 ---
 
-## 📜 License
+##  License
 
 © 2025 Bundle. All rights reserved.
