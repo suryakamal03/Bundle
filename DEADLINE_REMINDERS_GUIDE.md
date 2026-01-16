@@ -146,8 +146,8 @@ npm install resend
 Add the following to your `.env.local` file:
 
 ```env
-RESEND_API_KEY=your_resend_api_key_here
-CRON_SECRET=your_secure_random_string_here
+RESEND_API_KEY=<your_api_key_here>
+CRON_SECRET=<your_secure_random_string_here>
 ```
 
 - Get your Resend API key from https://resend.com

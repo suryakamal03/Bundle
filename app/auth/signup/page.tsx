@@ -148,15 +148,15 @@ export default function SignupPage() {
                   checked={agreed}
                   onChange={(e) => setAgreed(e.target.checked)}
                   disabled={loading}
-                  className="mt-1 w-4 h-4 text-primary-500 bg-gray-800 border-gray-700 rounded focus:ring-primary-500"
+                  className="mt-1 w-4 h-4 text-gray-500 bg-gray-800 border-gray-700 rounded focus:ring-gray-500"
                 />
                 <label htmlFor="terms" className="text-sm text-gray-400">
                   I agree to the{' '}
-                  <Link href="/terms" className="text-primary-400 hover:text-primary-300">
+                  <Link href="/terms" className="text-white hover:text-gray-200">
                     Terms of Service
                   </Link>{' '}
                   and{' '}
-                  <Link href="/privacy" className="text-primary-400 hover:text-primary-300">
+                  <Link href="/privacy" className="text-white hover:text-gray-200">
                     Privacy Policy
                   </Link>
                   .
@@ -170,7 +170,7 @@ export default function SignupPage() {
             
             <p className="text-center text-sm text-gray-400 mt-6">
               Already have an account?{' '}
-              <Link href="/auth/login" className="text-primary-400 hover:text-primary-300 font-medium">
+              <Link href="/auth/login" className="text-white hover:text-gray-200 font-medium">
                 Log in
               </Link>
             </p>

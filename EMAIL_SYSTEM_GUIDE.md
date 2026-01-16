@@ -66,8 +66,7 @@ curl http://localhost:3000/api/emails/test
 {
   "success": true,
   "message": "Resend API is configured and responding",
-  "configured": true,
-  "apiKeyPrefix": "re_grHiM3G..."
+  "configured": true
 }
 ```
 
@@ -137,13 +136,14 @@ curl http://localhost:3000/api/reminders/test
 Required in `.env.local`:
 ```bash
 # Resend API Key (Required)
-RESEND_API_KEY=your_resend_api_key_here
+# Get your API key from https://resend.com
+RESEND_API_KEY=<your_api_key_here>
 
 # Optional: Custom sender email (requires domain verification)
-RESEND_FROM_EMAIL=Bundle <noreply@bundle.app>
+RESEND_FROM_EMAIL=Bundle <noreply@yourdomain.com>
 
 # For testing reminders endpoint
-CRON_SECRET=your_cron_secret_here
+CRON_SECRET=<your_secure_random_string_here>
 ```
 
 ## Production Checklist
