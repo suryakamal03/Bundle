@@ -1,12 +1,4 @@
 {
-  "name": "send-task-reminders",
-  "description": "Sends email reminders for tasks due tomorrow",
-  "schedule": "0 9 * * *",
-  "timezone": "UTC",
-  "url": "https://your-bundle-domain.com/api/reminders/send",
-  "method": "POST",
-  "headers": {
-    "Authorization": "Bearer YOUR_CRON_SECRET",
-    "Content-Type": "application/json"
-  }
+  "buildCommand": "next build",
+  "framework": "nextjs"
 }
