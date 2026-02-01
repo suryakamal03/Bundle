@@ -115,9 +115,9 @@ export const projectService = {
     const querySnapshot = await getDocs(q);
 
     return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data() as ProjectData
-    }));
+      ...doc.data(),
+      id: doc.id
+    } as ProjectData & { id: string }));
   },
 
   async updateProjectProgress(projectId: string, progress: number): Promise<void> {

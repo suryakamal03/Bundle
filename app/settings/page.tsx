@@ -25,7 +25,7 @@ export default function SettingsPage() {
   const [changingPassword, setChangingPassword] = useState(false)
   
   // Toast state
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning'; isOpen: boolean }>({ message: '', type: 'success', isOpen: false })
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info'; isOpen: boolean }>({ message: '', type: 'success', isOpen: false })
   
   // Form states
   const [fullName, setFullName] = useState('')

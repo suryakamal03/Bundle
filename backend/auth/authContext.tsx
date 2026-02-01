@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const creationTime = user.metadata.creationTime;
           const isNewUser = creationTime && (Date.now() - new Date(creationTime).getTime()) < 5 * 60 * 1000;
           
-          const needsSetup = isNewUser && (!userData.displayName || !userData.githubUsername);
+          const needsSetup = Boolean(isNewUser && (!userData.displayName || !userData.githubUsername));
           setNeedsProfileSetup(needsSetup);
         }
       } else {

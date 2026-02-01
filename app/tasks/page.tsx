@@ -77,6 +77,7 @@ export default function TaskManagementPage() {
       assignedTo: task.assignedTo,
       assignedToName: task.assignedToName,
       projectId: task.projectId,
+      keywords: task.keywords || [],
       deadlineAt: task.deadlineAt,
       createdAt: task.createdAt,
       updatedAt: task.updatedAt,
@@ -93,10 +94,12 @@ export default function TaskManagementPage() {
     setSelectedTask(null)
   }
 
-  const formatDeadline = (deadline: any) => {
+  const formatDeadline = (deadline: Date | { toDate: () => Date } | string | null | undefined) => {
     if (!deadline) return null
     try {
-      const date = deadline.toDate ? deadline.toDate() : new Date(deadline)
+      const date = deadline && typeof deadline === 'object' && 'toDate' in deadline 
+        ? deadline.toDate() 
+        : new Date(deadline as string | Date)
       const now = new Date()
       const diffTime = date.getTime() - now.getTime()
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))

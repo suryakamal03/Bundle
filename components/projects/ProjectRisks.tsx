@@ -23,11 +23,7 @@ export default function ProjectRisks() {
                 'bg-green-50'
               }`}>
                 {risk.type === 'healthy' ? (
-                  <CheckCircle className={`w-5 h-5 ${
-                    risk.type === 'critical' ? 'text-red-600' :
-                    risk.type === 'warning' ? 'text-yellow-600' :
-                    'text-green-600'
-                  }`} />
+                  <CheckCircle className="w-5 h-5 text-green-600" />
                 ) : (
                   <AlertTriangle className={`w-5 h-5 ${
                     risk.type === 'critical' ? 'text-red-600' :

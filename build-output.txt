@@ -1,0 +1,23 @@
+
+> bundle@1.0.0 build
+> next build
+
+  Ôû▓ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully
+   Linting and checking validity of types ...
+Failed to compile.
+
+./backend/tasks/userTaskService.ts:80:55
+Type error: 'id' is specified more than once, so this usage will be overwritten.
+
+  78 |       for (const docSnap of snapshot.docs) {
+  79 |         const taskData = docSnap.data() as Task
+> 80 |         console.log(`[UserTaskService] Task data:`, { id: docSnap.id, ...taskData })
+     |                                                       ^
+  81 |         
+  82 |         const task: UserTask = {
+  83 |           ...taskData,
+Next.js build worker exited with code: 1 and signal: null

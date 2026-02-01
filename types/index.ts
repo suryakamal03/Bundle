@@ -23,6 +23,7 @@ export interface Task {
   assignedTo: string
   assignedToName?: string
   projectId: string
+  projectName?: string
   keywords: string[]
   createdAt: any
   updatedAt: any
@@ -35,7 +36,7 @@ export interface Project {
   id: string
   name: string
   description?: string
-  lead?: User
+  lead?: User | null
   status: 'Active' | 'On Hold' | 'Archived'
   progress?: number
   health?: 'Warning' | 'Healthy' | 'Critical'

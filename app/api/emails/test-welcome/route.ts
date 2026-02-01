@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
+  // Validate environment variable
+  if (!process.env.NEXT_PUBLIC_APP_URL) {
+    return NextResponse.json({ 
+      error: 'Configuration error',
+      message: 'NEXT_PUBLIC_APP_URL environment variable is not set'
+    }, { status: 500 });
+  }
+  
   try {
     const testEmail = request.nextUrl.searchParams.get('email') || 'test@example.com'
     const testName = request.nextUrl.searchParams.get('name') || 'Test User'
     
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/emails/welcome`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/emails/welcome`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

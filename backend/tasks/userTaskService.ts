@@ -77,7 +77,7 @@ export const userTaskService = {
 
       for (const docSnap of snapshot.docs) {
         const taskData = docSnap.data() as Task
-        console.log(`[UserTaskService] Task data:`, { id: docSnap.id, ...taskData })
+        console.log(`[UserTaskService] Task data:`, { taskId: docSnap.id, ...taskData })
         
         const task: UserTask = {
           ...taskData,

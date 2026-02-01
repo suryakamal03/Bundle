@@ -66,8 +66,8 @@ export const flowchartService = {
       const snapshot = await getDocs(q)
       
       return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+        ...doc.data(),
+        id: doc.id
       } as Flowchart))
     } catch (error) {
       console.error('[FlowchartService] Error fetching flowcharts:', error)

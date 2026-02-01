@@ -305,11 +305,12 @@ export default function MyDashboardPage() {
       title: task.title,
       description: task.description || '',
       status: task.status,
-      priority: task.priority || 'Medium',
       assignedTo: task.assignedTo,
       assignedToName: task.assignedToName,
       projectId: task.projectId,
+      keywords: [],
       createdAt: task.createdAt,
+      updatedAt: task.createdAt,
       deadlineAt: task.deadlineAt,
       reminderEnabled: task.reminderEnabled,
       reminderSent: task.reminderSent

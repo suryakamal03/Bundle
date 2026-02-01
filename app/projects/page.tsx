@@ -223,7 +223,13 @@ export default function ProjectsPage() {
 
       {/* Create Project Modal */}
       {showCreateModal && (
-        <CreateProjectModal onClose={() => setShowCreateModal(false)} />
+        <CreateProjectModal 
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={() => {
+            setShowCreateModal(false)
+            // Optionally reload projects list here
+          }}
+        />
       )}
     </DashboardLayout>
   )

@@ -60,6 +60,13 @@ Now generate a flowchart for the following process:`
 
     const text = response.text
 
+    if (!text) {
+      return {
+        success: false,
+        error: 'No response from Gemini API'
+      }
+    }
+
     // Extract mermaid code (remove markdown code blocks if present)
     let mermaidCode = text.trim()
     

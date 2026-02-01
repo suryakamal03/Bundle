@@ -26,7 +26,7 @@ export const taskManagementService = {
       const userProjects = projectsSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }))
+      } as { id: string; name?: string; createdBy?: string; [key: string]: any }))
 
       console.log('[TaskManagementService] User is in', userProjects.length, 'projects')
 
@@ -114,7 +114,7 @@ export const taskManagementService = {
       const userProjects = projectsSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }))
+      } as { id: string; name?: string; createdBy?: string; [key: string]: any }))
 
       const leadProjectIds = userProjects
         .filter(project => project.createdBy === userId)

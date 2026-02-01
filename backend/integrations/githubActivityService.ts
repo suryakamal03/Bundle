@@ -13,8 +13,8 @@ export const githubActivityService = {
 
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+      ...doc.data(),
+      id: doc.id
     } as GitHubActivity));
   },
 
@@ -38,8 +38,8 @@ export const githubActivityService = {
       (snapshot) => {
         console.log('[githubActivityService] Received snapshot with', snapshot.docs.length, 'activities')
         const activities = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
+          ...doc.data(),
+          id: doc.id
         } as GitHubActivity));
         callback(activities);
       },
@@ -52,3 +52,4 @@ export const githubActivityService = {
     );
   }
 };
+

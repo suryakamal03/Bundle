@@ -150,7 +150,14 @@ export const inviteService = {
       }
 
       // Batch fetch all users in chunks of 10 (Firestore 'in' query limit)
-      const members = [];
+      const members: Array<{
+        id: string;
+        name: string;
+        email: string;
+        role: string;
+        avatar?: string;
+        status?: string;
+      }> = [];
       const chunkSize = 10;
       
       for (let i = 0; i < memberIds.length; i += chunkSize) {

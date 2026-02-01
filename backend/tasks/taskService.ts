@@ -77,8 +77,8 @@ export const taskService = {
     
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+      ...doc.data(),
+      id: doc.id
     } as Task));
   },
 
@@ -91,8 +91,8 @@ export const taskService = {
     
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+      ...doc.data(),
+      id: doc.id
     } as Task));
   },
 
@@ -107,8 +107,8 @@ export const taskService = {
 
     return onSnapshot(q, (snapshot) => {
       const tasks = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+        ...doc.data(),
+        id: doc.id
       } as Task));
       callback(tasks);
     });
