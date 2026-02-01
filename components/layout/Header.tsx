@@ -9,6 +9,7 @@ import { useAuth } from '@/backend/auth/authContext'
 import LogoutModal from '@/components/ui/LogoutModal'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 export default function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -53,11 +54,23 @@ export default function Header() {
           <div className="flex items-center justify-between">
             {/* Left - Logo */}
             <Link href="/projects" className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-black dark:bg-white rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-white dark:text-black" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
+              <motion.div
+                className="w-7 h-7 mr-1"
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                whileHover={{ rotate: 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="16" r="16" fill="url(#paint0_linear)" />
+                  <defs>
+                    <linearGradient id="paint0_linear" x1="0" y1="0" x2="32" y2="32">
+                      <stop stopColor="#FF9966" />
+                      <stop offset="1" stopColor="#FF5E62" />
+                    </linearGradient>
+                  </defs>
                 </svg>
-              </div>
+              </motion.div>
               <span 
                 className="text-base font-bold text-gray-900 dark:text-white tracking-tight"
                 style={{ fontFamily: 'var(--font-quadria)' }}

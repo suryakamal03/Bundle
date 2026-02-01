@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { 
   LayoutDashboard, 
   FolderKanban, 
@@ -32,11 +33,25 @@ export default function VerticalNav() {
       {/* Logo */}
       <Link 
         href="/projects" 
-        className="w-12 h-12 mb-8 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center shadow-lg"
+        className="mb-8 flex items-center justify-center"
       >
-        <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
-        </svg>
+        <motion.div
+          className="w-7 h-7"
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          whileHover={{ rotate: 10 }}
+          transition={{ duration: 0.3 }}
+        >
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="16" fill="url(#paint0_linear_nav)" />
+            <defs>
+              <linearGradient id="paint0_linear_nav" x1="0" y1="0" x2="32" y2="32">
+                <stop stopColor="#FF9966" />
+                <stop offset="1" stopColor="#FF5E62" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </motion.div>
       </Link>
 
       {/* Navigation Items */}
