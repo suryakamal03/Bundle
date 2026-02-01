@@ -9,6 +9,7 @@ This script helps you test the GitHub webhook integration locally or in producti
 curl -X GET https://your-domain.com/api/webhooks/github
 
 # Expected Response:
+#123
 {
   "status": "active",
   "endpoint": "/api/webhooks/github",
