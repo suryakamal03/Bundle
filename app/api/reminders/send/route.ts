@@ -4,9 +4,9 @@ import { db } from '@/lib/firebase'
 import { collection, query, where, getDocs, doc, updateDoc, getDoc } from 'firebase/firestore'
 import { generateTaskReminderHTML } from '@/lib/emailTemplates'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function POST(request: NextRequest) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  
   try {
     const authHeader = request.headers.get('authorization')
     const expectedToken = process.env.CRON_SECRET
