@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-white dark:bg-[#0a0a0a] transition-colors">
+      <div className="min-h-screen bg-white dark:bg-[#141414] transition-colors">
         <Header />
         <main className="pt-20">
           <div className="p-6">

@@ -9,6 +9,7 @@ import { useAuth } from '@/backend/auth/authContext'
 import { getUserSettings, updateProfile } from '@/backend/settings/userSettingsService'
 import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
+import Toast from '@/components/ui/Toast'
 
 interface UserSettings {
   fullName: string
@@ -22,6 +23,9 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [changingPassword, setChangingPassword] = useState(false)
+  
+  // Toast state
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning'; isOpen: boolean }>({ message: '', type: 'success', isOpen: false })
   
   // Form states
   const [fullName, setFullName] = useState('')
@@ -61,10 +65,10 @@ export default function SettingsPage() {
       setSaving(true)
       await updateProfile(user.uid, { fullName, githubUsername })
       await loadSettings()
-      alert('Profile updated successfully!')
+      setToast({ message: 'Profile updated successfully!', type: 'success', isOpen: true })
     } catch (error) {
       console.error('Error saving profile:', error)
-      alert('Failed to update profile')
+      setToast({ message: 'Failed to update profile', type: 'error', isOpen: true })
     } finally {
       setSaving(false)
     }
@@ -74,12 +78,12 @@ export default function SettingsPage() {
     if (!auth.currentUser || !settings) return
 
     if (newPassword !== confirmPassword) {
-      alert('New passwords do not match!')
+      setToast({ message: 'New passwords do not match!', type: 'error', isOpen: true })
       return
     }
 
     if (newPassword.length < 6) {
-      alert('Password must be at least 6 characters long!')
+      setToast({ message: 'Password must be at least 6 characters long!', type: 'error', isOpen: true })
       return
     }
 
@@ -93,16 +97,16 @@ export default function SettingsPage() {
       // Update password
       await updatePassword(auth.currentUser, newPassword)
 
-      alert('Password changed successfully!')
+      setToast({ message: 'Password changed successfully!', type: 'success', isOpen: true })
       setOldPassword('')
       setNewPassword('')
       setConfirmPassword('')
     } catch (error: any) {
       console.error('Error changing password:', error)
       if (error.code === 'auth/wrong-password') {
-        alert('Current password is incorrect!')
+        setToast({ message: 'Current password is incorrect!', type: 'error', isOpen: true })
       } else {
-        alert('Failed to change password. Please try again.')
+        setToast({ message: 'Failed to change password. Please try again.', type: 'error', isOpen: true })
       }
     } finally {
       setChangingPassword(false)
@@ -235,6 +239,15 @@ export default function SettingsPage() {
           )}
         </div>
       </div>
+      
+      {/* Toast Notification */}
+      {toast.isOpen && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ ...toast, isOpen: false })}
+        />
+      )}
     </DashboardLayout>
   )
 }

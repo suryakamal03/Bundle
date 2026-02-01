@@ -6,7 +6,6 @@ import { GitCommit, GitPullRequest, GitMerge, AlertCircle, ExternalLink, GitBran
 import { githubActivityService } from '@/backend/integrations/githubActivityService'
 import { GitHubActivity } from '@/types'
 import { getRelativeTime, getExactTimestamp } from '@/lib/utils'
-import { AnimatedList } from '@/components/ui/animated-list'
 
 interface ProjectGitHubProps {
   projectId: string
@@ -115,7 +114,6 @@ export default function ProjectGitHub({ projectId }: ProjectGitHubProps) {
         </div>
       ) : (
       <div className="space-y-4">
-        <AnimatedList>
           {activities.slice(0, 5).map((activity) => {
             const { icon: Icon, color } = getActivityIcon(activity.activityType)
             return (
@@ -150,7 +148,6 @@ export default function ProjectGitHub({ projectId }: ProjectGitHubProps) {
               </div>
             )
           })}
-        </AnimatedList>
         </div>
       )}
     </Card>

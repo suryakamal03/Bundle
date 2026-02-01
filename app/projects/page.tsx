@@ -12,13 +12,35 @@ import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { Plus } from 'lucide-react'
 
+import ProjectsSkeleton from '@/components/ui/ProjectsSkeleton'
+
 export default function ProjectsPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  
+  // Get cached project data from sessionStorage
+  const getCachedProject = () => {
+    if (typeof window === 'undefined') return null
+    const cached = sessionStorage.getItem('project_cache')
+    if (cached) {
+      try {
+        const { data, timestamp } = JSON.parse(cached)
+        // Use cache if less than 5 minutes old
+        if (Date.now() - timestamp < 5 * 60 * 1000) {
+          return data
+        }
+      } catch (e) {
+        return null
+      }
+    }
+    return null
+  }
+  
+  const cachedProject = getCachedProject()
+  const [selectedProject, setSelectedProject] = useState<Project | null>(cachedProject)
   const [activeTab, setActiveTab] = useState<'tasks' | 'github' | 'team' | 'chat' | 'ai-assigner' | 'webhook'>('tasks')
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(!cachedProject)
 
   // Load project from URL or localStorage on mount and refresh
   useEffect(() => {
@@ -55,6 +77,12 @@ export default function ProjectsPage() {
               lead: null
             }
             setSelectedProject(project)
+            
+            // Cache the project data
+            sessionStorage.setItem('project_cache', JSON.stringify({
+              data: project,
+              timestamp: Date.now()
+            }))
             
             // Restore tab if specified
             if (tab && ['tasks', 'github', 'team', 'chat', 'ai-assigner', 'webhook'].includes(tab)) {
@@ -152,11 +180,7 @@ export default function ProjectsPage() {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <p className="text-sm text-gray-600 dark:text-[#9a9a9a]">Loading...</p>
-          </div>
-        </div>
+        <ProjectsSkeleton />
       </DashboardLayout>
     )
   }

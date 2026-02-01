@@ -14,13 +14,35 @@ import { cn } from '@/lib/utils'
 import { Task } from '@/types'
 import Loading from '@/components/ui/Loading'
 
+import TasksSkeleton from '@/components/ui/TasksSkeleton'
+
 type FilterStatus = 'All' | 'To Do' | 'In Review'
 
 export default function TaskManagementPage() {
   const { user } = useAuth()
   const router = useRouter()
-  const [tasks, setTasks] = useState<TaskManagementItem[]>([])
-  const [loading, setLoading] = useState(true)
+  
+  // Check session cache to avoid loading skeleton on tab switch
+  const getCachedTasks = () => {
+    if (typeof window === 'undefined' || !user) return null
+    const cached = sessionStorage.getItem(`tasks_cache_${user.uid}`)
+    if (cached) {
+      try {
+        const { data, timestamp } = JSON.parse(cached)
+        // Use cache if less than 5 minutes old
+        if (Date.now() - timestamp < 5 * 60 * 1000) {
+          return data
+        }
+      } catch (e) {
+        return null
+      }
+    }
+    return null
+  }
+  
+  const cachedTasks = getCachedTasks()
+  const [tasks, setTasks] = useState<TaskManagementItem[]>(cachedTasks || [])
+  const [loading, setLoading] = useState(!cachedTasks)
   const [activeFilter, setActiveFilter] = useState<FilterStatus>('All')
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
@@ -34,6 +56,12 @@ export default function TaskManagementPage() {
     const unsubscribe = taskManagementService.subscribeToTasks(user.uid, (updatedTasks) => {
       setTasks(updatedTasks)
       setLoading(false)
+      
+      // Cache the tasks data
+      sessionStorage.setItem(`tasks_cache_${user.uid}`, JSON.stringify({
+        data: updatedTasks,
+        timestamp: Date.now()
+      }))
     })
 
     return () => unsubscribe()
@@ -132,9 +160,7 @@ export default function TaskManagementPage() {
         </div>
         
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loading />
-          </div>
+          <TasksSkeleton />
         ) : filteredTasks.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-600 dark:text-[#9a9a9a]">No tasks found</p>

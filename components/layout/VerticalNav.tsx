@@ -29,7 +29,7 @@ export default function VerticalNav() {
   const pathname = usePathname()
   
   return (
-    <nav className="fixed left-0 top-0 h-screen w-20 bg-[#1a1a1a] dark:bg-[#0a0a0a] border-r border-gray-800 flex flex-col items-center py-4 z-50">
+    <nav className="fixed left-0 top-0 h-screen w-20 bg-[#1a1a1a] dark:bg-[#0a0a0a] border-r border-gray-800 dark:border-[#1f1f1f] flex flex-col items-center py-4 z-50">
       {/* Logo */}
       <Link 
         href="/projects" 

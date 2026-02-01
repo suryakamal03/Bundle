@@ -49,7 +49,7 @@ export default function Header() {
   
   return (
     <>
-      <header className="fixed top-0 right-0 left-0 z-50 bg-white dark:bg-black/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+      <header className="fixed top-0 right-0 left-0 z-50 bg-white dark:bg-[#0a0a0a] backdrop-blur-md border-b border-gray-200 dark:border-[#1f1f1f]">
         <div className="max-w-full mx-auto px-6 py-1.5">
           <div className="flex items-center justify-between">
             {/* Left - Logo */}
