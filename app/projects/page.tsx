@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import ProjectList from '@/components/projects/ProjectList'
@@ -14,7 +14,7 @@ import { Plus } from 'lucide-react'
 
 import ProjectsSkeleton from '@/components/ui/ProjectsSkeleton'
 
-export default function ProjectsPage() {
+function ProjectsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -232,5 +232,13 @@ export default function ProjectsPage() {
         />
       )}
     </DashboardLayout>
+  )
+}
+
+export default function ProjectsPage() {
+  return (
+    <Suspense fallback={<ProjectsSkeleton />}>
+      <ProjectsContent />
+    </Suspense>
   )
 }
