@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react'
 import Card from '@/components/ui/Card'
 import { GitCommit, GitPullRequest, GitMerge, AlertCircle, CheckCircle, Activity } from 'lucide-react'
-import { collection, query, orderBy, limit, onSnapshot, where, getDoc, doc } from 'firebase/firestore'
+import { collection, query, orderBy, limit, onSnapshot, where, getDoc, doc, getDocs } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { GitHubActivity } from '@/types'
 import { getRelativeTime } from '@/lib/utils'
+import { useAuth } from '@/backend/auth/authContext'
 
 interface RecentActivityProps {
   projectId?: string
@@ -15,19 +16,53 @@ interface RecentActivityProps {
 }
 
 export default function RecentActivity({ projectId, projectName, onActivityClick }: RecentActivityProps) {
+  const { user } = useAuth()
   const [activities, setActivities] = useState<GitHubActivity[]>([])
   const [loading, setLoading] = useState(true)
   const [projectNames, setProjectNames] = useState<Record<string, string>>({})
+  const [userProjectIds, setUserProjectIds] = useState<string[]>([])
+
+  // Fetch user's project IDs
+  useEffect(() => {
+    if (!user || projectId) return // Skip if specific project is already provided
+    
+    const fetchUserProjects = async () => {
+      try {
+        const projectsRef = collection(db, 'projects')
+        const q = query(projectsRef, where('members', 'array-contains', user.uid))
+        const snapshot = await getDocs(q)
+        const projectIds = snapshot.docs.map(doc => doc.id)
+        console.log('[RecentActivity] User project IDs:', projectIds)
+        setUserProjectIds(projectIds)
+      } catch (error) {
+        console.error('[RecentActivity] Error fetching user projects:', error)
+        setUserProjectIds([])
+      }
+    }
+
+    fetchUserProjects()
+  }, [user, projectId])
 
   useEffect(() => {
-    console.log('[RecentActivity] Setting up subscription', { projectId, projectName })
+    console.log('[RecentActivity] Setting up subscription', { projectId, projectName, userProjectIds })
     setLoading(true)
 
     // Build query based on whether we have a specific project
     const baseQuery = collection(db, 'githubActivity')
-    const q = projectId
-      ? query(baseQuery, where('projectId', '==', projectId), orderBy('createdAt', 'desc'), limit(4))
-      : query(baseQuery, orderBy('createdAt', 'desc'), limit(4))
+    let q
+    
+    if (projectId) {
+      // Show activities for specific project
+      q = query(baseQuery, where('projectId', '==', projectId), orderBy('createdAt', 'desc'), limit(4))
+    } else if (userProjectIds.length > 0) {
+      // Show activities only from user's projects
+      q = query(baseQuery, where('projectId', 'in', userProjectIds.slice(0, 10)), orderBy('createdAt', 'desc'), limit(4))
+    } else {
+      // No projects yet, set empty activities and return
+      setActivities([])
+      setLoading(false)
+      return
+    }
 
     const unsubscribe = onSnapshot(
       q,
@@ -64,7 +99,7 @@ export default function RecentActivity({ projectId, projectName, onActivityClick
     )
 
     return () => unsubscribe()
-  }, [projectId])
+  }, [projectId, userProjectIds])
 
   const fetchProjectNames = async (activities: GitHubActivity[]) => {
     const uniqueProjectIds = [...new Set(activities.map(a => a.projectId))]
