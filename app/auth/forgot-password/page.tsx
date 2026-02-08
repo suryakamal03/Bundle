@@ -9,9 +9,9 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-gray-900 border border-gray-800 rounded-lg shadow-lg p-8">
+        <div className="bg-[#0a0a0a] border border-gray-900 rounded-lg shadow-2xl p-8">
           <div className="flex flex-col items-center mb-8">
             <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center mb-3">
               <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
             </Button>
             
             <p className="text-center text-sm text-gray-400 mt-6">
-              <Link href="/auth/login" className="text-primary-400 hover:text-primary-300 font-medium">
+              <Link href="/auth/login" className="text-white hover:text-gray-200 font-medium">
                 Remembered your password?
               </Link>
             </p>

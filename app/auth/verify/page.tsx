@@ -5,16 +5,16 @@ import Button from '@/components/ui/Button'
 
 export default function VerifyEmailPage() {
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-gray-900 border border-gray-800 rounded-lg shadow-lg p-8">
+        <div className="bg-[#0a0a0a] border border-gray-900 rounded-lg shadow-2xl p-8">
           <h2 className="text-2xl font-bold text-white mb-2 text-center">Check your email</h2>
           <p className="text-gray-400 text-center mb-6">
             We've sent a verification link to{' '}
             <span className="font-medium text-white">user@bundle.com</span>. Please click the link in the email to confirm your account.
           </p>
           
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-6">
+          <div className="bg-[#111111] border border-gray-800 rounded-lg p-4 mb-6">
             <h3 className="font-medium text-white mb-2">How to verify:</h3>
             <ol className="space-y-2 text-sm text-gray-400">
               <li className="flex gap-2">
@@ -41,7 +41,7 @@ export default function VerifyEmailPage() {
               Resend verification email
             </Button>
             
-            <Link href="/auth/login" className="block text-center text-sm text-primary-400 hover:text-primary-300 font-medium">
+            <Link href="/auth/login" className="block text-center text-sm text-white hover:text-gray-200 font-medium">
               Change email address
             </Link>
           </div>
