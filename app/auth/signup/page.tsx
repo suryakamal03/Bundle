@@ -71,49 +71,49 @@ export default function SignupPage() {
   }
   
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#141414] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-[#0a0a0a] border border-gray-900 rounded-lg shadow-2xl p-8">
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center mb-3">
-              <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <div className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg shadow-xl p-6">
+          <div className="flex flex-col items-center mb-4">
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mb-2">
+              <svg className="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-white">Bundle</h1>
+            <h1 className="text-xl font-bold text-white">Bundle</h1>
           </div>
           
-          <h2 className="text-2xl font-bold text-white mb-6 text-center">Create your Bundle account</h2>
+          <h2 className="text-xl font-bold text-white mb-1 text-center">Create your Bundle account</h2>
+          <p className="text-gray-300 text-sm text-center mb-4">Unlock seamless project management and AI-powered insights.</p>
           
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+            <div className="mb-3 p-2 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-sm">
               {error}
             </div>
           )}
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             <Button 
               type="button"
               variant="secondary" 
               className="w-full gap-2" 
-              size="lg"
               onClick={handleGoogleSignup}
               disabled={loading}
             >
-              <Chrome className="w-5 h-5" />
+              <Chrome className="w-4 h-4" />
               Sign up with Google
             </Button>
             
-            <div className="relative my-6">
+            <div className="relative my-3">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-700"></div>
+                <div className="w-full border-t border-[#2a2a2a]"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-900 text-gray-400">OR</span>
+                <span className="px-2 bg-[#1c1c1c] text-gray-300">OR</span>
               </div>
             </div>
             
-            <form onSubmit={handleEmailSignup} className="space-y-4">
+            <form onSubmit={handleEmailSignup} className="space-y-3">
               <Input
                 label="Full Name"
                 type="text"
@@ -148,29 +148,29 @@ export default function SignupPage() {
                   checked={agreed}
                   onChange={(e) => setAgreed(e.target.checked)}
                   disabled={loading}
-                  className="mt-1 w-4 h-4 text-gray-500 bg-gray-800 border-gray-700 rounded focus:ring-gray-500"
+                  className="mt-1 w-4 h-4 text-white bg-[#1c1c1c] border-[#2a2a2a] rounded focus:ring-white"
                 />
-                <label htmlFor="terms" className="text-sm text-gray-400">
+                <label htmlFor="terms" className="text-sm text-gray-300">
                   I agree to the{' '}
-                  <Link href="/terms" className="text-white hover:text-gray-200">
+                  <Link href="/terms" className="text-white hover:text-gray-300 underline">
                     Terms of Service
                   </Link>{' '}
                   and{' '}
-                  <Link href="/privacy" className="text-white hover:text-gray-200">
+                  <Link href="/privacy" className="text-white hover:text-gray-300 underline">
                     Privacy Policy
                   </Link>
                   .
                 </label>
               </div>
               
-              <Button type="submit" className="w-full" size="lg" disabled={!agreed || loading}>
+              <Button type="submit" className="w-full" disabled={!agreed || loading}>
                 {loading ? 'Creating account...' : 'Create account'}
               </Button>
             </form>
             
-            <p className="text-center text-sm text-gray-400 mt-6">
+            <p className="text-center text-sm text-gray-300 mt-3">
               Already have an account?{' '}
-              <Link href="/auth/login" className="text-white hover:text-gray-200 font-medium">
+              <Link href="/auth/login" className="text-white hover:text-gray-300 font-medium">
                 Log in
               </Link>
             </p>
