@@ -62,13 +62,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <Link
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                    'flex items-center px-4 py-3 rounded-lg text-base font-semibold transition-colors',
                     isActive
                       ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                       : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
                   )}
                 >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
                   <span className="flex-1">{item.name}</span>
                 </Link>
               </li>

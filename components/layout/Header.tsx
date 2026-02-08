@@ -89,14 +89,13 @@ export default function Header() {
                     key={item.href} 
                     href={item.href}
                     className={cn(
-                      "flex flex-col items-center justify-center gap-0.5 px-5 py-1.5 rounded-xl transition-all",
+                      "flex items-center px-5 py-2 rounded-xl transition-all",
                       isActive 
-                        ? "text-gray-900 dark:text-white" 
+                        ? "text-gray-900 dark:text-white font-semibold" 
                         : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                     )}
                   >
-                    <Icon className="w-4 h-4" />
-                    <span className="text-[9px] font-medium">{item.name}</span>
+                    <span className="text-sm">{item.name}</span>
                   </Link>
                 )
               })}

@@ -74,12 +74,8 @@ export default function VerticalNav() {
               {isActive && (
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full" />
               )}
-              <Icon className={cn(
-                'w-7 h-7 transition-transform',
-                isActive ? 'scale-110' : 'group-hover:scale-110'
-              )} />
               <span className={cn(
-                'text-[11px] font-medium',
+                'text-sm font-semibold',
                 isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'
               )}>
                 {item.name}
