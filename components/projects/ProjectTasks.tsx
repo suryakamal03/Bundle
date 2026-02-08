@@ -382,11 +382,7 @@ export default function ProjectTasks({ projectId, showAddTaskModal, setShowAddTa
                     </div>
 
               {/* Task Rows */}
-              {groupTasks.length === 0 ? (
-                <div className="px-4 py-8 text-center">
-                  <p className="text-sm text-[#9a9a9a]">No tasks</p>
-                </div>
-              ) : (
+              {groupTasks.length > 0 && (
                 <div className="space-y-0.5">
                   {groupTasks.map((task) => {
                     const deadlineInfo = formatDeadline(task.deadlineAt)
