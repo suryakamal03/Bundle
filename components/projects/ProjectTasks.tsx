@@ -315,15 +315,15 @@ export default function ProjectTasks({ projectId, showAddTaskModal, setShowAddTa
         <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar">
           <button
             onClick={() => setSelectedMember(null)}
-            className={`group relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+            className={`group relative px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap ${
               selectedMember === null 
-                ? 'bg-white text-black shadow-md shadow-white/20 scale-[1.02]' 
+                ? 'bg-white text-black shadow-sm' 
                 : 'bg-[#0f0f10] border border-[#26262a] text-[#9a9a9a] hover:bg-[#1c1c1f] hover:border-[#3a3a3a] hover:text-[#eaeaea]'
             }`}
           >
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-1.5">
               All 
-              <span className={`inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 rounded-full text-xs font-bold ${
+              <span className={`inline-flex items-center justify-center min-w-[1.25rem] h-4 px-1 rounded text-[10px] font-bold ${
                 selectedMember === null 
                   ? 'bg-black/10 text-black' 
                   : 'bg-[#1c1c1f] text-[#9a9a9a] group-hover:bg-[#26262a] group-hover:text-white'
@@ -334,31 +334,19 @@ export default function ProjectTasks({ projectId, showAddTaskModal, setShowAddTa
           </button>
           {members.map((member) => {
             const memberTasks = tasks.filter(t => t.assignedTo === member.id)
-            const colors = [
-              'bg-gradient-to-br from-blue-500 to-blue-600',
-              'bg-gradient-to-br from-purple-500 to-purple-600',
-              'bg-gradient-to-br from-green-500 to-green-600',
-              'bg-gradient-to-br from-orange-500 to-orange-600',
-              'bg-gradient-to-br from-pink-500 to-pink-600',
-              'bg-gradient-to-br from-indigo-500 to-indigo-600',
-            ]
-            const colorIndex = member.name.charCodeAt(0) % colors.length
             return (
               <button
                 key={member.id}
                 onClick={() => setSelectedMember(member.id)}
-                className={`group relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                className={`group relative flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap ${
                   selectedMember === member.id 
-                    ? 'bg-white text-black shadow-md shadow-white/20 scale-[1.02]' 
+                    ? 'bg-white text-black shadow-sm' 
                     : 'bg-[#0f0f10] border border-[#26262a] text-[#9a9a9a] hover:bg-[#1c1c1f] hover:border-[#3a3a3a] hover:text-[#eaeaea]'
                 }`}
               >
-                <div className={`w-5 h-5 rounded-full ${colors[colorIndex]} flex items-center justify-center text-[10px] text-white font-bold shadow-sm ring-1 ring-white/20`}>
-                  {member.name.charAt(0).toUpperCase()}
-                </div>
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-1.5">
                   {member.name}
-                  <span className={`inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 rounded-full text-xs font-bold ${
+                  <span className={`inline-flex items-center justify-center min-w-[1.25rem] h-4 px-1 rounded text-[10px] font-bold ${
                     selectedMember === member.id 
                       ? 'bg-black/10 text-black' 
                       : 'bg-[#1c1c1f] text-[#9a9a9a] group-hover:bg-[#26262a] group-hover:text-white'
