@@ -1,5 +1,5 @@
 import { db } from '@/lib/firebase'
-import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, updateDoc, setDoc, collection, query, where, getDocs, writeBatch } from 'firebase/firestore'
 
 export interface UserSettings {
   userId: string
@@ -100,6 +100,31 @@ export async function updateProfile(userId: string, data: { fullName?: string; g
       console.log('[UserSettings] ✅ Verification - GitHub username in users collection:', userData.githubUsername);
     } else {
       console.error('[UserSettings] ❌ User document still does not exist after update!');
+    }
+    
+    // Update assignedToName in all tasks where this user is assigned
+    if (data.fullName !== undefined) {
+      try {
+        const tasksQuery = query(collection(db, 'tasks'), where('assignedTo', '==', userId));
+        const tasksSnapshot = await getDocs(tasksQuery);
+        
+        if (!tasksSnapshot.empty) {
+          const batch = writeBatch(db);
+          tasksSnapshot.forEach((taskDoc) => {
+            batch.update(taskDoc.ref, { assignedToName: data.fullName });
+          });
+          await batch.commit();
+          console.log(`[UserSettings] Updated assignedToName in ${tasksSnapshot.size} tasks`);
+          
+          // Clear dashboard cache so changes appear immediately
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem(`dashboard_cache_${userId}`);
+          }
+        }
+      } catch (error) {
+        console.error('[UserSettings] Error updating task assignee names:', error);
+        // Don't throw - profile update succeeded, task update is a nice-to-have
+      }
     }
   } catch (error) {
     console.error('[UserSettings] Error updating profile:', error)
