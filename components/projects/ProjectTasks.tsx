@@ -458,11 +458,11 @@ export default function ProjectTasks({ projectId, showAddTaskModal, setShowAddTa
                               {task.assignedTo ? (
                                 <>
                                   <Avatar 
-                                    name={getMemberName(task.assignedTo) || task.assignedToName} 
+                                    name={getMemberName(task.assignedTo) || task.assignedToName || 'Unknown'} 
                                     size="sm" 
                                   />
                                   <span className="text-xs text-[#9a9a9a] truncate">
-                                    {getMemberName(task.assignedTo) || task.assignedToName}
+                                    {getMemberName(task.assignedTo) || task.assignedToName || 'Unknown'}
                                   </span>
                                 </>
                               ) : (
