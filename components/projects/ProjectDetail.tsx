@@ -348,6 +348,7 @@ export default function ProjectDetail({ project, onBack, activeTab: externalActi
           <WebhookConfig 
             githubOwner={project.githubOwner || ''} 
             githubRepo={project.githubRepo || ''} 
+            projectId={project.id}
           />
         )}
       </div>

@@ -9,9 +9,10 @@ import { Copy, Check, ExternalLink, Webhook, AlertCircle, RefreshCw, CheckCircle
 interface WebhookConfigProps {
   githubOwner: string
   githubRepo: string
+  projectId?: string
 }
 
-export default function WebhookConfig({ githubOwner, githubRepo }: WebhookConfigProps) {
+export default function WebhookConfig({ githubOwner, githubRepo, projectId }: WebhookConfigProps) {
   const [copied, setCopied] = useState(false)
   const [ngrokUrl, setNgrokUrl] = useState('')
   const [isLocalhost, setIsLocalhost] = useState(false)
@@ -46,11 +47,13 @@ export default function WebhookConfig({ githubOwner, githubRepo }: WebhookConfig
     }
   }
   
-  const webhookUrl = ngrokUrl 
+  const baseWebhookUrl = ngrokUrl 
     ? `${ngrokUrl}/api/webhooks/github`
     : typeof window !== 'undefined' 
       ? `${window.location.origin}/api/webhooks/github`
       : '/api/webhooks/github'
+      
+  const webhookUrl = projectId ? `${baseWebhookUrl}?projectId=${projectId}` : baseWebhookUrl
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(webhookUrl)
@@ -71,7 +74,10 @@ export default function WebhookConfig({ githubOwner, githubRepo }: WebhookConfig
         <div className="flex-1">
           <h3 className="font-semibold text-[#eaeaea] mb-1">GitHub Webhook Configuration</h3>
           <p className="text-sm text-[#9a9a9a]">
-            Configure GitHub webhooks to receive real-time updates
+            {projectId 
+              ? 'Configure GitHub webhook with this project-specific URL'
+              : 'Configure GitHub webhooks to receive real-time updates'
+            }
           </p>
         </div>
       </div>
