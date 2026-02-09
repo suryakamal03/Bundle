@@ -312,33 +312,60 @@ export default function ProjectTasks({ projectId, showAddTaskModal, setShowAddTa
     <div className="space-y-4">
       {/* Member Pills (Secondary Filter) */}
       {!loadingMembers && members.length > 0 && (
-        <div className="flex items-center gap-2 overflow-x-auto pb-2">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar">
           <button
             onClick={() => setSelectedMember(null)}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+            className={`group relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
               selectedMember === null 
-                ? 'bg-white text-black' 
-                : 'bg-[#0f0f10] border border-[#26262a] text-[#9a9a9a] hover:bg-[#1c1c1f]'
+                ? 'bg-white text-black shadow-md shadow-white/20 scale-[1.02]' 
+                : 'bg-[#0f0f10] border border-[#26262a] text-[#9a9a9a] hover:bg-[#1c1c1f] hover:border-[#3a3a3a] hover:text-[#eaeaea]'
             }`}
           >
-            All ({tasks.length})
+            <span className="flex items-center gap-2">
+              All 
+              <span className={`inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 rounded-full text-xs font-bold ${
+                selectedMember === null 
+                  ? 'bg-black/10 text-black' 
+                  : 'bg-[#1c1c1f] text-[#9a9a9a] group-hover:bg-[#26262a] group-hover:text-white'
+              }`}>
+                {tasks.length}
+              </span>
+            </span>
           </button>
           {members.map((member) => {
             const memberTasks = tasks.filter(t => t.assignedTo === member.id)
+            const colors = [
+              'bg-gradient-to-br from-blue-500 to-blue-600',
+              'bg-gradient-to-br from-purple-500 to-purple-600',
+              'bg-gradient-to-br from-green-500 to-green-600',
+              'bg-gradient-to-br from-orange-500 to-orange-600',
+              'bg-gradient-to-br from-pink-500 to-pink-600',
+              'bg-gradient-to-br from-indigo-500 to-indigo-600',
+            ]
+            const colorIndex = member.name.charCodeAt(0) % colors.length
             return (
               <button
                 key={member.id}
                 onClick={() => setSelectedMember(member.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+                className={`group relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   selectedMember === member.id 
-                    ? 'bg-white text-black' 
-                    : 'bg-[#0f0f10] border border-[#26262a] text-[#9a9a9a] hover:bg-[#1c1c1f]'
+                    ? 'bg-white text-black shadow-md shadow-white/20 scale-[1.02]' 
+                    : 'bg-[#0f0f10] border border-[#26262a] text-[#9a9a9a] hover:bg-[#1c1c1f] hover:border-[#3a3a3a] hover:text-[#eaeaea]'
                 }`}
               >
-                <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-white font-semibold">
+                <div className={`w-5 h-5 rounded-full ${colors[colorIndex]} flex items-center justify-center text-[10px] text-white font-bold shadow-sm ring-1 ring-white/20`}>
                   {member.name.charAt(0).toUpperCase()}
                 </div>
-                {member.name} ({memberTasks.length})
+                <span className="flex items-center gap-2">
+                  {member.name}
+                  <span className={`inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 rounded-full text-xs font-bold ${
+                    selectedMember === member.id 
+                      ? 'bg-black/10 text-black' 
+                      : 'bg-[#1c1c1f] text-[#9a9a9a] group-hover:bg-[#26262a] group-hover:text-white'
+                  }`}>
+                    {memberTasks.length}
+                  </span>
+                </span>
               </button>
             )
           })}

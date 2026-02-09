@@ -12,23 +12,22 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('light')
+  const [theme, setThemeState] = useState<Theme>('dark')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    // Load theme from localStorage
-    const savedTheme = localStorage.getItem('theme') as Theme
-    if (savedTheme) {
-      setThemeState(savedTheme)
-      applyTheme(savedTheme)
-    }
+    // Always force dark mode
+    setThemeState('dark')
+    applyTheme('dark')
+    localStorage.setItem('theme', 'dark')
   }, [])
 
   const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme)
-    localStorage.setItem('theme', newTheme)
-    applyTheme(newTheme)
+    // Always force dark mode, ignore the requested theme
+    setThemeState('dark')
+    localStorage.setItem('theme', 'dark')
+    applyTheme('dark')
   }
 
   const applyTheme = (theme: Theme) => {
