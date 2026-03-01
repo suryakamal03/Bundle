@@ -8,11 +8,33 @@ export interface UserTask extends Task {
 
 export const userTaskService = {
   /**
-   * Get all tasks assigned to a specific user across all projects
+   * Get user's project IDs (projects where they are a member)
+   */
+  async _getUserProjectIds(userId: string): Promise<Map<string, string>> {
+    const projectsQuery = query(
+      collection(db, 'projects'),
+      where('members', 'array-contains', userId)
+    )
+    const projectsSnapshot = await getDocs(projectsQuery)
+    const projectMap = new Map<string, string>()
+    projectsSnapshot.docs.forEach(d => {
+      projectMap.set(d.id, d.data()?.name || 'Unknown Project')
+    })
+    return projectMap
+  },
+
+  /**
+   * Get all tasks assigned to a specific user, only from projects they belong to
    */
   async getUserTasks(userId: string): Promise<UserTask[]> {
     try {
       console.log(`[UserTaskService] Fetching all tasks for userId: ${userId}`)
+
+      // Step 1: Get projects the user is a member of
+      const userProjects = await this._getUserProjectIds(userId)
+      console.log(`[UserTaskService] User is member of ${userProjects.size} projects`)
+
+      if (userProjects.size === 0) return []
       
       const q = query(
         collection(db, 'tasks'),
@@ -26,25 +48,16 @@ export const userTaskService = {
 
       for (const docSnap of snapshot.docs) {
         const taskData = docSnap.data() as Task
-        console.log(`[UserTaskService] Task:`, { id: docSnap.id, title: taskData.title, status: taskData.status })
-        
-        const task: UserTask = {
-          ...taskData,
-          id: docSnap.id
-        }
+        const task: UserTask = { ...taskData, id: docSnap.id }
 
-        // Fetch project name and verify project still exists
-        if (task.projectId) {
-          const projectDoc = await getDoc(doc(db, 'projects', task.projectId))
-          if (projectDoc.exists()) {
-            task.projectName = projectDoc.data()?.name || 'Unknown Project'
-            tasks.push(task)
-          } else {
-            // Skip tasks from deleted projects
-            console.log(`[UserTaskService] Skipping task ${docSnap.id} - project ${task.projectId} no longer exists`)
-          }
-        } else {
+        // Only include tasks from projects the user is a member of
+        if (task.projectId && userProjects.has(task.projectId)) {
+          task.projectName = userProjects.get(task.projectId) || 'Unknown Project'
           tasks.push(task)
+        } else if (!task.projectId) {
+          tasks.push(task)
+        } else {
+          console.log(`[UserTaskService] Skipping task ${docSnap.id} - user is not a member of project ${task.projectId}`)
         }
       }
 
@@ -62,6 +75,10 @@ export const userTaskService = {
   async getUserTasksByStatus(userId: string, status: 'To Do' | 'In Review'): Promise<UserTask[]> {
     try {
       console.log(`[UserTaskService] Fetching tasks for userId: ${userId}, status: ${status}`)
+
+      // Get projects the user is a member of
+      const userProjects = await this._getUserProjectIds(userId)
+      if (userProjects.size === 0) return []
       
       const q = query(
         collection(db, 'tasks'),
@@ -77,40 +94,26 @@ export const userTaskService = {
 
       for (const docSnap of snapshot.docs) {
         const taskData = docSnap.data() as Task
-        console.log(`[UserTaskService] Task data:`, { taskId: docSnap.id, ...taskData })
-        
-        const task: UserTask = {
-          ...taskData,
-          id: docSnap.id
-        }
+        const task: UserTask = { ...taskData, id: docSnap.id }
 
-        // Fetch project name and verify project still exists
-        if (task.projectId) {
-          const projectDoc = await getDoc(doc(db, 'projects', task.projectId))
-          if (projectDoc.exists()) {
-            task.projectName = projectDoc.data()?.name || 'Unknown Project'
-            tasks.push(task)
-          } else {
-            // Skip tasks from deleted projects
-            console.log(`[UserTaskService] Skipping task ${docSnap.id} - project ${task.projectId} no longer exists`)
-          }
-        } else {
+        // Only include tasks from projects the user is a member of
+        if (task.projectId && userProjects.has(task.projectId)) {
+          task.projectName = userProjects.get(task.projectId) || 'Unknown Project'
           tasks.push(task)
+        } else if (!task.projectId) {
+          tasks.push(task)
+        } else {
+          console.log(`[UserTaskService] Skipping task ${docSnap.id} - user is not a member of project ${task.projectId}`)
         }
       }
 
       return tasks
     } catch (error: any) {
       console.error('[UserTaskService] Error fetching user tasks by status:', error)
-      console.error('[UserTaskService] Error code:', error?.code)
-      console.error('[UserTaskService] Error message:', error?.message)
       
-      // If it's an index error, provide helpful message
       if (error?.code === 'failed-precondition' || error?.message?.includes('index')) {
         console.error('[UserTaskService] FIRESTORE INDEX REQUIRED!')
-        console.error('[UserTaskService] You need to create a composite index for:')
-        console.error('[UserTaskService] Collection: tasks')
-        console.error('[UserTaskService] Fields: assignedTo (Ascending), status (Ascending), createdAt (Descending)')
+        console.error('[UserTaskService] Collection: tasks, Fields: assignedTo, status, createdAt')
       }
       
       return []
@@ -143,28 +146,21 @@ export const userTaskService = {
     const unsubscribe = onSnapshot(
       q,
       async (snapshot) => {
+        // Get user's projects for membership filtering
+        const userProjects = await userTaskService._getUserProjectIds(userId)
         const tasks: UserTask[] = []
 
         for (const docSnap of snapshot.docs) {
           const taskData = docSnap.data() as Task
-          const task: UserTask = {
-            ...taskData,
-            id: docSnap.id
-          }
+          const task: UserTask = { ...taskData, id: docSnap.id }
 
-          // Fetch project name
-          if (task.projectId) {
-            try {
-              const projectDoc = await getDoc(doc(db, 'projects', task.projectId))
-              if (projectDoc.exists()) {
-                task.projectName = projectDoc.data()?.name || 'Unknown Project'
-              }
-            } catch (err) {
-              console.error('Error fetching project name:', err)
-            }
+          // Only include tasks from projects the user is a member of
+          if (task.projectId && userProjects.has(task.projectId)) {
+            task.projectName = userProjects.get(task.projectId) || 'Unknown Project'
+            tasks.push(task)
+          } else if (!task.projectId) {
+            tasks.push(task)
           }
-
-          tasks.push(task)
         }
 
         callback(tasks)
