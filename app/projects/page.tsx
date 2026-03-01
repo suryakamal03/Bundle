@@ -11,11 +11,13 @@ import { Project } from '@/types'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { Plus } from 'lucide-react'
+import { useAuth } from '@/backend/auth/authContext'
 
 import ProjectsSkeleton from '@/components/ui/ProjectsSkeleton'
 
 function ProjectsContent() {
   const router = useRouter()
+  const { user } = useAuth()
   const searchParams = useSearchParams()
   
   // Get cached project data from sessionStorage
@@ -45,14 +47,19 @@ function ProjectsContent() {
   // Load project from URL or localStorage on mount and refresh
   useEffect(() => {
     const loadProject = async () => {
+      if (!user) {
+        setIsLoading(false)
+        return
+      }
+
       // First check URL params
       let projectId = searchParams.get('projectId')
       let tab = searchParams.get('tab') as typeof activeTab
       
-      // If not in URL, check localStorage
+      // If not in URL, check user-specific localStorage
       if (!projectId) {
-        const savedProjectId = localStorage.getItem('lastSelectedProjectId')
-        const savedTab = localStorage.getItem('lastSelectedProjectTab') as typeof activeTab
+        const savedProjectId = localStorage.getItem(`lastSelectedProjectId_${user.uid}`)
+        const savedTab = localStorage.getItem(`lastSelectedProjectTab_${user.uid}`) as typeof activeTab
         
         if (savedProjectId) {
           projectId = savedProjectId
@@ -65,6 +72,18 @@ function ProjectsContent() {
           const projectDoc = await getDoc(doc(db, 'projects', projectId))
           if (projectDoc.exists()) {
             const projectData = projectDoc.data()
+            
+            // MEMBERSHIP CHECK: Only show project if user is a member
+            const members: string[] = projectData.members || []
+            if (!members.includes(user.uid)) {
+              console.log('[Projects] User is not a member of this project, clearing selection')
+              localStorage.removeItem(`lastSelectedProjectId_${user.uid}`)
+              localStorage.removeItem(`lastSelectedProjectTab_${user.uid}`)
+              router.replace('/projects', { scroll: false })
+              setIsLoading(false)
+              return
+            }
+
             const project: Project = {
               id: projectDoc.id,
               name: projectData.name,
@@ -94,6 +113,10 @@ function ProjectsContent() {
             params.set('projectId', project.id)
             params.set('tab', tab || 'tasks')
             router.replace(`/projects?${params.toString()}`, { scroll: false })
+          } else {
+            // Project doesn't exist, clear localStorage
+            localStorage.removeItem(`lastSelectedProjectId_${user.uid}`)
+            localStorage.removeItem(`lastSelectedProjectTab_${user.uid}`)
           }
         } catch (error) {
           console.error('Failed to load project:', error)
@@ -103,16 +126,16 @@ function ProjectsContent() {
     }
     
     loadProject()
-  }, [searchParams])
+  }, [searchParams, user])
 
   // Update URL when project or tab changes
   const handleSelectProject = (project: Project | null) => {
     setSelectedProject(project)
     
-    if (project) {
-      // Save to localStorage
-      localStorage.setItem('lastSelectedProjectId', project.id)
-      localStorage.setItem('lastSelectedProjectTab', activeTab)
+    if (project && user) {
+      // Save to user-specific localStorage
+      localStorage.setItem(`lastSelectedProjectId_${user.uid}`, project.id)
+      localStorage.setItem(`lastSelectedProjectTab_${user.uid}`, activeTab)
       
       // Update URL with project ID and current tab
       const params = new URLSearchParams()
@@ -120,9 +143,11 @@ function ProjectsContent() {
       params.set('tab', activeTab)
       router.push(`/projects?${params.toString()}`, { scroll: false })
     } else {
-      // Clear localStorage and URL params when no project selected
-      localStorage.removeItem('lastSelectedProjectId')
-      localStorage.removeItem('lastSelectedProjectTab')
+      // Clear user-specific localStorage and URL params when no project selected
+      if (user) {
+        localStorage.removeItem(`lastSelectedProjectId_${user.uid}`)
+        localStorage.removeItem(`lastSelectedProjectTab_${user.uid}`)
+      }
       router.push('/projects', { scroll: false })
     }
   }
@@ -131,9 +156,9 @@ function ProjectsContent() {
   const handleTabChange = (tab: typeof activeTab) => {
     setActiveTab(tab)
     
-    if (selectedProject) {
-      // Save to localStorage
-      localStorage.setItem('lastSelectedProjectTab', tab)
+    if (selectedProject && user) {
+      // Save to user-specific localStorage
+      localStorage.setItem(`lastSelectedProjectTab_${user.uid}`, tab)
       
       const params = new URLSearchParams()
       params.set('projectId', selectedProject.id)
@@ -143,11 +168,20 @@ function ProjectsContent() {
   }
 
   const handleActivityClick = async (projectId: string) => {
+    if (!user) return
     try {
       // Fetch the project data
       const projectDoc = await getDoc(doc(db, 'projects', projectId))
       if (projectDoc.exists()) {
         const projectData = projectDoc.data()
+        
+        // MEMBERSHIP CHECK: Only allow if user is a member
+        const members: string[] = projectData.members || []
+        if (!members.includes(user.uid)) {
+          console.log('[Projects] User is not a member of clicked project')
+          return
+        }
+
         const project: Project = {
           id: projectDoc.id,
           name: projectData.name,
@@ -162,9 +196,9 @@ function ProjectsContent() {
         setSelectedProject(project)
         setActiveTab('github')
         
-        // Save to localStorage
-        localStorage.setItem('lastSelectedProjectId', project.id)
-        localStorage.setItem('lastSelectedProjectTab', 'github')
+        // Save to user-specific localStorage
+        localStorage.setItem(`lastSelectedProjectId_${user.uid}`, project.id)
+        localStorage.setItem(`lastSelectedProjectTab_${user.uid}`, 'github')
         
         // Update URL
         const params = new URLSearchParams()

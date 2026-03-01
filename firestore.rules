@@ -21,7 +21,7 @@ service cloud.firestore {
     
     // GitHub Activity collection - stores processed webhook activities
     match /githubActivity/{activityId} {
-      allow read: if request.auth != null; // Project members can read
+      allow read: if request.auth != null;
       allow create: if true; // Allow server-side webhook processing
       allow update, delete: if false; // Activities are immutable once created
     }
@@ -48,9 +48,12 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow update, delete: if request.auth != null && request.auth.uid == resource.data.createdBy;
     }
-    
-    match /{document=**} {
+
+    // Chat messages - only accessible to authenticated users
+    match /chatMessages/{messageId} {
       allow read, write: if request.auth != null;
     }
+
+    // No catch-all rule - only explicitly defined collections are accessible
   }
 }
