@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
-import { db } from '@/lib/firebase'
-import { collection, query, where, getDocs, doc, updateDoc, getDoc } from 'firebase/firestore'
+import { getAdminDb } from '@/lib/firebase-admin'
 import { generateTaskReminderHTML } from '@/lib/emailTemplates'
+
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY)
@@ -19,6 +20,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Resend API key not configured' }, { status: 500 })
     }
 
+    const db = getAdminDb()
+
     const now = new Date()
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
@@ -26,18 +29,15 @@ export async function POST(request: NextRequest) {
     const tomorrowStart = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate())
     const tomorrowEnd = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 23, 59, 59)
 
-    const tasksRef = collection(db, 'tasks')
-    const q = query(
-      tasksRef,
-      where('reminderEnabled', '==', true),
-      where('reminderSent', '==', false)
-    )
+    const tasksSnapshot = await db.collection('tasks')
+      .where('reminderEnabled', '==', true)
+      .where('reminderSent', '==', false)
+      .get()
 
-    const querySnapshot = await getDocs(q)
     const remindersSent = []
     const errors = []
 
-    for (const taskDoc of querySnapshot.docs) {
+    for (const taskDoc of tasksSnapshot.docs) {
       const task = taskDoc.data()
       
       if (task.status === 'Done') {
@@ -59,17 +59,17 @@ export async function POST(request: NextRequest) {
 
       if (deadlineDate >= tomorrowStart && deadlineDate <= tomorrowEnd) {
         try {
-          const userDoc = await getDoc(doc(db, 'users', task.assignedTo))
-          if (!userDoc.exists()) {
+          const userDoc = await db.collection('users').doc(task.assignedTo).get()
+          if (!userDoc.exists) {
             errors.push({ taskId: taskDoc.id, error: 'User not found' })
             continue
           }
 
-          const userData = userDoc.data()
+          const userData = userDoc.data()!
           const userEmail = userData.email
 
-          const projectDoc = await getDoc(doc(db, 'projects', task.projectId))
-          const projectName = projectDoc.exists() ? projectDoc.data().name : 'Unknown Project'
+          const projectDoc = await db.collection('projects').doc(task.projectId).get()
+          const projectName = projectDoc.exists ? projectDoc.data()?.name : 'Unknown Project'
 
           const emailHTML = generateTaskReminderHTML({
             taskTitle: task.title,
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
             html: emailHTML
           })
 
-          await updateDoc(doc(db, 'tasks', taskDoc.id), {
+          await db.collection('tasks').doc(taskDoc.id).update({
             reminderSent: true
           })
 
