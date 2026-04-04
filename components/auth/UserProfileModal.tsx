@@ -50,17 +50,17 @@ export default function UserProfileModal({ userId, onComplete }: UserProfileModa
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-[#171717] border border-[#2a2a2a] rounded-lg shadow-xl max-w-md w-full p-6">
         <div className="mb-4">
-          <h2 className="text-xl font-bold text-gray-900">Complete Your Profile</h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <h2 className="text-xl font-bold text-white">Complete Your Profile</h2>
+          <p className="text-sm text-[#b0b0b0] mt-1">
             We need some additional information to set up your account.
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-300 rounded-lg text-sm">
             {error}
           </div>
         )}
@@ -86,7 +86,7 @@ export default function UserProfileModal({ userId, onComplete }: UserProfileModa
               disabled={loading}
               required
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[#9a9a9a] mt-1">
               Required for matching tasks with your GitHub commits
             </p>
           </div>
