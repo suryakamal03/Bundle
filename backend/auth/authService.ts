@@ -24,7 +24,11 @@ async function createOrMergeUserDocWithRetry(
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       await user.getIdToken(true);
-      await setDoc(doc(db, 'users', user.uid), payload, merge ? { merge: true } : undefined);
+      if (merge) {
+        await setDoc(doc(db, 'users', user.uid), payload, { merge: true });
+      } else {
+        await setDoc(doc(db, 'users', user.uid), payload);
+      }
       return;
     } catch (error: any) {
       lastError = error;
