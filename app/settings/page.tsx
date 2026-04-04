@@ -8,7 +8,9 @@ import Input from '@/components/ui/Input'
 import { useAuth } from '@/backend/auth/authContext'
 import { getUserSettings, updateProfile } from '@/backend/settings/userSettingsService'
 import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
 import { auth } from '@/lib/firebase'
+import { db } from '@/lib/firebase'
 import Toast from '@/components/ui/Toast'
 
 interface UserSettings {
@@ -48,11 +50,16 @@ export default function SettingsPage() {
     
     try {
       setLoading(true)
-      const userSettings = await getUserSettings(user.uid)
+      const [userSettings, userDoc] = await Promise.all([
+        getUserSettings(user.uid),
+        getDoc(doc(db, 'users', user.uid))
+      ])
+
+      const userData = userDoc.exists() ? userDoc.data() : {}
       const mergedSettings: UserSettings = {
-        fullName: userSettings.fullName || user.displayName || '',
-        email: userSettings.email || user.email || '',
-        githubUsername: userSettings.githubUsername || ''
+        fullName: userSettings.fullName || userData.name || userData.displayName || user.displayName || '',
+        email: userSettings.email || userData.email || user.email || '',
+        githubUsername: userSettings.githubUsername || userData.githubUsername || ''
       }
 
       setSettings(mergedSettings)
@@ -60,10 +67,20 @@ export default function SettingsPage() {
       setGithubUsername(mergedSettings.githubUsername || '')
     } catch (error) {
       console.error('Error loading settings:', error)
+      let fallbackUserData: any = {}
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid))
+        if (userDoc.exists()) {
+          fallbackUserData = userDoc.data()
+        }
+      } catch (userDocError) {
+        console.error('Error loading fallback user profile:', userDocError)
+      }
+
       const fallbackSettings: UserSettings = {
-        fullName: user.displayName || '',
-        email: user.email || '',
-        githubUsername: ''
+        fullName: fallbackUserData.name || fallbackUserData.displayName || user.displayName || '',
+        email: fallbackUserData.email || user.email || '',
+        githubUsername: fallbackUserData.githubUsername || ''
       }
       setSettings(fallbackSettings)
       setFullName(fallbackSettings.fullName)
