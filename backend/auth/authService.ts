@@ -11,6 +11,38 @@ import {
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function createOrMergeUserDocWithRetry(
+  user: User,
+  payload: Record<string, unknown>,
+  merge = false
+): Promise<void> {
+  const maxAttempts = 3;
+  let lastError: any = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      await user.getIdToken(true);
+      await setDoc(doc(db, 'users', user.uid), payload, merge ? { merge: true } : undefined);
+      return;
+    } catch (error: any) {
+      lastError = error;
+      const isPermissionError =
+        error?.code === 'permission-denied' ||
+        error?.code === 'firestore/permission-denied';
+
+      if (!isPermissionError || attempt === maxAttempts) {
+        throw error;
+      }
+
+      await sleep(attempt * 250);
+    }
+  }
+
+  throw lastError;
+}
+
 export interface AuthError {
   code: string;
   message: string;
@@ -43,7 +75,7 @@ export const authService = {
           displayName: data.fullName
         });
 
-        await setDoc(doc(db, 'users', userCredential.user.uid), {
+        await createOrMergeUserDocWithRetry(userCredential.user, {
           uid: userCredential.user.uid,
           email: userCredential.user.email,
           name: data.fullName,
@@ -95,15 +127,14 @@ export const authService = {
       const userCredential = await signInWithPopup(auth, provider);
 
       if (userCredential.user) {
-        const userRef = doc(db, 'users', userCredential.user.uid);
-        const userDoc = await setDoc(userRef, {
+        await createOrMergeUserDocWithRetry(userCredential.user, {
           uid: userCredential.user.uid,
           email: userCredential.user.email,
           name: userCredential.user.displayName || userCredential.user.email,
           displayName: '',
           githubUsername: '',
           createdAt: serverTimestamp()
-        }, { merge: true });
+        }, true);
 
         // Send welcome email for new users (check if user was just created)
         // Note: We use merge:true, so we can't easily detect if this is a new user
@@ -154,6 +185,8 @@ export const authService = {
       'auth/network-request-failed': 'Network error. Please check your connection',
       'auth/popup-closed-by-user': 'Sign-in popup was closed',
       'auth/cancelled-popup-request': 'Only one popup request is allowed at a time',
+      'permission-denied': 'Firestore blocked account setup. Check Firestore Rules and publish them for your current database.',
+      'firestore/permission-denied': 'Firestore blocked account setup. Check Firestore Rules and publish them for your current database.',
     };
 
     return {
