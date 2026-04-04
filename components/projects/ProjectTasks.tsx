@@ -7,7 +7,7 @@ import Button from '@/components/ui/Button'
 import Avatar from '@/components/ui/Avatar'
 import AddTaskModal from './AddTaskModal'
 import TaskDetailsModal from './TaskDetailsModal'
-import { Plus, Calendar, Filter, Users, ChevronDown, MoreHorizontal, MessageSquare, Circle, CheckCircle2, Flag, Edit2 } from 'lucide-react'
+import { Plus, Calendar, Filter, Users, ChevronDown, MoreHorizontal, MessageSquare, Circle, Flag, Edit2, X } from 'lucide-react'
 import { taskService } from '@/backend/tasks/taskService'
 import { inviteService } from '@/backend/projects/inviteService'
 import { Task } from '@/types'
@@ -254,6 +254,19 @@ export default function ProjectTasks({ projectId, showAddTaskModal, setShowAddTa
     } catch (error) {
       console.error('Failed to create task:', error)
     }
+  }
+
+  const cancelInlineTaskCreation = () => {
+    setCreatingInlineTask(null)
+    setNewTaskName('')
+    setNewTaskAssignee('')
+    setNewTaskAssigneeName('')
+    setNewTaskDate('')
+    setNewTaskPriority('')
+    setAssigneeSelected(false)
+    setShowNewAssigneeDropdown(false)
+    setShowNewDatePicker(false)
+    setShowNewPriorityDropdown(false)
   }
 
   const filteredTasks = selectedMember
@@ -661,13 +674,7 @@ export default function ProjectTasks({ projectId, showAddTaskModal, setShowAddTa
                             }
                           }
                           if (e.key === 'Escape') {
-                            setCreatingInlineTask(null)
-                            setNewTaskName('')
-                            setNewTaskAssignee('')
-                            setNewTaskAssigneeName('')
-                            setNewTaskDate('')
-                            setNewTaskPriority('')
-                            setAssigneeSelected(false)
+                            cancelInlineTaskCreation()
                           }
                         }}
                         placeholder="Task name"
@@ -811,14 +818,15 @@ export default function ProjectTasks({ projectId, showAddTaskModal, setShowAddTa
                     )}
                   </div>
 
-                  {/* Save/Cancel */}
+                  {/* Cancel */}
                   <div className="flex items-center justify-center gap-1">
                     <button
-                      onClick={() => createInlineTask(status)}
+                      onClick={cancelInlineTaskCreation}
                       className="p-1 hover:bg-[#26262a] rounded transition-colors"
-                      disabled={!newTaskName.trim()}
+                      aria-label="Cancel task creation"
+                      title="Cancel task creation"
                     >
-                      <CheckCircle2 className="w-4 h-4 text-green-400" />
+                      <X className="w-4 h-4 text-red-400" />
                     </button>
                   </div>
                 </div>

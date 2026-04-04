@@ -96,11 +96,34 @@ export default function ProjectGitHub({ projectId }: ProjectGitHubProps) {
   }
 
   if (loading) {
-    return null // Don't show while loading
+    return (
+      <Card>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">GitHub Activity</h2>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse flex gap-3">
+              <div className="w-10 h-10 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+              <div className="flex-1">
+                <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-2/3 mb-2"></div>
+                <div className="h-2.5 bg-gray-200 dark:bg-gray-800 rounded w-1/2"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    )
   }
 
   if (error) {
-    return null // Don't show on error
+    return (
+      <Card>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">GitHub Activity</h2>
+        <div className="py-8 text-center">
+          <p className="text-sm text-red-500 dark:text-red-400">Could not load GitHub activity.</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{error}</p>
+        </div>
+      </Card>
+    )
   }
 
   return (

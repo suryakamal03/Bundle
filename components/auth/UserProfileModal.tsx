@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 
 interface UserProfileModalProps {
@@ -36,10 +35,27 @@ export default function UserProfileModal({ userId, onComplete }: UserProfileModa
 
     try {
       const userRef = doc(db, 'users', userId)
+      const userSnapshot = await getDoc(userRef)
+      const existingUserData = userSnapshot.exists() ? userSnapshot.data() : {}
+      const normalizedDisplayName = displayName.trim()
+      const normalizedGithubUsername = githubUsername.trim().toLowerCase()
+
       await updateDoc(userRef, {
-        displayName: displayName.trim(),
-        githubUsername: githubUsername.trim().toLowerCase()
+        name: normalizedDisplayName,
+        displayName: normalizedDisplayName,
+        githubUsername: normalizedGithubUsername
       })
+
+      await setDoc(doc(db, 'userSettings', userId), {
+        userId,
+        fullName: normalizedDisplayName,
+        email: existingUserData?.email || '',
+        githubUsername: normalizedGithubUsername,
+        autoReminder: true,
+        reminderTime: '09:00',
+        theme: 'light',
+        updatedAt: new Date()
+      }, { merge: true })
 
       onComplete()
     } catch (err: any) {

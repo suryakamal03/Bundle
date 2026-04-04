@@ -14,21 +14,23 @@ export interface UserSettings {
 
 export async function getUserSettings(userId: string): Promise<UserSettings> {
   try {
-    const settingsDoc = await getDoc(doc(db, 'userSettings', userId))
+    const settingsRef = doc(db, 'userSettings', userId)
+    const userRef = doc(db, 'users', userId)
+    const [settingsDoc, userDoc] = await Promise.all([
+      getDoc(settingsRef),
+      getDoc(userRef)
+    ])
+    const userData = userDoc.exists() ? userDoc.data() : {}
     
     if (!settingsDoc.exists()) {
-      // Get user data from users collection
-      const userDoc = await getDoc(doc(db, 'users', userId))
       if (!userDoc.exists()) {
         throw new Error('User not found')
       }
-      
-      const userData = userDoc.data()
-      
+
       // Create default settings
       const defaultSettings: UserSettings = {
         userId,
-        fullName: userData.name || '',
+        fullName: userData.name || userData.displayName || '',
         email: userData.email || '',
         githubUsername: userData.githubUsername || '',
         autoReminder: true,
@@ -36,12 +38,41 @@ export async function getUserSettings(userId: string): Promise<UserSettings> {
         theme: 'light',
         updatedAt: new Date()
       }
-      
-      await setDoc(doc(db, 'userSettings', userId), defaultSettings)
+
+      await setDoc(settingsRef, defaultSettings)
       return defaultSettings
     }
-    
-    return { ...settingsDoc.data(), userId } as UserSettings
+
+    const settingsData = settingsDoc.data() as Partial<UserSettings>
+    const fullName = settingsData.fullName || (userData.name || userData.displayName || '')
+    const email = settingsData.email || (userData.email || '')
+    const githubUsername = settingsData.githubUsername || (userData.githubUsername || '')
+
+    const normalizedSettings: UserSettings = {
+      userId,
+      fullName,
+      email,
+      githubUsername,
+      autoReminder: settingsData.autoReminder ?? true,
+      reminderTime: settingsData.reminderTime || '09:00',
+      theme: (settingsData.theme as 'light' | 'dark') || 'light',
+      updatedAt: settingsData.updatedAt || new Date()
+    }
+
+    if (
+      settingsData.fullName !== fullName ||
+      settingsData.email !== email ||
+      settingsData.githubUsername !== githubUsername
+    ) {
+      await setDoc(settingsRef, {
+        fullName,
+        email,
+        githubUsername,
+        updatedAt: new Date()
+      }, { merge: true })
+    }
+
+    return normalizedSettings
   } catch (error) {
     console.error('Error getting user settings:', error)
     throw error
@@ -53,21 +84,38 @@ export async function updateProfile(userId: string, data: { fullName?: string; g
     console.log('[UserSettings] Updating profile for user:', userId);
     console.log('[UserSettings] Update data:', data);
     
+    const settingsRef = doc(db, 'userSettings', userId)
+    const userRef = doc(db, 'users', userId)
+    const currentUserDoc = await getDoc(userRef)
+    const currentUserData = currentUserDoc.exists() ? currentUserDoc.data() : {}
+
     const updates: any = {
       updatedAt: new Date()
     }
     
-    if (data.fullName !== undefined) updates.fullName = data.fullName
-    if (data.githubUsername !== undefined) updates.githubUsername = data.githubUsername
+    const normalizedFullName = data.fullName?.trim()
+    const normalizedGithubUsername = data.githubUsername?.trim().toLowerCase()
+
+    if (normalizedFullName !== undefined) updates.fullName = normalizedFullName
+    if (normalizedGithubUsername !== undefined) updates.githubUsername = normalizedGithubUsername
     
     // Update or create userSettings collection
     try {
-      await updateDoc(doc(db, 'userSettings', userId), updates);
+      await updateDoc(settingsRef, updates);
       console.log('[UserSettings] Updated userSettings collection');
     } catch (error: any) {
       if (error.code === 'not-found') {
         console.log('[UserSettings] userSettings document not found, creating it');
-        await setDoc(doc(db, 'userSettings', userId), updates);
+        await setDoc(settingsRef, {
+          userId,
+          fullName: normalizedFullName || currentUserData.name || currentUserData.displayName || '',
+          email: currentUserData.email || '',
+          githubUsername: normalizedGithubUsername || currentUserData.githubUsername || '',
+          autoReminder: true,
+          reminderTime: '09:00',
+          theme: 'light',
+          updatedAt: new Date()
+        }, { merge: true });
       } else {
         throw error;
       }
@@ -75,19 +123,23 @@ export async function updateProfile(userId: string, data: { fullName?: string; g
     
     // Also update the users collection
     const userUpdates: any = {}
-    if (data.fullName !== undefined) userUpdates.name = data.fullName
-    if (data.githubUsername !== undefined) userUpdates.githubUsername = data.githubUsername
+    if (normalizedFullName !== undefined) {
+      userUpdates.name = normalizedFullName
+      userUpdates.displayName = normalizedFullName
+    }
+    if (normalizedGithubUsername !== undefined) userUpdates.githubUsername = normalizedGithubUsername
     
     try {
-      await updateDoc(doc(db, 'users', userId), userUpdates);
+      await updateDoc(userRef, userUpdates);
       console.log('[UserSettings] Updated users collection with:', userUpdates);
     } catch (error: any) {
       if (error.code === 'not-found') {
         console.log('[UserSettings] users document not found, creating it');
-        await setDoc(doc(db, 'users', userId), {
+        await setDoc(userRef, {
           ...userUpdates,
+          email: currentUserData.email || '',
           createdAt: new Date()
-        });
+        }, { merge: true });
       } else {
         throw error;
       }
