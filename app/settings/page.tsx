@@ -22,6 +22,7 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<UserSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [changingPassword, setChangingPassword] = useState(false)
   
   // Toast state
@@ -48,23 +49,38 @@ export default function SettingsPage() {
     try {
       setLoading(true)
       const userSettings = await getUserSettings(user.uid)
-      setSettings(userSettings)
-      setFullName(userSettings.fullName)
-      setGithubUsername(userSettings.githubUsername || '')
+      const mergedSettings: UserSettings = {
+        fullName: userSettings.fullName || user.displayName || '',
+        email: userSettings.email || user.email || '',
+        githubUsername: userSettings.githubUsername || ''
+      }
+
+      setSettings(mergedSettings)
+      setFullName(mergedSettings.fullName)
+      setGithubUsername(mergedSettings.githubUsername || '')
     } catch (error) {
       console.error('Error loading settings:', error)
+      const fallbackSettings: UserSettings = {
+        fullName: user.displayName || '',
+        email: user.email || '',
+        githubUsername: ''
+      }
+      setSettings(fallbackSettings)
+      setFullName(fallbackSettings.fullName)
+      setGithubUsername(fallbackSettings.githubUsername || '')
     } finally {
       setLoading(false)
     }
   }
 
   const handleSaveProfile = async () => {
-    if (!user?.uid) return
+    if (!user?.uid || !isEditingProfile) return
     
     try {
       setSaving(true)
       await updateProfile(user.uid, { fullName, githubUsername })
       await loadSettings()
+      setIsEditingProfile(false)
       setToast({ message: 'Profile updated successfully!', type: 'success', isOpen: true })
     } catch (error) {
       console.error('Error saving profile:', error)
@@ -132,21 +148,21 @@ export default function SettingsPage() {
     <DashboardLayout>
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Manage your account settings</p>
+          <h1 className="text-3xl font-bold text-[#111827] dark:text-white">Settings</h1>
+          <p className="text-sm text-[#4b5563] dark:text-gray-400">Manage your account settings</p>
         </div>
         
         <div className="space-y-6">
-          <Card className="border-gray-200 dark:border-gray-700">
+          <Card className="border-[#d1d5db] bg-white dark:border-gray-700 dark:bg-[#151517]">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
-                <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="p-2 bg-[#eef2ff] dark:bg-primary-900/20 rounded-lg">
+                <svg className="w-6 h-6 text-[#4f46e5] dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Personal Information</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Update your personal details and profile</p>
+                <h2 className="text-lg font-semibold text-[#111827] dark:text-white">Personal Information</h2>
+                <p className="text-sm text-[#4b5563] dark:text-gray-400">Update your personal details and profile</p>
               </div>
             </div>
             
@@ -155,16 +171,16 @@ export default function SettingsPage() {
                 label="Full Name" 
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                disabled={saving}
+                disabled={!isEditingProfile || saving}
                 placeholder="Enter your full name"
               />
               
               <Input 
                 label="Email Address" 
                 type="email" 
-                value={settings?.email || ''}
+                value={settings?.email || user?.email || ''}
                 disabled
-                className="bg-gray-50 dark:bg-gray-900 cursor-not-allowed"
+                className="bg-[#f3f4f6] dark:bg-gray-900 cursor-not-allowed"
               />
               
               <Input 
@@ -172,13 +188,32 @@ export default function SettingsPage() {
                 value={githubUsername}
                 onChange={(e) => setGithubUsername(e.target.value)}
                 placeholder="Enter your GitHub username"
-                disabled={saving}
+                disabled={!isEditingProfile || saving}
               />
               
               <div className="flex justify-end pt-2">
-                <Button onClick={handleSaveProfile} disabled={saving} className="min-w-[140px]">
-                  {saving ? 'Saving...' : 'Save Changes'}
-                </Button>
+                {!isEditingProfile ? (
+                  <Button onClick={() => setIsEditingProfile(true)} className="min-w-[140px]">
+                    Edit Details
+                  </Button>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        setIsEditingProfile(false)
+                        setFullName(settings?.fullName || user?.displayName || '')
+                        setGithubUsername(settings?.githubUsername || '')
+                      }}
+                      disabled={saving}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSaveProfile} disabled={saving} className="min-w-[140px]">
+                      {saving ? 'Saving...' : 'Save Details'}
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </Card>
