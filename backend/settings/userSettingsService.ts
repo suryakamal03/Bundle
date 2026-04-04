@@ -39,7 +39,12 @@ export async function getUserSettings(userId: string): Promise<UserSettings> {
         updatedAt: new Date()
       }
 
-      await setDoc(settingsRef, defaultSettings)
+      try {
+        await setDoc(settingsRef, defaultSettings)
+      } catch (writeError) {
+        // Return fallback data even if userSettings write is currently blocked.
+        console.warn('[UserSettings] Could not create userSettings document, returning fallback data:', writeError)
+      }
       return defaultSettings
     }
 
@@ -64,12 +69,17 @@ export async function getUserSettings(userId: string): Promise<UserSettings> {
       settingsData.email !== email ||
       settingsData.githubUsername !== githubUsername
     ) {
-      await setDoc(settingsRef, {
-        fullName,
-        email,
-        githubUsername,
-        updatedAt: new Date()
-      }, { merge: true })
+      try {
+        await setDoc(settingsRef, {
+          fullName,
+          email,
+          githubUsername,
+          updatedAt: new Date()
+        }, { merge: true })
+      } catch (syncError) {
+        // Do not fail settings load if sync-back write fails.
+        console.warn('[UserSettings] Could not sync missing userSettings fields:', syncError)
+      }
     }
 
     return normalizedSettings
@@ -99,29 +109,7 @@ export async function updateProfile(userId: string, data: { fullName?: string; g
     if (normalizedFullName !== undefined) updates.fullName = normalizedFullName
     if (normalizedGithubUsername !== undefined) updates.githubUsername = normalizedGithubUsername
     
-    // Update or create userSettings collection
-    try {
-      await updateDoc(settingsRef, updates);
-      console.log('[UserSettings] Updated userSettings collection');
-    } catch (error: any) {
-      if (error.code === 'not-found') {
-        console.log('[UserSettings] userSettings document not found, creating it');
-        await setDoc(settingsRef, {
-          userId,
-          fullName: normalizedFullName || currentUserData.name || currentUserData.displayName || '',
-          email: currentUserData.email || '',
-          githubUsername: normalizedGithubUsername || currentUserData.githubUsername || '',
-          autoReminder: true,
-          reminderTime: '09:00',
-          theme: 'light',
-          updatedAt: new Date()
-        }, { merge: true });
-      } else {
-        throw error;
-      }
-    }
-    
-    // Also update the users collection
+    // Update users collection first (source of truth for profile fields).
     const userUpdates: any = {}
     if (normalizedFullName !== undefined) {
       userUpdates.name = normalizedFullName
@@ -142,6 +130,35 @@ export async function updateProfile(userId: string, data: { fullName?: string; g
         }, { merge: true });
       } else {
         throw error;
+      }
+    }
+
+    // Best effort: keep userSettings collection in sync.
+    try {
+      await updateDoc(settingsRef, {
+        ...updates,
+        email: currentUserData.email || ''
+      });
+      console.log('[UserSettings] Updated userSettings collection');
+    } catch (error: any) {
+      if (error.code === 'not-found') {
+        console.log('[UserSettings] userSettings document not found, creating it');
+        try {
+          await setDoc(settingsRef, {
+            userId,
+            fullName: normalizedFullName || currentUserData.name || currentUserData.displayName || '',
+            email: currentUserData.email || '',
+            githubUsername: normalizedGithubUsername || currentUserData.githubUsername || '',
+            autoReminder: true,
+            reminderTime: '09:00',
+            theme: 'light',
+            updatedAt: new Date()
+          }, { merge: true });
+        } catch (createSettingsError) {
+          console.warn('[UserSettings] Could not create userSettings document:', createSettingsError)
+        }
+      } else {
+        console.warn('[UserSettings] Could not update userSettings document:', error)
       }
     }
     
