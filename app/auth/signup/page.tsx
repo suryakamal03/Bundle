@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -9,7 +9,7 @@ import { Chrome } from 'lucide-react'
 import { authService } from '@/backend/auth/authService'
 import { validateEmail, validatePassword, validateFullName } from '@/backend/auth/authHelpers'
 
-export default function SignupPage() {
+function SignupContent() {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -183,5 +183,13 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#141414]" />}>
+      <SignupContent />
+    </Suspense>
   )
 }
