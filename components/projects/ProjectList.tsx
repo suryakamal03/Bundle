@@ -255,6 +255,8 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
           <h2 className="text-sm font-semibold text-gray-900 dark:text-[#eaeaea]">Projects</h2>
           <button 
             onClick={() => setShowCreateModal(true)}
+            aria-label="Create project"
+            title="Create project"
             className="p-1 hover:bg-gray-200 dark:hover:bg-[#1c1c1f] rounded transition-colors"
           >
             <Plus className="w-4 h-4 text-gray-600 dark:text-[#9a9a9a]" />
@@ -312,6 +314,8 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
                         e.stopPropagation()
                         setMenuOpen(menuOpen === project.id ? null : project.id)
                       }}
+                      aria-label="Project actions"
+                      title="Project actions"
                       className="p-1 hover:bg-gray-200 dark:hover:bg-[#26262a] rounded opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <MoreVertical className="w-3.5 h-3.5" />

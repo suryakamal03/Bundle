@@ -72,6 +72,8 @@ export default function InviteMemberModal({ projectId, projectName, onClose }: I
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Invite Team Member</h2>
             <button
               onClick={onClose}
+              aria-label="Close invite modal"
+              title="Close"
               className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
               <X className="w-5 h-5" />
@@ -103,6 +105,7 @@ export default function InviteMemberModal({ projectId, projectName, onClose }: I
                   />
                   <button
                     onClick={handleCopy}
+                    aria-label={copied ? 'Invite link copied' : 'Copy invite link'}
                     className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
                     title={copied ? "Copied!" : "Copy"}
                   >

@@ -66,12 +66,16 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
+            aria-label={isExpanded ? 'Minimize AI assistant' : 'Expand AI assistant'}
+            title={isExpanded ? 'Minimize' : 'Expand'}
             className="p-2 text-[#9a9a9a] hover:text-[#eaeaea] rounded-lg hover:bg-[#1c1c1f]"
           >
             {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
           <button
             onClick={onClose}
+            aria-label="Close AI assistant"
+            title="Close"
             className="p-2 text-[#9a9a9a] hover:text-[#eaeaea] rounded-lg hover:bg-[#1c1c1f]"
           >
             <X className="w-4 h-4" />

@@ -75,6 +75,8 @@ export default function CreateProjectModal({ onClose, onSuccess }: CreateProject
           <h2 className="text-lg font-semibold text-[#eaeaea]">Create New Project</h2>
           <button
             onClick={onClose}
+            aria-label="Close create project modal"
+            title="Close"
             className="text-[#9a9a9a] hover:text-[#eaeaea] transition-colors"
           >
             <X className="w-5 h-5" />
