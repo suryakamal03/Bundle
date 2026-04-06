@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 
+export const dynamic = 'force-dynamic';
+
 // Test endpoint to check project configuration and activities
 export async function GET(req: NextRequest) {
   try {
