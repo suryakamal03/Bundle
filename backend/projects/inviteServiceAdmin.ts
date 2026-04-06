@@ -64,6 +64,9 @@ export const inviteServiceAdmin = {
   },
 
   async createInvite(projectId: string, createdBy: string): Promise<{ inviteId: string; inviteLink: string }> {
+    const projectDoc = await adminDb.collection('projects').doc(projectId).get();
+    const projectName = projectDoc.exists ? projectDoc.data()?.name || '' : '';
+
     // Check if there's already a pending invite for this project
     const invitesSnapshot = await adminDb.collection('invites')
       .where('projectId', '==', projectId)
@@ -83,6 +86,7 @@ export const inviteServiceAdmin = {
     // Otherwise create a new invite
     const inviteData = {
       projectId,
+      projectName,
       createdBy,
       createdAt: FieldValue.serverTimestamp(),
       status: 'pending'

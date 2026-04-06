@@ -4,6 +4,7 @@ import { db } from '@/lib/firebase';
 export interface ProjectInvite {
   id?: string;
   projectId: string;
+  projectName?: string;
   createdBy: string;
   createdAt: Timestamp;
   expiresAt: Timestamp;

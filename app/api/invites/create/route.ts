@@ -20,8 +20,12 @@ export async function POST(req: NextRequest) {
     const result = await inviteServiceAdmin.createInvite(projectId, userId);
     console.log('Invite created successfully:', result);
 
-    const origin = req.nextUrl.origin;
-    const absoluteInviteLink = new URL(result.inviteLink, origin).toString();
+    const configuredBaseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '');
+    const forwardedHost = req.headers.get('x-forwarded-host');
+    const forwardedProto = req.headers.get('x-forwarded-proto') || 'https';
+    const requestOrigin = forwardedHost ? `${forwardedProto}://${forwardedHost}` : req.nextUrl.origin;
+    const baseOrigin = configuredBaseUrl || requestOrigin;
+    const absoluteInviteLink = new URL(result.inviteLink, baseOrigin).toString();
 
     return NextResponse.json({
       success: true,

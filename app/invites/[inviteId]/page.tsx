@@ -35,6 +35,10 @@ export default function InvitePage({ params }: InvitePageProps) {
           return
         }
 
+        if (invite.projectName) {
+          setProjectName(invite.projectName)
+        }
+
         const validation = await inviteService.validateInvite(params.inviteId)
         
         if (!validation.valid) {
@@ -44,11 +48,15 @@ export default function InvitePage({ params }: InvitePageProps) {
         }
 
         if (validation.projectId) {
-          const { doc, getDoc } = await import('firebase/firestore')
-          const { db } = await import('@/lib/firebase')
-          const projectDoc = await getDoc(doc(db, 'projects', validation.projectId))
-          if (projectDoc.exists()) {
-            setProjectName(projectDoc.data().name)
+          try {
+            const { doc, getDoc } = await import('firebase/firestore')
+            const { db } = await import('@/lib/firebase')
+            const projectDoc = await getDoc(doc(db, 'projects', validation.projectId))
+            if (projectDoc.exists()) {
+              setProjectName(projectDoc.data().name)
+            }
+          } catch (projectReadError) {
+            console.warn('Invite validation: unable to read project document before join', projectReadError)
           }
         }
 
