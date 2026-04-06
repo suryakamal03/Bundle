@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useMemo, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { Chrome } from 'lucide-react'
@@ -17,6 +17,11 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectPath = useMemo(() => {
+    const redirect = searchParams.get('redirect')
+    return redirect && redirect.startsWith('/') ? redirect : '/projects'
+  }, [searchParams])
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -48,7 +53,7 @@ export default function SignupPage() {
 
     try {
       await authService.signUpWithEmail({ email, password, fullName })
-      router.push('/projects')
+      router.push(redirectPath)
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -62,7 +67,7 @@ export default function SignupPage() {
 
     try {
       await authService.signInWithGoogle()
-      router.push('/projects')
+      router.push(redirectPath)
     } catch (err: any) {
       setError(err.message)
     } finally {

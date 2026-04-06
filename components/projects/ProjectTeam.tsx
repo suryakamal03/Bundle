@@ -27,7 +27,7 @@ export default function ProjectTeam({ projectId }: ProjectTeamProps) {
 
   useEffect(() => {
     loadTeamMembers()
-  }, [projectId])
+  }, [projectId, user?.uid])
 
   const loadTeamMembers = async () => {
     try {
