@@ -54,12 +54,14 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
   const [menuOpen, setMenuOpen] = useState<string | null>(null)
   const [editProject, setEditProject] = useState<Project | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
-  const hasLoadedData = useRef(!!initialState.projects.length)
+  const hasLoadedData = useRef(false)
 
-  const loadProjects = async () => {
+  const loadProjects = async (showLoader = true) => {
     if (!user) return
 
-    setLoading(true)
+    if (showLoader) {
+      setLoading(true)
+    }
     try {
       const userProjects = await projectService.getUserProjects(user.uid)
       
@@ -104,14 +106,24 @@ export default function ProjectList({ onSelectProject, selectedProject }: Projec
     } catch (error) {
       console.error('Failed to load projects:', error)
     } finally {
-      setLoading(false)
+      if (showLoader) {
+        setLoading(false)
+      }
     }
   }
 
   useEffect(() => {
-    if (!user || hasLoadedData.current) return
+    if (!user) {
+      hasLoadedData.current = false
+      setProjects([])
+      setLoading(false)
+      return
+    }
+
+    if (hasLoadedData.current) return
     hasLoadedData.current = true
-    loadProjects()
+    // Revalidate in background when cached projects are present.
+    loadProjects(initialState.projects.length === 0)
   }, [user])
 
   useEffect(() => {
