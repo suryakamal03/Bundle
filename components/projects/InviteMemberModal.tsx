@@ -43,7 +43,10 @@ export default function InviteMemberModal({ projectId, projectName, onClose }: I
         return
       }
 
-      const fullLink = `${window.location.origin}/invites/${data.inviteId}`
+      const fullLink = typeof data.inviteLink === 'string' && data.inviteLink.length > 0
+        ? (data.inviteLink.startsWith('http') ? data.inviteLink : `${window.location.origin}${data.inviteLink}`)
+        : `${window.location.origin}/invites/${data.inviteId}`
+
       setInviteLink(fullLink)
     } catch (err) {
       setError('An error occurred while generating the invite link')

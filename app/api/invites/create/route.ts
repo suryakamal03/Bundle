@@ -20,10 +20,13 @@ export async function POST(req: NextRequest) {
     const result = await inviteServiceAdmin.createInvite(projectId, userId);
     console.log('Invite created successfully:', result);
 
+    const origin = req.nextUrl.origin;
+    const absoluteInviteLink = new URL(result.inviteLink, origin).toString();
+
     return NextResponse.json({
       success: true,
       inviteId: result.inviteId,
-      inviteLink: result.inviteLink
+      inviteLink: absoluteInviteLink
     });
 
   } catch (error: any) {
