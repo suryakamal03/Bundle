@@ -16,6 +16,12 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow update: if true; // Allow server-side updates for invite acceptance
       allow delete: if request.auth != null && request.auth.uid == resource.data.createdBy;
+
+      // Chat messages within projects
+      match /messages/{messageId} {
+        allow read: if request.auth != null && request.auth.uid in get(/databases/$(database)/documents/projects/$(projectId)).data.members;
+        allow create, write: if request.auth != null && request.auth.uid in get(/databases/$(database)/documents/projects/$(projectId)).data.members;
+      }
     }
     
     match /github_events/{eventId} {
