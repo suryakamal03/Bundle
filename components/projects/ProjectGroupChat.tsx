@@ -7,6 +7,7 @@ import { useAuth } from '@/backend/auth/authContext'
 import Card from '@/components/ui/Card'
 import Avatar from '@/components/ui/Avatar'
 import Loading from '@/components/ui/Loading'
+import { addChatMessage } from '@/backend/chat/chatService'
 
 interface ChatMessage {
   id: string
@@ -116,7 +117,7 @@ export default function ProjectGroupChat({ projectId }: ProjectGroupChatProps) {
   }, [user, projectId])
 
   const handleSendMessage = () => {
-    if (!messageText.trim() || !user || !socketRef.current || isSending) return
+    if (!messageText.trim() || !user || isSending) return
 
     setIsSending(true)
 
@@ -126,13 +127,28 @@ export default function ProjectGroupChat({ projectId }: ProjectGroupChatProps) {
       text: messageText.trim()
     }
 
-    socketRef.current.emit('message:send', {
-      projectId,
-      message
-    })
+    const socket = socketRef.current
 
-    setMessageText('')
-    setIsSending(false)
+    if (socket && socket.connected) {
+      socket.emit('message:send', {
+        projectId,
+        message
+      })
+      setMessageText('')
+      setIsSending(false)
+    } else {
+      addChatMessage(projectId, message.senderId, message.senderName, message.text)
+        .then(() => {
+          setMessageText('')
+        })
+        .catch((error) => {
+          console.error('Failed to send chat message:', error)
+          alert('Could not send message right now. Please try again.')
+        })
+        .finally(() => {
+          setIsSending(false)
+        })
+    }
     
     // Reset textarea height
     if (textareaRef.current) {
@@ -263,14 +279,13 @@ export default function ProjectGroupChat({ projectId }: ProjectGroupChatProps) {
             onChange={handleTextareaChange}
             onKeyDown={handleKeyDown}
             placeholder="Type a message... (Shift+Enter for new line)"
-            disabled={!isConnected || isSending}
+            disabled={isSending}
             rows={1}
-            className="flex-1 px-4 py-2 bg-gray-50 dark:bg-[#2a2a2a] border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ minHeight: '40px', maxHeight: '120px' }}
+            className="flex-1 px-4 py-2 bg-gray-50 dark:bg-[#2a2a2a] border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 disabled:opacity-50 disabled:cursor-not-allowed min-h-[40px] max-h-[120px]"
           />
           <button
             onClick={handleSendMessage}
-            disabled={!messageText.trim() || !isConnected || isSending}
+            disabled={!messageText.trim() || isSending}
             className="p-2 bg-primary-500 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
             aria-label="Send message"
           >
