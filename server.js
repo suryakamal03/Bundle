@@ -43,9 +43,10 @@ const httpServer = createServer((req, res) => {
 })
 
 // Initialize Socket.IO with CORS
+const appOrigin = process.env.NEXT_PUBLIC_APP_URL || process.env.FRONTEND_URL
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    origin: appOrigin,
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -206,7 +207,7 @@ httpServer.listen(PORT, () => {
   console.log(`
   🚀 Socket.IO Chat Server Running
   📡 Port: ${PORT}
-  🌐 CORS: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}
+  🌐 CORS: ${appOrigin || 'not configured'}
   `)
 })
 

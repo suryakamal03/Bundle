@@ -7,6 +7,10 @@ import Input from '@/components/ui/Input'
 import { X, Copy, Check } from 'lucide-react'
 import { useAuth } from '@/backend/auth/authContext'
 
+function isLocalInviteLink(url: string): boolean {
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(url)
+}
+
 interface InviteMemberModalProps {
   projectId: string
   projectName: string
@@ -43,9 +47,12 @@ export default function InviteMemberModal({ projectId, projectName, onClose }: I
         return
       }
 
+      const currentOrigin = window.location.origin
       const fullLink = typeof data.inviteLink === 'string' && data.inviteLink.length > 0
-        ? (data.inviteLink.startsWith('http') ? data.inviteLink : `${window.location.origin}${data.inviteLink}`)
-        : `${window.location.origin}/invites/${data.inviteId}`
+        ? (data.inviteLink.startsWith('http')
+            ? (isLocalInviteLink(data.inviteLink) ? data.inviteLink.replace(/^https?:\/\/localhost(:\d+)?/i, currentOrigin).replace(/^https?:\/\/127\.0\.0\.1(:\d+)?/i, currentOrigin) : data.inviteLink)
+            : `${currentOrigin}${data.inviteLink}`)
+        : `${currentOrigin}/invites/${data.inviteId}`
 
       setInviteLink(fullLink)
     } catch (err) {

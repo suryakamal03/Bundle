@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { inviteServiceAdmin } from '@/backend/projects/inviteServiceAdmin';
 
+function isLocalOrigin(origin: string): boolean {
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -24,7 +28,9 @@ export async function POST(req: NextRequest) {
     const forwardedHost = req.headers.get('x-forwarded-host');
     const forwardedProto = req.headers.get('x-forwarded-proto') || 'https';
     const requestOrigin = forwardedHost ? `${forwardedProto}://${forwardedHost}` : req.nextUrl.origin;
-    const baseOrigin = configuredBaseUrl || requestOrigin;
+    const baseOrigin = configuredBaseUrl && !isLocalOrigin(configuredBaseUrl)
+      ? configuredBaseUrl
+      : requestOrigin;
     const absoluteInviteLink = new URL(result.inviteLink, baseOrigin).toString();
 
     return NextResponse.json({
