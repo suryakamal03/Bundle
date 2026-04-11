@@ -75,8 +75,6 @@ export const taskServiceAdmin = {
     
     if (messageKeywords.length === 0) {
       console.log('⚠️  No valid keywords extracted from commit message');
-      console.log('=== END MATCHING ===');
-      return;
     }
     
     const targetStatuses = isMainBranch
@@ -95,6 +93,8 @@ export const taskServiceAdmin = {
       const taskStatus = normalizeStatus(taskDoc.data()?.status);
       return targetStatuses.has(taskStatus);
     });
+
+    const usernameMatchedTasks: Array<{ ref: any; title: string; currentStatus: string }> = [];
 
     console.log(`Found candidate tasks: ${taskDocs.length}`);
 
@@ -135,6 +135,11 @@ export const taskServiceAdmin = {
           
           if (userGithubUsername === commitGithubUsername) {
             console.log('✓ GitHub username matches!');
+            usernameMatchedTasks.push({
+              ref: taskDoc.ref,
+              title: task.title || 'Untitled task',
+              currentStatus
+            });
             
             const keywordMatch = hasKeywordOverlap(task.keywords, commitMessage);
             
@@ -173,6 +178,22 @@ export const taskServiceAdmin = {
           console.log('✗ User document not found for ID:', task.assignedTo);
         }
       }
+
+    if (usernameMatchedTasks.length === 1) {
+      const fallbackTask = usernameMatchedTasks[0];
+      const newStatus = isMainBranch ? 'Done' : 'In Review';
+
+      await fallbackTask.ref.update({
+        status: newStatus,
+        updatedAt: Timestamp.now()
+      });
+
+      console.log(
+        `✅✅✅ FALLBACK SUCCESS! Single open task "${fallbackTask.title}" moved from "${fallbackTask.currentStatus}" to "${newStatus}" for user ${githubUsername}.`
+      );
+      console.log('=== END MATCHING ===');
+      return;
+    }
     
     console.log('\n⚠️  No matching tasks found');
     console.log('=== END MATCHING ===');
@@ -195,8 +216,6 @@ export const taskServiceAdmin = {
     
     if (prKeywords.length === 0) {
       console.log('⚠️  No valid keywords extracted from PR title/body');
-      console.log('=== END PR MERGE MATCHING ===');
-      return;
     }
     
     const tasksSnapshot = await adminDb.collection('tasks')
@@ -216,6 +235,8 @@ export const taskServiceAdmin = {
         if (bStatus === 'in-review') return 1;
         return 0;
       });
+
+    const usernameMatchedTasks: Array<{ ref: any; title: string; currentStatus: string }> = [];
 
     console.log('Found candidate tasks for PR merge:', candidateTaskDocs.length);
 
@@ -260,6 +281,11 @@ export const taskServiceAdmin = {
         
         if (userGithubUsername === commitGithubUsername) {
           console.log('✓ GitHub username matches!');
+          usernameMatchedTasks.push({
+            ref: taskDoc.ref,
+            title: task.title || 'Untitled task',
+            currentStatus: task.status || 'Unknown'
+          });
           
           const keywordMatch = hasKeywordOverlap(task.keywords, combinedText);
           
@@ -288,6 +314,21 @@ export const taskServiceAdmin = {
       } else {
         console.log('✗ User document not found for ID:', task.assignedTo);
       }
+    }
+
+    if (usernameMatchedTasks.length === 1) {
+      const fallbackTask = usernameMatchedTasks[0];
+
+      await fallbackTask.ref.update({
+        status: 'Done',
+        updatedAt: Timestamp.now()
+      });
+
+      console.log(
+        `✅✅✅ FALLBACK SUCCESS! Single open task "${fallbackTask.title}" moved from "${fallbackTask.currentStatus}" to "Done" for user ${githubUsername}.`
+      );
+      console.log('=== END PR MERGE MATCHING ===');
+      return;
     }
     console.log('\n⚠️  No matching tasks found');
     console.log('=== END PR MERGE MATCHING ===');
