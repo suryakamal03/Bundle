@@ -17,6 +17,17 @@ import { Task } from '@/types'
 
 type TabType = 'todo' | 'in-review' | 'issues'
 
+const normalizeTaskStatus = (status?: string): 'todo' | 'in-review' | 'done' | 'unknown' => {
+  if (!status) return 'unknown'
+
+  const value = status.toLowerCase().trim()
+  if (value === 'to do' || value === 'todo' || value === 'to-do') return 'todo'
+  if (value === 'in review' || value === 'in-review' || value === 'inreview') return 'in-review'
+  if (value === 'done') return 'done'
+
+  return 'unknown'
+}
+
 // ==================== SKELETON LOADERS ====================
 // These show only on first load, matching actual content layout
 const TaskSkeleton = memo(() => (
@@ -255,8 +266,8 @@ export default function MyDashboardPage() {
     if (!user) return
 
     const unsubscribe = userTaskService.subscribeToUserTasks(user.uid, (allUserTasks) => {
-      const todo = allUserTasks.filter(task => task.status === 'To Do')
-      const inReview = allUserTasks.filter(task => task.status === 'In Review')
+      const todo = allUserTasks.filter(task => normalizeTaskStatus(task.status) === 'todo')
+      const inReview = allUserTasks.filter(task => normalizeTaskStatus(task.status) === 'in-review')
 
       setTodoTasks(todo)
       setInReviewTasks(inReview)
@@ -288,8 +299,8 @@ export default function MyDashboardPage() {
       setGithubUsername(username)
 
       const allUserTasks = await userTaskService.getUserTasks(user.uid)
-      const todo = allUserTasks.filter(task => task.status === 'To Do')
-      const inReview = allUserTasks.filter(task => task.status === 'In Review')
+      const todo = allUserTasks.filter(task => normalizeTaskStatus(task.status) === 'todo')
+      const inReview = allUserTasks.filter(task => normalizeTaskStatus(task.status) === 'in-review')
       
       setTodoTasks(todo)
       setInReviewTasks(inReview)
@@ -354,8 +365,8 @@ export default function MyDashboardPage() {
       sessionStorage.removeItem(cacheKey)
       
       const allUserTasks = await userTaskService.getUserTasks(user.uid)
-      const todo = allUserTasks.filter(task => task.status === 'To Do')
-      const inReview = allUserTasks.filter(task => task.status === 'In Review')
+      const todo = allUserTasks.filter(task => normalizeTaskStatus(task.status) === 'todo')
+      const inReview = allUserTasks.filter(task => normalizeTaskStatus(task.status) === 'in-review')
       
       setTodoTasks(todo)
       setInReviewTasks(inReview)

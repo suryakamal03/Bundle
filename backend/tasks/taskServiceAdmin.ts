@@ -13,6 +13,35 @@ const normalizeStatus = (status?: string): 'to-do' | 'in-review' | 'done' | 'unk
   return 'unknown';
 };
 
+const toNormalizedTokens = (input: string): string[] => {
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(token => token.length > 2);
+};
+
+const hasKeywordOverlap = (taskKeywords: string[], text: string): boolean => {
+  const textTokens = new Set(toNormalizedTokens(text));
+
+  return taskKeywords.some(rawKeyword => {
+    const keyword = rawKeyword.toLowerCase().trim();
+    if (!keyword) return false;
+
+    // Exact token match first.
+    if (textTokens.has(keyword)) return true;
+
+    // Fuzzy fallback for mixed words like "auth" vs "authentication".
+    for (const token of textTokens) {
+      if (token.includes(keyword) || keyword.includes(token)) {
+        return true;
+      }
+    }
+
+    return false;
+  });
+};
+
 export const taskServiceAdmin = {
   extractKeywords(title: string): string[] {
     const stopWords = new Set([
@@ -107,9 +136,7 @@ export const taskServiceAdmin = {
           if (userGithubUsername === commitGithubUsername) {
             console.log('✓ GitHub username matches!');
             
-            const keywordMatch = task.keywords.some((keyword: string) => 
-              messageKeywords.includes(keyword.toLowerCase())
-            );
+            const keywordMatch = hasKeywordOverlap(task.keywords, commitMessage);
             
             console.log('Keyword match result:', keywordMatch);
             
@@ -234,9 +261,7 @@ export const taskServiceAdmin = {
         if (userGithubUsername === commitGithubUsername) {
           console.log('✓ GitHub username matches!');
           
-          const keywordMatch = task.keywords.some((keyword: string) => 
-            prKeywords.includes(keyword.toLowerCase())
-          );
+          const keywordMatch = hasKeywordOverlap(task.keywords, combinedText);
           
           console.log('Keyword match result:', keywordMatch);
           
