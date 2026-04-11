@@ -1,6 +1,18 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 
+const normalizeStatus = (status?: string): 'to-do' | 'in-review' | 'done' | 'unknown' => {
+  if (!status) return 'unknown';
+
+  const value = status.toLowerCase().trim();
+
+  if (value === 'to do' || value === 'todo' || value === 'to-do') return 'to-do';
+  if (value === 'in review' || value === 'in-review' || value === 'inreview') return 'in-review';
+  if (value === 'done') return 'done';
+
+  return 'unknown';
+};
+
 export const taskServiceAdmin = {
   extractKeywords(title: string): string[] {
     const stopWords = new Set([
@@ -38,25 +50,31 @@ export const taskServiceAdmin = {
       return;
     }
     
-    // If committing to main branch, check both "To Do" and "In Review" tasks
-    // Otherwise, only check "To Do" tasks
-    const statusesToCheck = isMainBranch ? ['To Do', 'In Review'] : ['To Do'];
-    
-    console.log(`Checking tasks in status: ${statusesToCheck.join(', ')}`);
-    
-    for (const status of statusesToCheck) {
-      const tasksSnapshot = await adminDb.collection('tasks')
-        .where('projectId', '==', projectId)
-        .where('status', '==', status)
-        .get();
-      
-      console.log(`Found Tasks in "${status}":`, tasksSnapshot.size);
-      
-      for (const taskDoc of tasksSnapshot.docs) {
+    const targetStatuses = isMainBranch
+      ? new Set(['to-do', 'in-review'])
+      : new Set(['to-do']);
+
+    console.log(
+      `Checking normalized task statuses: ${Array.from(targetStatuses).join(', ')}`
+    );
+
+    const tasksSnapshot = await adminDb.collection('tasks')
+      .where('projectId', '==', projectId)
+      .get();
+
+    const taskDocs = tasksSnapshot.docs.filter(taskDoc => {
+      const taskStatus = normalizeStatus(taskDoc.data()?.status);
+      return targetStatuses.has(taskStatus);
+    });
+
+    console.log(`Found candidate tasks: ${taskDocs.length}`);
+
+    for (const taskDoc of taskDocs) {
         const task = taskDoc.data();
+        const currentStatus = task.status || 'Unknown';
         console.log(`\n--- Checking Task: ${task.title}`);
         console.log('Task ID:', taskDoc.id);
-        console.log('Current Status:', status);
+        console.log('Current Status:', currentStatus);
         console.log('Task Keywords:', task.keywords || 'MISSING!');
         console.log('Assigned To:', task.assignedTo);
         
@@ -108,7 +126,7 @@ export const taskServiceAdmin = {
                 updatedAt: Timestamp.now()
               });
               
-              console.log(`✅✅✅ SUCCESS! Task "${task.title}" moved from "${status}" to "${newStatus}"!`);
+              console.log(`✅✅✅ SUCCESS! Task "${task.title}" moved from "${currentStatus}" to "${newStatus}"!`);
               console.log(`Task ID: ${taskDoc.id}`);
               console.log('=== END MATCHING ===');
               return;
@@ -128,7 +146,6 @@ export const taskServiceAdmin = {
           console.log('✗ User document not found for ID:', task.assignedTo);
         }
       }
-    }
     
     console.log('\n⚠️  No matching tasks found');
     console.log('=== END MATCHING ===');
@@ -157,21 +174,35 @@ export const taskServiceAdmin = {
     
     const tasksSnapshot = await adminDb.collection('tasks')
       .where('projectId', '==', projectId)
-      .where('status', '==', 'In Review')
       .get();
-    
-    console.log('Found Tasks in In Review:', tasksSnapshot.size);
-    
-    if (tasksSnapshot.empty) {
-      console.log('⚠️  No tasks in "In Review" status for this project');
+
+    const candidateTaskDocs = tasksSnapshot.docs
+      .filter(taskDoc => {
+        const normalized = normalizeStatus(taskDoc.data()?.status);
+        return normalized === 'in-review' || normalized === 'to-do';
+      })
+      .sort((a, b) => {
+        const aStatus = normalizeStatus(a.data()?.status);
+        const bStatus = normalizeStatus(b.data()?.status);
+        if (aStatus === bStatus) return 0;
+        if (aStatus === 'in-review') return -1;
+        if (bStatus === 'in-review') return 1;
+        return 0;
+      });
+
+    console.log('Found candidate tasks for PR merge:', candidateTaskDocs.length);
+
+    if (candidateTaskDocs.length === 0) {
+      console.log('⚠️  No tasks in "In Review" or "To Do" status for this project');
       console.log('=== END PR MERGE MATCHING ===');
       return;
     }
-    
-    for (const taskDoc of tasksSnapshot.docs) {
+
+    for (const taskDoc of candidateTaskDocs) {
       const task = taskDoc.data();
       console.log('\n--- Checking Task:', task.title);
       console.log('Task ID:', taskDoc.id);
+      console.log('Current Status:', task.status || 'Unknown');
       console.log('Task Keywords:', task.keywords || 'MISSING!');
       
       // Check if task has keywords

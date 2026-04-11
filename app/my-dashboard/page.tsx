@@ -251,6 +251,31 @@ export default function MyDashboardPage() {
     loadUserData()
   }, [user])
 
+  useEffect(() => {
+    if (!user) return
+
+    const unsubscribe = userTaskService.subscribeToUserTasks(user.uid, (allUserTasks) => {
+      const todo = allUserTasks.filter(task => task.status === 'To Do')
+      const inReview = allUserTasks.filter(task => task.status === 'In Review')
+
+      setTodoTasks(todo)
+      setInReviewTasks(inReview)
+      setLoading(false)
+
+      const cacheKey = `dashboard_cache_${user.uid}`
+      sessionStorage.setItem(cacheKey, JSON.stringify({
+        todoTasks: todo,
+        inReviewTasks: inReview,
+        issues,
+        activities,
+        githubUsername,
+        timestamp: Date.now()
+      }))
+    })
+
+    return () => unsubscribe()
+  }, [user, issues, activities, githubUsername])
+
   const loadUserData = useCallback(async () => {
     if (!user) return
 
