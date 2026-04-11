@@ -13,6 +13,11 @@ const normalizeStatus = (status?: string): 'to-do' | 'in-review' | 'done' | 'unk
   return 'unknown';
 };
 
+const normalizeGithubUsername = (username?: string): string => {
+  if (!username) return '';
+  return username.toLowerCase().replace(/^@/, '').trim();
+};
+
 const toNormalizedTokens = (input: string): string[] => {
   return input
     .toLowerCase()
@@ -77,9 +82,7 @@ export const taskServiceAdmin = {
       console.log('⚠️  No valid keywords extracted from commit message');
     }
     
-    const targetStatuses = isMainBranch
-      ? new Set(['to-do', 'in-review'])
-      : new Set(['to-do']);
+    const targetStatuses = new Set(['to-do', 'in-review']);
 
     console.log(
       `Checking normalized task statuses: ${Array.from(targetStatuses).join(', ')}`
@@ -94,7 +97,7 @@ export const taskServiceAdmin = {
       return targetStatuses.has(taskStatus);
     });
 
-    const usernameMatchedTasks: Array<{ ref: any; title: string; currentStatus: string }> = [];
+    const usernameMatchedTasks: Array<{ ref: any; title: string; currentStatus: string; normalizedStatus: 'to-do' | 'in-review' | 'done' | 'unknown' }> = [];
 
     console.log(`Found candidate tasks: ${taskDocs.length}`);
 
@@ -123,8 +126,8 @@ export const taskServiceAdmin = {
         
         if (userDoc.exists) {
           const userData = userDoc.data();
-          const userGithubUsername = userData?.githubUsername?.toLowerCase().trim();
-          const commitGithubUsername = githubUsername.toLowerCase().trim();
+          const userGithubUsername = normalizeGithubUsername(userData?.githubUsername);
+          const commitGithubUsername = normalizeGithubUsername(githubUsername);
           
           console.log('User GitHub Username:', userData?.githubUsername || 'NOT SET!');
           
@@ -138,7 +141,8 @@ export const taskServiceAdmin = {
             usernameMatchedTasks.push({
               ref: taskDoc.ref,
               title: task.title || 'Untitled task',
-              currentStatus
+              currentStatus,
+              normalizedStatus: normalizeStatus(task.status)
             });
             
             const keywordMatch = hasKeywordOverlap(task.keywords, commitMessage);
@@ -146,12 +150,7 @@ export const taskServiceAdmin = {
             console.log('Keyword match result:', keywordMatch);
             
             if (keywordMatch) {
-              let newStatus: string;
-              if (isMainBranch) {
-                newStatus = 'Done';
-              } else {
-                newStatus = 'In Review';
-              }
+              const newStatus = 'Done';
               
               await taskDoc.ref.update({
                 status: newStatus,
@@ -179,9 +178,9 @@ export const taskServiceAdmin = {
         }
       }
 
-    if (usernameMatchedTasks.length === 1) {
-      const fallbackTask = usernameMatchedTasks[0];
-      const newStatus = isMainBranch ? 'Done' : 'In Review';
+    if (usernameMatchedTasks.length > 0) {
+      const fallbackTask = usernameMatchedTasks.find(task => task.normalizedStatus === 'to-do') || usernameMatchedTasks[0];
+      const newStatus = 'Done';
 
       await fallbackTask.ref.update({
         status: newStatus,
@@ -189,7 +188,7 @@ export const taskServiceAdmin = {
       });
 
       console.log(
-        `✅✅✅ FALLBACK SUCCESS! Single open task "${fallbackTask.title}" moved from "${fallbackTask.currentStatus}" to "${newStatus}" for user ${githubUsername}.`
+        `✅✅✅ FALLBACK SUCCESS! Open task "${fallbackTask.title}" moved from "${fallbackTask.currentStatus}" to "${newStatus}" for user ${githubUsername}.`
       );
       console.log('=== END MATCHING ===');
       return;
@@ -236,7 +235,7 @@ export const taskServiceAdmin = {
         return 0;
       });
 
-    const usernameMatchedTasks: Array<{ ref: any; title: string; currentStatus: string }> = [];
+    const usernameMatchedTasks: Array<{ ref: any; title: string; currentStatus: string; normalizedStatus: 'to-do' | 'in-review' | 'done' | 'unknown' }> = [];
 
     console.log('Found candidate tasks for PR merge:', candidateTaskDocs.length);
 
@@ -269,8 +268,8 @@ export const taskServiceAdmin = {
       
       if (userDoc.exists) {
         const userData = userDoc.data();
-        const userGithubUsername = userData?.githubUsername?.toLowerCase().trim();
-        const commitGithubUsername = githubUsername.toLowerCase().trim();
+        const userGithubUsername = normalizeGithubUsername(userData?.githubUsername);
+        const commitGithubUsername = normalizeGithubUsername(githubUsername);
         
         console.log('User GitHub Username:', userData?.githubUsername || 'NOT SET!');
         
@@ -284,7 +283,8 @@ export const taskServiceAdmin = {
           usernameMatchedTasks.push({
             ref: taskDoc.ref,
             title: task.title || 'Untitled task',
-            currentStatus: task.status || 'Unknown'
+            currentStatus: task.status || 'Unknown',
+            normalizedStatus: normalizeStatus(task.status)
           });
           
           const keywordMatch = hasKeywordOverlap(task.keywords, combinedText);
@@ -316,8 +316,8 @@ export const taskServiceAdmin = {
       }
     }
 
-    if (usernameMatchedTasks.length === 1) {
-      const fallbackTask = usernameMatchedTasks[0];
+    if (usernameMatchedTasks.length > 0) {
+      const fallbackTask = usernameMatchedTasks.find(task => task.normalizedStatus === 'in-review') || usernameMatchedTasks[0];
 
       await fallbackTask.ref.update({
         status: 'Done',
@@ -325,7 +325,7 @@ export const taskServiceAdmin = {
       });
 
       console.log(
-        `✅✅✅ FALLBACK SUCCESS! Single open task "${fallbackTask.title}" moved from "${fallbackTask.currentStatus}" to "Done" for user ${githubUsername}.`
+        `✅✅✅ FALLBACK SUCCESS! Open task "${fallbackTask.title}" moved from "${fallbackTask.currentStatus}" to "Done" for user ${githubUsername}.`
       );
       console.log('=== END PR MERGE MATCHING ===');
       return;
