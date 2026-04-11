@@ -18,6 +18,11 @@ const normalizeGithubUsername = (username?: string): string => {
   return username.toLowerCase().replace(/^@/, '').trim();
 };
 
+const normalizeIdentity = (value?: string): string => {
+  if (!value) return '';
+  return value.toLowerCase().replace(/^@/, '').replace(/\s+/g, ' ').trim();
+};
+
 const toNormalizedTokens = (input: string): string[] => {
   return input
     .toLowerCase()
@@ -67,7 +72,8 @@ export const taskServiceAdmin = {
     projectId: string,
     commitMessage: string,
     githubUsername: string,
-    isMainBranch: boolean = false
+    isMainBranch: boolean = false,
+    commitAuthorName?: string
   ): Promise<void> {
     console.log('=== MATCHING TASK FOR COMMIT ===');
     console.log('Project ID:', projectId);
@@ -75,7 +81,8 @@ export const taskServiceAdmin = {
     console.log('GitHub Username:', githubUsername);
     console.log('Is Main Branch:', isMainBranch);
     
-    const messageKeywords = this.extractKeywords(commitMessage);
+    const safeCommitMessage = (commitMessage || '').trim();
+    const messageKeywords = this.extractKeywords(safeCommitMessage);
     console.log('Extracted Keywords from Commit:', messageKeywords);
     
     if (messageKeywords.length === 0) {
@@ -128,6 +135,8 @@ export const taskServiceAdmin = {
           const userData = userDoc.data();
           const userGithubUsername = normalizeGithubUsername(userData?.githubUsername);
           const commitGithubUsername = normalizeGithubUsername(githubUsername);
+          const commitAuthorNameNormalized = normalizeIdentity(commitAuthorName);
+          const userNameNormalized = normalizeIdentity(userData?.name || userData?.displayName);
           
           console.log('User GitHub Username:', userData?.githubUsername || 'NOT SET!');
           
@@ -136,7 +145,13 @@ export const taskServiceAdmin = {
             continue;
           }
           
-          if (userGithubUsername === commitGithubUsername) {
+          const identityMatch =
+            (userGithubUsername && commitGithubUsername && userGithubUsername === commitGithubUsername) ||
+            (userGithubUsername && commitAuthorNameNormalized && userGithubUsername === commitAuthorNameNormalized) ||
+            (userNameNormalized && commitGithubUsername && userNameNormalized === commitGithubUsername) ||
+            (userNameNormalized && commitAuthorNameNormalized && userNameNormalized === commitAuthorNameNormalized);
+
+          if (identityMatch) {
             console.log('✓ GitHub username matches!');
             usernameMatchedTasks.push({
               ref: taskDoc.ref,
@@ -145,7 +160,7 @@ export const taskServiceAdmin = {
               normalizedStatus: normalizeStatus(task.status)
             });
             
-            const keywordMatch = hasKeywordOverlap(task.keywords, commitMessage);
+            const keywordMatch = hasKeywordOverlap(task.keywords, safeCommitMessage);
             
             console.log('Keyword match result:', keywordMatch);
             
@@ -168,7 +183,7 @@ export const taskServiceAdmin = {
               console.log('  Suggestion: Include one of these words in your commit:', task.keywords.join(', '));
             }
           } else {
-            console.log('✗ GitHub username does not match');
+            console.log('✗ Commit author identity does not match task assignee');
             console.log(`  Expected: ${commitGithubUsername}`);
             console.log(`  Got: ${userGithubUsername}`);
             console.log('  Suggestion: Update GitHub username in user settings');

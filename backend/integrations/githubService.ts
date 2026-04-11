@@ -25,6 +25,14 @@ export interface WebhookPayload {
   };
   action?: string;
   ref?: string;
+  head_commit?: {
+    id?: string;
+    message?: string;
+  };
+  pusher?: {
+    name?: string;
+    email?: string;
+  };
   commits?: Array<{
     id: string;
     message: string;
@@ -156,9 +164,21 @@ export const githubService = {
       console.log(`[GitHub] Push to branch: ${branchName}, Commits: ${payload.commits.length}, Is Main: ${isMainBranch}`);
       
       for (const commit of payload.commits) {
-        const githubUsername = commit.author.username || payload.sender.login;
-        const commitMessage = commit.message;
+        const githubUsername =
+          commit.author.username ||
+          payload.sender.login ||
+          payload.pusher?.name ||
+          '';
+        const commitAuthorName = commit.author.name || payload.pusher?.name || '';
+        const commitMessage =
+          commit.message ||
+          payload.head_commit?.message ||
+          '';
         const commitId = commit.id;
+
+        console.log(
+          `[GitHub] Commit identity resolved. username="${githubUsername}", authorName="${commitAuthorName}", messagePreview="${commitMessage.substring(0, 80)}"`
+        );
         
         // Check if member of project
         const isMember = await isProjectMember(projectId, githubUsername);
@@ -204,7 +224,8 @@ export const githubService = {
               projectId, 
               commitMessage, 
               githubUsername,
-              isMainBranch
+              isMainBranch,
+              commitAuthorName
             );
           } catch (error) {
             console.error(`[GitHub] Error matching task for commit ${commitId}:`, error);
